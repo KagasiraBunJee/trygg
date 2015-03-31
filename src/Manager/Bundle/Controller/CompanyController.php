@@ -1,0 +1,252 @@
+<?php
+
+namespace Manager\Bundle\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\HttpFoundation\Request;
+
+use Manager\Bundle\Entity\Company;
+use Manager\Bundle\Form\CompanyType;
+use Manager\Bundle\Entity\Step;
+use Manager\Bundle\Entity\Log;
+
+class CompanyController extends Controller
+{
+    /**
+     * @Route("/", defaults={"step" = 1, "id" = 0}, name="home")
+     * @Route("/home/{step}" , name="main", defaults={"step" = 1, "id" = 0})
+     * @Route("/home/{step}/{id}" , name="main_with_item", defaults={"step" = 1, "id" = 0})
+     * @Template()
+     */
+    public function listCategorizedAction($step, $id,Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $step = $em->getRepository("ManagerBundle:Step")->find($step);
+        $searchText = $request->get("search") ? $request->get("search") : "";
+        $companies = $em->getRepository("ManagerBundle:Company")->getCompanies($step,$searchText);
+        $company = new Company();
+
+        $paginator  = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $companies,
+            $request->query->get('page', 1)/*page number*/,
+            $this->container->getParameter("items_per_page")/*limit per page*/
+        );
+
+        if($id)
+        {
+            $company = $em->getRepository("ManagerBundle:Company")->find($id);
+        }
+
+        return [
+            'step' => $step,
+            'company' => $company,
+            'companies' => $pagination
+        ];
+    }
+
+    /**
+     * @return array
+     * @Route("/all", name="all_customers")
+     * @Template("ManagerBundle:Company:list.html.twig")
+     */
+    public function allCompaniesAction(Request $request)
+    {
+        $searchText = $request->get("search") ? $request->get("search") : "";
+        $companies = $this->getDoctrine()->getRepository("ManagerBundle:Company")->getAllCompaniesQuery($searchText);
+        $step = new Step();
+        $step->setName('All Customers');
+
+        $paginator  = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $companies,
+            $request->query->get('page', 1)/*page number*/,
+            $this->container->getParameter("items_per_page")/*limit per page*/
+        );
+
+        return [
+            'companies' => $pagination,
+            'step' => $step
+        ];
+    }
+
+    /**
+     * @Route("/add", name="add_sale")
+     * @Template()
+     */
+    public function addAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $step = $em->getRepository("ManagerBundle:Step")->find(1);
+        $company = new Company();
+        $user = $this->getUser();
+        $form = $this->createForm(new CompanyType(), $company);
+        $form->handleRequest($request);
+
+        if($form->isValid())
+        {
+            $company->setCreator($user);
+            $company->setStep($step);
+            $company->setRejected(false);
+            $company->setTrashed(false);
+            $user->addCompany($company);
+            $step->addCompany($company);
+            $log = new Log();
+            $log->setUser($user);
+            $log->setTitle("New");
+            $log->setMessage("User:".$user->getName()." has added new sale[".$company->getName()."]");
+            $log->setCreated(new \DateTime("now"));
+            $log->setCompany($company);
+            $em->persist($company);
+            $em->persist($log);
+            $company->addLog($log);
+            $em->flush();
+
+            return $this->redirectToRoute('home');
+        }
+
+        return [
+            'bar_title' => "Add new company",
+            'form' => $form->createView()
+        ];
+    }
+
+    /**
+     * @Route("/edit/{id}", name="edit_company")
+     * @Template("ManagerBundle:Company:add.html.twig")
+     * @ParamConverter("company", class="ManagerBundle:Company", options={"id" = "id"})
+     */
+    public function editAction(Company $company, Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        $form = $this->createForm(new CompanyType(), $company);
+        $step = $company->getStep();
+        $image = $company->getImage();
+        $form->handleRequest($request);
+
+        if($form->isValid())
+        {
+            $company->setCreator($user);
+            $company->setStep($step);
+            $company->setRejected(false);
+            $user->addCompany($company);
+            $step->addCompany($company);
+            $log = new Log();
+            $log->setUser($user);
+            $log->setTitle("Update");
+            $log->setMessage("User:".$user->getName()." has added new sale[".$company->getName()."]");
+            $log->setCreated(new \DateTime("now"));
+            $log->setCompany($company);
+            /*if($form->getData()->getImage() != null)
+            {
+                if($image)
+                {
+                    $company->setImage($image);
+                }
+            }*/
+            $company->addLog($log);
+            $em->persist($log);
+            $em->flush();
+
+            //return $this->redirectToRoute('edit_sale');
+        }
+
+        return [
+            'bar_title' => "Edit <strong>".$company->getName()."</strong>",
+            'form' => $form->createView()
+        ];
+    }
+
+    /**
+     * @Route("/list/rejected", name="rejected", defaults={"id" = 0})
+     * @Route("/list/rejected/{id}", name="rejectedCom", defaults={"id" = 0})
+     * @Template("ManagerBundle:Company:listRejected.html.twig")
+     * @Security("has_role('ROLE_SUPER_ADMIN')")
+     */
+    public function rejectedListAction($id, Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $step = new Step();
+        $step->setName('Rejected');
+        $company = new Company();
+        $searchText = $request->get("search") ? $request->get("search") : "";
+        $companies = $em->getRepository("ManagerBundle:Company")->getRejectedListQuery($searchText);
+
+        $paginator  = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $companies,
+            $request->query->get('page', 1)/*page number*/,
+            $this->container->getParameter("items_per_page")/*limit per page*/
+        );
+
+        if($companies)
+        {
+            //$company = $companies[0];
+            if($id)
+            {
+                $company = $em->getRepository("ManagerBundle:Company")->find($id);
+            }
+        }
+
+        return [
+            'companies' => $pagination,
+            'step' => $step,
+            'company' => $company
+        ];
+    }
+
+    /**
+     * @Route("/reject/{id}", name="reject")
+     * @Security("has_role('ROLE_SUPER_ADMIN')")
+     */
+    public function rejectCompanyAction(Company $company)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $company->setRejected(true);
+        $lastStep = $company->getStep();
+        $step = $em->getRepository("ManagerBundle:Step")->find(1);
+        $company->setStep($step);
+        $log = new Log();
+        $log->setCreated(new \DateTime("now"));
+        $log->setMessage("Rejected ".$company->getName());
+        $log->setUser($this->getUser());
+        $log->setTitle("Update");
+        $log->setCompany($company);
+        $em->persist($log);
+        $company->addLog($log);
+        $em->flush();
+        return $this->redirectToRoute("main_with_item",["step"=>$lastStep->getId(), "id" => $company->getId()]);
+    }
+
+    /**
+     * @Route("/company/setType/{stepId}/{id}", name="set_step")
+     * @ParamConverter("step", class="ManagerBundle:Step", options={"id" = "stepId"})
+     * @ParamConverter("company", class="ManagerBundle:Company", options={"id" = "id"})
+     * @Security("has_role('ROLE_SUPER_ADMIN')")
+     */
+    public function setStep(Step $step, Company $company)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $lastStep = $company->getStep();
+        $company->setStep($step);
+        $step->addCompany($company);
+        $log = new Log();
+        $log->setCreated(new \DateTime("now"));
+        $company->setRejected(false);
+        $company->setTrashed(false);
+        $log->setMessage("Updated status of ".$company->getName()." to status ".$step->getName());
+        $log->setUser($this->getUser());
+        $log->setCompany($company);
+        $log->setTitle("Update");
+        $em->persist($log);
+        $company->addLog($log);
+        $em->flush();
+        return $this->redirectToRoute("main_with_item",["step"=>$lastStep->getId(), "id" => $company->getId()]);
+    }
+
+}

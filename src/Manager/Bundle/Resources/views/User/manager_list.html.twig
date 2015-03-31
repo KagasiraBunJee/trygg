@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<h1>All managers</h1>
+<div>
+    {% if users|length > 0 %}
+        <ul class="list-group">
+            {% for user in users %}
+                <li class="list-group-item">{{ user.name }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <h2>No managers found</h2>
+    {% endif %}
+</div>
+{% endblock %}

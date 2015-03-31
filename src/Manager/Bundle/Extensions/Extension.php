@@ -1,0 +1,44 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: USER
+ * Date: 25.03.2015
+ * Time: 21:02
+ */
+
+namespace Manager\Bundle\Extensions;
+
+use Doctrine\ORM\EntityManager;
+
+class Extension extends \Twig_Extension{
+
+    /**
+     * Constructor
+     * @param EntityManager $em
+     */
+
+    public function __construct(EntityManager $em)
+    {
+        $this->em = $em;
+    }
+
+    public function getFunctions()
+    {
+        return array(
+            new \Twig_SimpleFunction("steps", array($this, 'getSteps'))
+        );
+    }
+
+
+    public function getSteps()
+    {
+        $steps = $this->em->getRepository("ManagerBundle:Step")->findAll();
+        return $steps;
+    }
+
+    public function getName()
+    {
+        return "extension";
+    }
+
+}

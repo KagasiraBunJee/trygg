@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-12">
+            {% if companies|length > 0 %}
+               <table class="table table-striped">
+                    <tr>
+                        <td>ID</td>
+                        <td>Company</td>
+                        <td>Number</td>
+                        <td>Address</td>
+                        <td>Contact</td>
+                        <td>Phone</td>
+                        <td></td>
+                    </tr>
+                    {% for item in companies %}
+                        <tr>
+                            <td>{{ item.id }}</td>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.orgCode }}</td>
+                            <td>{{ item.address }}</td>
+                            <td>{{ item.contact }}</td>
+                            <td>{{ item.phone }}</td>
+                            <td style="position: relative;">
+                                <a href="{{ path('main_with_item', { "step":step.id, "id":item.id }) }}" type="button" class="btn btn-default btn-sm" aria-label="Left Align">
+                                    <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                                </a>
+                                <a href="{{ path('edit_company', { "id":item.id }) }}" type="button" class="btn btn-default btn-sm" aria-label="Left Align">
+                                    <span class="glyphicon glyphicon glyphicon-cog" aria-hidden="true"></span>
+                                </a>
+                                <a href="{{ path('reject', {"id":item.id}) }}" type="button" class="btn btn-default btn-sm btn-danger" aria-label="Left Align">
+                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        {{ knp_pagination_render(companies) }}
+                    </div>
+                </div>
+            {% else %}
+                <h2>No companies found</h2>
+            {% endif %}
+        </div>
+        {% if company.id is not null %}
+        <div style="background: #e6e6e6;" class="col-md-12">
+            <div class="row">
+                <div class="col-sm-2">
+                    {% if company.image is not empty %}
+                        <img src="{{ asset('upload/' ~ company.id ~'/' ~ company.image)}}" alt="" height="100" />
+                    {% else %}
+                        <img src="{{ asset('upload/default.png')}}" alt="" height="100" />
+                    {% endif %}
+
+                </div>
+                <div class="col-sm-7">
+                    {% if company %}
+                        <h2>Selected company</h2>
+                        <p>Company name: {{ company.name }}</p>
+                        <p>Org. Number: {{ company.orgCode }}</p>
+                        <p>Company id: {{ company.id }}</p>
+                    {% endif %}
+                </div>
+                <div class="col-sm-3">
+                    {% if company %}
+                        <h2>Notes</h2>
+                        <p>
+                            {{ company.comment }}
+                        </p>
+                    {% endif %}
+                </div>
+                <div class="col-sm-12">
+                    <p>Added by: {{ company.creator.name }}</p>
+                    <p>Last updated by: {{ company.logs.last.user.name }} [{{ company.logs.last.created|date('Y-m-d H:i:s') }}] - [Action: {{ company.logs.last.message }}]</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <ul class="list-inline">
+                        {% if is_granted('ROLE_SUPER_ADMIN') %}
+                            {% for step in steps() %}
+                                {% if step.id > 1 %}
+                                    <li><a {% if company.step.id >= step.id %}disabled="disabled"{% endif %} class="{% if company.step.id >= step.id %} btn-success {% endif %}btn btn-default btn-sm text-uppercase" href="{{ path('set_step', { 'stepId':step.id, "id":company.id }) }}"> {{ step.name }} </a></li>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+
+{% endblock %}

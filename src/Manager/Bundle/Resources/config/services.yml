@@ -1,0 +1,10 @@
+parameters:
+#    manager..example.class: Manager\Bundle\Example
+
+services:
+    public.functions:
+        class:     Manager\Bundle\Extensions\Extension
+        tags:
+            - { name: twig.extension }
+        arguments:
+            em: "@doctrine.orm.entity_manager"

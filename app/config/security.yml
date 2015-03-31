@@ -1,0 +1,38 @@
+security:
+    encoders:
+        Manager\Bundle\Entity\User:
+            algorithm: bcrypt
+            cost: 12
+
+    role_hierarchy:
+        ROLE_ADMIN:       ROLE_USER
+        ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+
+    providers:
+        main:
+            entity:
+                class: Manager\Bundle\Entity\User
+                property: email
+
+    firewalls:
+        dev:
+            pattern:  ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+            
+        default:
+            anonymous: ~
+            http_basic: ~
+            form_login:
+                login_path: login
+                check_path: login_check
+                default_target_path: /home
+            logout:
+                path:   logout
+                target: login
+                
+    access_control:
+        - { path: ^/(user/login)$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/user, roles: ROLE_SUPER_ADMIN }
+        - { path: ^/list/rejected, roles: ROLE_SUPER_ADMIN }
+        - { path: ^/home/1, roles: ROLE_ADMIN}
+        - { path: ^/, roles: ROLE_ADMIN}

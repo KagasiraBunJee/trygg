@@ -1,0 +1,95 @@
+<?php
+
+namespace Manager\Bundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Manager\Bundle\Entity\Company;
+/**
+ * User
+ *
+ * @ORM\Table()
+ * @ORM\Entity(repositoryClass="Manager\Bundle\Entity\Repository\UserRepository")
+ */
+class User implements UserInterface
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var string
+     * @ORM\Column(name="email", type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\Email()
+     */
+    private $email;
+    
+    /**
+     * @var string
+     * @ORM\Column(name="name", type="string", length=255)
+     * @Assert\NotBlank()
+     */
+    private $name;
+    
+    /**
+     * @var string
+     * @ORM\Column(name="password", type="string", length=255)
+     * @Assert\NotBlank()
+     */
+    private $password;
+    
+    /**
+     * @var string
+     * @ORM\Column(name="role", type="string", length=255)
+     * @Assert\NotBlank()
+     */
+    private $role;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Company", mappedBy="creator")
+     */
+    private $companies;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Log", mappedBy="user")
+     */
+    private $logs;
+    
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+    
+    public function eraseCredentials() {
+        
+    }
+
+    public function getPassword() {
+        return $this->password;
+    }
+
+    public function getRoles() {
+        return [$role];
+    }
+
+    public function getSalt() {
+        return null;
+    }
+
+    public function getUsername() {
+        return $this->email;
+    }
+
+}

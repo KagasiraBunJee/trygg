@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h2>Add new company</h2>
+    <div class="row">
+        <div class="col-md-3">
+            {{ form_start(form, {"attr" : { "class":"form-horizontal" }}) }}
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="name">Company</label>
+                    <div class="col-md-9">
+                        {{ form_widget(form.name, { "attr":{ "class":"form-control" }, "id":"name" }) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="orgCode">Org.nr.</label>
+                    <div class="col-md-9">
+                        {{ form_widget(form.orgCode, { "attr":{ "class":"form-control" },"id":"orgCode" }) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="address">Adresse</label>
+                    <div class="col-md-9">
+                        {{ form_widget(form.address, { "attr":{ "class":"form-control" }, "id":"address" }) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="contact">Kontakt</label>
+                    <div class="col-md-9">
+                        {{ form_widget(form.contact, { "attr":{ "class":"form-control" }, "id":"contact" }) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="phone">Phone</label>
+                    <div class="col-md-9">
+                        {{ form_widget(form.phone, { "attr":{ "class":"form-control" }, "id":"phone" }) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="image">Image</label>
+                    <div class="col-md-9">
+                        {{ form_widget(form.image, { "attr":{ "class":"" }, "id":"image" }) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="comment">Comment</label>
+                    <div class="col-md-9">
+                        {{ form_widget(form.comment, { "attr":{ "class":"form-control" }, "id":"comment" }) }}
+                    </div>
+                </div>
+                <div class="col-md-3"></div>
+                <div class="col-md-9">
+                    {{ form_widget(form.submit, {"label":"Register", "attr":{ "class":"btn btn-default" }, "id":"submit" }) }}
+                </div>
+            {{ form_end(form) }}
+        </div>
+        <div class="col-md-5"></div>
+        <div class="col-md-4"></div>
+    </div>
+{% endblock %}
