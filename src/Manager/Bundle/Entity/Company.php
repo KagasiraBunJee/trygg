@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\HasLifecycleCallbacks
  * @ORM\Entity(repositoryClass="Manager\Bundle\Entity\Repository\CompanyRepository")
  */
-class Company
+class Company implements \JsonSerializable
 {
     /**
      * @var integer
@@ -476,4 +476,24 @@ class Company
     {
         return $this->trashed;
     }
+
+    /**
+     * (PHP 5 &gt;= 5.4.0)<br/>
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     */
+    function jsonSerialize()
+    {
+        return [
+            "id" => $this->getId(),
+            "name" => $this->getName(),
+            "step" => $this->getStep(),
+            "rejected" => $this->getRejected(),
+            "trashed" => $this->getTrashed()
+        ];
+    }
+
+
 }

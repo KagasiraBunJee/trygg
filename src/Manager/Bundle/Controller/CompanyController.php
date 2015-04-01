@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 use Manager\Bundle\Entity\Company;
 use Manager\Bundle\Form\CompanyType;
@@ -173,6 +174,7 @@ class CompanyController extends Controller
         $em = $this->getDoctrine()->getManager();
         $step = new Step();
         $step->setName('Rejected');
+        $step->setStepLvl("rejected");
         $company = new Company();
         $searchText = $request->get("search") ? $request->get("search") : "";
         $companies = $em->getRepository("ManagerBundle:Company")->getRejectedListQuery($searchText);
@@ -266,6 +268,59 @@ class CompanyController extends Controller
         $company->addLog($log);
         $em->flush();
         return $this->redirectToRoute("main_with_item",["step"=>$lastStep->getId(), "id" => $company->getId()]);
+    }
+
+    /**
+     * @Route("/company/search", name="smart_search")
+     */
+    public function smartSearchAction(Request $request)
+    {
+        $searchTxt = $request->query->get("smartSearch") ? $request->query->get("smartSearch") : false;
+        $searchWithStep = $request->query->get("stepId") ? $request->query->get("stepId") : false;
+        $rejected = $request->query->get("rejected");
+        $trashed = $request->query->get("trashed");
+        if($searchTxt)
+        {
+            $em = $this->getDoctrine()->getManager();
+            if(!$rejected and !$trashed and $searchWithStep)
+            {
+
+                $step = $em->getRepository("ManagerBundle:Step")->find($searchWithStep);
+                $companies = $em->getRepository("ManagerBundle:Company")->getCompanies($step,$searchTxt);
+            }
+            elseif($rejected)
+            {
+                $companies = $em->getRepository("ManagerBundle:Company")->getRejectedListQuery($searchTxt);
+            }
+            /*elseif($trashed)
+            {
+            }*/
+            else
+            {
+                $companies = $this->getDoctrine()->getRepository("ManagerBundle:Company")->getAllCompaniesQuery($searchTxt);
+            }
+
+            $result = [];
+
+            $companies = $companies->getResult();
+
+            foreach($companies as $company)
+            {
+                $url = $rejected ? $this->generateUrl("rejectedCom", ["id"=>$company->getId()]) : $this->generateUrl("main_with_item", ["id"=>$company->getId(), "step"=> $company->getStep()->getId()]);
+                $result[] = [
+                    "id" => $company->getId(),
+                    "name" => $company->getName(),
+                    "url" => $url
+                ];
+            }
+
+            return new JsonResponse([
+                "result" => $result
+            ]);
+        }
+        return new JsonResponse([
+            "result" => "nothing"
+        ]);
     }
 
 }
