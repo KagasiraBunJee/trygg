@@ -81,7 +81,8 @@ class UserController extends Controller
         }
 
         return [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'bar_title' => "Add new manager"
         ];
     }
     

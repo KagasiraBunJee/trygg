@@ -16,7 +16,7 @@ class CompanyRepository extends EntityRepository
     {
         $em = $this->getEntityManager();
         $query = $em->createQuery("
-                    SELECT p FROM ManagerBundle:Company p WHERE p.step = :step and p.rejected = 0 and p.name LIKE '%$searchText%'
+                    SELECT p FROM ManagerBundle:Company p WHERE p.step = :step and p.rejected = 0 and p.name LIKE '%$searchText%' and p.trashed = 0
         ");
         $query->setParameter('step', $step);
         return $query;
@@ -32,7 +32,8 @@ class CompanyRepository extends EntityRepository
     public function getRejectedListQuery($searchText = "")
     {
         $em = $this->getEntityManager();
-        $query = $em->createQuery(" SELECT p FROM ManagerBundle:Company p WHERE p.rejected = 1 and p.name LIKE '%$searchText%'");
+        $query = $em->createQuery(" SELECT p FROM ManagerBundle:Company p WHERE p.rejected = 1 and p.name LIKE '%$searchText%' and p.trashed = 0");
         return $query;
     }
+
 }

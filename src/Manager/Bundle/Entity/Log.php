@@ -46,7 +46,7 @@ class Log
      * @ORM\ManyToOne(targetEntity="Company",inversedBy="logs")
      * @ORM\JoinColumn(name="companyId", referencedColumnName="id")
      */
-    public $company;
+    private $company;
     
     /**
      * @var datetime

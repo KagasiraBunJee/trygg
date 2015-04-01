@@ -202,7 +202,6 @@ class CompanyController extends Controller
 
     /**
      * @Route("/reject/{id}", name="reject")
-     * @Security("has_role('ROLE_SUPER_ADMIN')")
      */
     public function rejectCompanyAction(Company $company)
     {
@@ -221,6 +220,26 @@ class CompanyController extends Controller
         $company->addLog($log);
         $em->flush();
         return $this->redirectToRoute("main_with_item",["step"=>$lastStep->getId(), "id" => $company->getId()]);
+    }
+
+    /**
+     * @Route("/delete/{id}", name="delete")
+     */
+    public function deleteAction(Company $company)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $company->setTrashed(true);
+        $lastStep = $company->getStep();
+        $log = new Log();
+        $log->setCreated(new \DateTime("now"));
+        $log->setMessage("Deleted ".$company->getName());
+        $log->setUser($this->getUser());
+        $log->setTitle("Deleting company");
+        $log->setCompany($company);
+        $em->persist($log);
+        $company->addLog($log);
+        $em->flush();
+        return $this->redirectToRoute("main_with_item",["step"=>$lastStep->getId()]);
     }
 
     /**
