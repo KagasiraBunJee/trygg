@@ -69,6 +69,7 @@ class UserController extends Controller
         $form = $this->createForm(new UserType(), $user);
         $form->handleRequest($request);
         $em = $this->getDoctrine()->getManager();
+        $success = false;
 
         if($form->isValid())
         {
@@ -78,11 +79,13 @@ class UserController extends Controller
             $user->setRole('ROLE_ADMIN');
             $em->persist($user);
             $em->flush();
+            $success = true;
         }
 
         return [
             'form' => $form->createView(),
-            'bar_title' => "Add new manager"
+            'bar_title' => "Add new manager",
+            'result' => $success
         ];
     }
     
