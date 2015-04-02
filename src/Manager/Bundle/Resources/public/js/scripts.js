@@ -14,7 +14,7 @@ jQuery("document").ready(function(){
             //console.log(params.join("&"));
             var dropdownmenu = jQuery(".smartSearchResult");
             jQuery.ajax({
-                url:"http://localhost:8080/trygg/web/app_dev.php/company/search?"+params.join("&")
+                url:"http://104.236.61.177/web/app.php/company/search?"+params.join("&")
             }).done(function(result) {
                 if (result.result != "nothing")
                 {
