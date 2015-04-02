@@ -58,7 +58,7 @@
 
                         <form class="navbar-form navbar-brand" role="search" method="get">
                             <div class="form-group">
-                                <input style="width: 300px;" type="text" {% if step is defined %} step="{{ step.id }}" {% endif %} {% if step.name == "Rejected" %} rejected="true" {% endif %} id="searchAjax" class="form-control" placeholder="Search" name="search">
+                                <input style="width: 300px;" type="text" {% if step is defined %} step="{{ step.id }}" {% if step.name == "Rejected" %} rejected="true" {% endif %} {% endif %} id="searchAjax" class="form-control" placeholder="Search" name="search">
                                 <ul class="dropdown-menu smartSearchResult" role="menu">
                                 </ul>
                             </div>
