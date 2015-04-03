@@ -112,7 +112,9 @@ class CompanyController extends Controller
 
         return [
             'bar_title' => "Add new company",
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'action' => "Create",
+            "hide_add_btn" => true
         ];
     }
 
@@ -159,7 +161,9 @@ class CompanyController extends Controller
 
         return [
             'bar_title' => "Edit <strong>".$company->getName()."</strong>",
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'action' => "Save",
+            "hide_add_btn" => true
         ];
     }
 
@@ -198,7 +202,8 @@ class CompanyController extends Controller
         return [
             'companies' => $pagination,
             'step' => $step,
-            'company' => $company
+            'company' => $company,
+            "hide_add_btn" => true
         ];
     }
 
@@ -321,6 +326,15 @@ class CompanyController extends Controller
         return new JsonResponse([
             "result" => "nothing"
         ]);
+    }
+
+    /**
+     * @Route("/company/reports", name="reports")
+     * @Security("has_role('ROLE_SUPER_ADMIN')")
+     */
+    public function reportsListAction(Request $request)
+    {
+
     }
 
 }

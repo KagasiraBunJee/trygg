@@ -36,4 +36,8 @@ class CompanyRepository extends EntityRepository
         return $query;
     }
 
+    public function getReportedCompamnies($searchText = "")
+    {
+        $em = $this->getEntityManager();
+    }
 }

@@ -7,6 +7,7 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 
+
 /**
  * Company
  *
@@ -103,7 +104,21 @@ class Company implements \JsonSerializable
      */
     private $trashed;
 
+    /**
+     * @var \DateTime
+     * @ORM\Column(name="created", type="datetime")
+     */
+    private $created;
+
+    /**
+     * @var \DateTime $updated
+     * @ORM\Column(name="updated", type="datetime")
+     */
+    private $updated;
+
     private $updateWIthoutImage = false;
+
+
 
     /**
      * Get id
@@ -419,6 +434,8 @@ class Company implements \JsonSerializable
     public function __construct()
     {
         $this->logs = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->created = new \DateTime();
+        $this->updated = new \DateTime();
     }
 
     /**
@@ -468,16 +485,6 @@ class Company implements \JsonSerializable
     }
 
     /**
-     * Get trashed
-     *
-     * @return boolean 
-     */
-    public function getTrashed()
-    {
-        return $this->trashed;
-    }
-
-    /**
      * (PHP 5 &gt;= 5.4.0)<br/>
      * Specify data which should be serialized to JSON
      * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
@@ -496,4 +503,76 @@ class Company implements \JsonSerializable
     }
 
 
+
+    /**
+     * Get trashed
+     *
+     * @return boolean 
+     */
+    public function getTrashed()
+    {
+        return $this->trashed;
+    }
+
+    /**
+     * Set created
+     *
+     * @param \DateTime $created
+     * @return Company
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
+
+        return $this;
+    }
+
+    /**
+     * Get created
+     *
+     * @return \DateTime 
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * Set updated
+     *
+     * @param \DateTime $updated
+     * @return Company
+     */
+    public function setUpdated($updated)
+    {
+        $this->updated = $updated;
+
+        return $this;
+    }
+
+    /**
+     * Get updated
+     *
+     * @return \DateTime 
+     */
+    public function getUpdated()
+    {
+        return $this->updated;
+    }
+
+    /**
+     * @ORM\PreUpdate()
+     */
+    private function itemUpdated()
+    {
+        $this->setUpdated(new \DateTime());
+    }
+
+    /**
+     * @ORM\PrePersist()
+     */
+    private function itemAdded()
+    {
+        $this->setCreated(new \DateTime());
+    }
 }

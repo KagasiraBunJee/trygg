@@ -3,6 +3,7 @@
 namespace Manager\Bundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -13,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\HasLifecycleCallbacks
  * @ORM\Entity(repositoryClass="Manager\Bundle\Entity\Repository\CompanyRepository")
  */
-class Company
+class Company implements \JsonSerializable
 {
     /**
      * @var integer
@@ -101,6 +102,22 @@ class Company
      * @ORM\Column(name="trashed", type="boolean", options={"default":false})
      */
     private $trashed;
+
+    /**
+     * @var \DateTime
+     * @ORM\Column(name="created", type="datetime")
+     */
+    private $created;
+
+    /**
+     * @var \DateTime
+     * @ORM\Column(name="updated", type="datetime")
+     */
+    private $updated;
+
+    private $updateWIthoutImage = false;
+
+
 
     /**
      * Get id
@@ -359,22 +376,32 @@ class Company
 
     /**
      * @ORM\PrePersist()
+     * @ORM\PreUpdate()
      */
     public function uploadImage() {
         // the file property can be empty if the field is not required
         if (null === $this->image) {
             return;
         }
+        if(is_string($this->getImage()))
+        {
+            $this->updateWIthoutImage = true;
+            return;
+        }
+
         if(!$this->id){
             $this->image->move($this->getTmpUploadRootDir(), $this->image->getClientOriginalName());
         }else{
+            $this->updateWIthoutImage = true;
             $this->image->move($this->getUploadRootDir(), $this->image->getClientOriginalName());
         }
         $this->setImage($this->image->getClientOriginalName());
+
     }
 
     /**
      * @ORM\PostPersist()
+     * @ORM\PostUpdate()
      */
     public function moveImage()
     {
@@ -384,8 +411,11 @@ class Company
         if(!is_dir($this->getUploadRootDir())){
             mkdir($this->getUploadRootDir());
         }
-        copy($this->getTmpUploadRootDir().$this->image, $this->getFullImagePath());
-        unlink($this->getTmpUploadRootDir().$this->image);
+        if(!$this->updateWIthoutImage)
+        {
+            copy($this->getTmpUploadRootDir().$this->image, $this->getFullImagePath());
+            unlink($this->getTmpUploadRootDir().$this->image);
+        }
     }
 
     /**
@@ -403,6 +433,8 @@ class Company
     public function __construct()
     {
         $this->logs = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->created = new \DateTime("now");
+        $this->updated = new \DateTime("now");
     }
 
     /**
@@ -436,5 +468,110 @@ class Company
     public function getLogs()
     {
         return $this->logs;
+    }
+
+    /**
+     * Set trashed
+     *
+     * @param boolean $trashed
+     * @return Company
+     */
+    public function setTrashed($trashed = false)
+    {
+        $this->trashed = $trashed;
+
+        return $this;
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.4.0)<br/>
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     */
+    function jsonSerialize()
+    {
+        return [
+            "id" => $this->getId(),
+            "name" => $this->getName(),
+            "step" => $this->getStep(),
+            "rejected" => $this->getRejected(),
+            "trashed" => $this->getTrashed()
+        ];
+    }
+
+
+
+    /**
+     * Get trashed
+     *
+     * @return boolean 
+     */
+    public function getTrashed()
+    {
+        return $this->trashed;
+    }
+
+    /**
+     * Set created
+     *
+     * @param \DateTime $created
+     * @return Company
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
+
+        return $this;
+    }
+
+    /**
+     * Get created
+     *
+     * @return \DateTime 
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * Set updated
+     *
+     * @param \DateTime $updated
+     * @return Company
+     */
+    public function setUpdated($updated)
+    {
+        $this->updated = $updated;
+
+        return $this;
+    }
+
+    /**
+     * Get updated
+     *
+     * @return \DateTime 
+     */
+    public function getUpdated()
+    {
+        return $this->updated;
+    }
+
+    /**
+     * @ORM\PreUpdate()
+     */
+    private function itemUpdated()
+    {
+        $this->setUpdated(new \DateTime("now"));
+    }
+
+    /**
+     * @ORM\PrePersist()
+     */
+    private function itemAdded()
+    {
+        $this->setCreated(new \DateTime("now"));
     }
 }

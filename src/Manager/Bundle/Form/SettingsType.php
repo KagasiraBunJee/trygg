@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class CompanyType extends AbstractType
+class SettingsType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -15,16 +15,12 @@ class CompanyType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name')
-            ->add('orgCode')
-            ->add('address')
-            ->add('contact')
-            ->add('phone')
-            ->add('image','file', [
-                "required" => false,
-                'data_class' => null
+            ->add('email')
+            ->add('activate','checkbox',[
+                'required' => false
             ])
-            ->add('comment','textarea')
+            ->add('days')
+            ->add('numbers')
         ;
     }
     
@@ -34,7 +30,7 @@ class CompanyType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Manager\Bundle\Entity\Company'
+            'data_class' => 'Manager\Bundle\Entity\Settings'
         ));
     }
 
@@ -43,6 +39,6 @@ class CompanyType extends AbstractType
      */
     public function getName()
     {
-        return 'company';
+        return 'manager_bundle_settings';
     }
 }

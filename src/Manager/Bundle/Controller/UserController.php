@@ -85,7 +85,8 @@ class UserController extends Controller
         return [
             'form' => $form->createView(),
             'bar_title' => "Add new manager",
-            'result' => $success
+            'result' => $success,
+            "hide_add_btn" => true
         ];
     }
     
