@@ -2,6 +2,7 @@
 
 namespace Manager\Bundle\Entity;
 
+use Doctrine\DBAL\Types\DateType;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -381,6 +382,7 @@ class Company implements \JsonSerializable
      */
     public function uploadImage() {
         // the file property can be empty if the field is not required
+        $this->updated = new \DateTime();
         if (null === $this->image) {
             return;
         }
