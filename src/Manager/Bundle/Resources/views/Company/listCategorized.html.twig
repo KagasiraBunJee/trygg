@@ -7,8 +7,8 @@
             {% if companies|length > 0 %}
                <table class="table table-striped">
                     <tr>
-                        <td>ID</td>
-                        <td>Company</td>
+                        <td>{% if companies.isSorted('p.id') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'ID', 'p.id') }}</td>
+                        <td>{% if companies.isSorted('p.name') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'Company', 'p.name') }}</td>
                         <td>Number</td>
                         <td>Address</td>
                         <td>Contact</td>
