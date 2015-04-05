@@ -49,7 +49,7 @@
         {% if company.id is not null %}
         <div style="background: #e6e6e6;" class="col-md-12">
             <div class="row">
-                <div class="col-sm-2">
+                <div class="col-sm-3">
                     {% if company.image is not empty %}
                         <img src="{{ asset('upload/' ~ company.id ~'/' ~ company.image)}}" alt="" height="100" />
                     {% else %}
@@ -57,7 +57,7 @@
                     {% endif %}
 
                 </div>
-                <div class="col-sm-7">
+                <div class="col-sm-5">
                     {% if company %}
                         <h2>Selected company</h2>
                         <p>Company name: {{ company.name }}</p>
@@ -65,7 +65,7 @@
                         <p>Company id: {{ company.id }}</p>
                     {% endif %}
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-4">
                     {% if company %}
                         <h2>Notes</h2>
                         <p>
