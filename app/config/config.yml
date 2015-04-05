@@ -21,6 +21,8 @@ framework:
     trusted_proxies: ~
     session:
         cookie_lifetime: 86400
+        gc_maxlifetime: 86400
+        save_path: "%kernel.cache_dir%/sessions"
     fragments:       ~
     http_method_override: true
 
