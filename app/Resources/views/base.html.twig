@@ -32,10 +32,15 @@
             .custom-menu{
                 padding-right: 0;
                 padding-left: 0;
-                /*background: #cfd6db !important;*/
+
             }
-            .custom-menu .list-group a{
-                margin-bottom: 5px;
+            .custom-menu .list-group{
+                background: #f8f8f8 !important;
+            }
+            .custom-menu .list-group .list-group-item{
+                background: none;
+                border: none;
+                padding:5px;
             }
             .selected-row{
                 background-color: #f5f5f5;
@@ -81,37 +86,42 @@
 
             {% endif %}
         {% endblock %}
-        <div style="width: 1200px;margin-left: auto;margin-right: auto;" class="row">
+        <div style="width: 1000px;margin-left: auto;margin-right: auto;" class="row">
             {% if app.user %}
-                <h1>
+                <h2><small>
                     {% if step is defined %}
                         {{ step.name }} list
                     {% elseif bar_title is defined %}
                         {{ bar_title|raw() }}
+                    {% endif %}</small>
+                    {% if hide_add_btn is not defined %}
+                        <a style="" href="{{ path('add_sale') }}" class="btn btn-default pull-right"><i class="fa fa-plus"></i> Create new company</a>
                     {% endif %}
-                    {% if hide_add_btn is not defined %}<a style="" href="{{ path('add_sale') }}" class="btn btn-default pull-right"><i class="fa fa-plus"></i> Create new company</a>{% endif %}
-                </h1>
+                    {% if show_manager_button is defined %}
+                        <a style="" href="{{ path('reg_manager') }}" class="btn btn-default pull-right"><i class="fa fa-plus"></i> Create new manager</a>
+                    {% endif %}
+                </h2>
             {% endif %}
         {% block sidemenu %}
             {% if app.user and is_granted('ROLE_SUPER_ADMIN') %}
             <div class="col-md-2 custom-menu">
-                <div class="list-group">
-                    <a style="background: #00b05d;color:white;" class="list-group-item text-center text-uppercase list-group-item-success" href="{{ path('main', { 'step':1 }) }}"> New Sales </a>
-                    <a style="background: #ff3d00;color:white;" class="list-group-item text-center text-uppercase list-group-item-danger" href="{{ path('rejected') }}"> Not Accepted </a>
+                <ul class="list-group">
+                    <li class="list-group-item"><a style="" class="btn btn-link" href="{{ path('main', { 'step':1 }) }}"> New Sales </a></li>
+                    <li class="list-group-item"><a style="" class="btn btn-link" href="{{ path('rejected') }}"> Not Accepted </a></li>
                     {% for cat in steps() %}
                         {% if cat.id > 1 and cat.id < 8%}
-                            <a class="list-group-item text-center text-uppercase button-menu-margin" href="{{ path('main', { 'step':cat.id }) }}"> {{ cat.name }} </a>
+                            <li class="list-group-item"><a class="btn btn-link" href="{{ path('main', { 'step':cat.id }) }}"> {{ cat.name }} </a></li>
                         {% endif %}
                     {% endfor %}
-                    <a style="background: #1c3557;color:white;" class="list-group-item list-group-item-info text-center text-uppercase button-menu-margin" href="{{ path('main', { 'step':8 }) }}">Not Paid</a></li>
-                    <a style="background: #1c3557;color:white;" class="list-group-item list-group-item-info text-center text-uppercase button-menu-margin" href="{{ path('main', { 'step':9 }) }}">Complaints</a>
-                    <a style="background: #1c3557;color:white;" class="list-group-item list-group-item-info text-center text-uppercase button-menu-margin" href="{{ path('main', { 'step':10 }) }}">Other</a>
-                    <a class="list-group-item text-center text-uppercase button-menu-margin" href="{{ path('all_customers') }}">All companies</a>
-                    <a class="list-group-item text-center text-uppercase button-menu-margin" href="{{ path('personal') }}">Managers</a>
-                    <a class="list-group-item text-center text-uppercase button-menu-margin" href="{{ path('reg_manager') }}">Add new manager</a>
-                    <a class="list-group-item text-center text-uppercase button-menu-margin" href="#">Reports[Not working currently]</a>
-                    <a class="list-group-item text-center text-uppercase button-menu-margin" href="{{ path("settings_page") }}">Settings</a>
-                </div>
+                    <li class="list-group-item"><a style="" class="btn btn-link" href="{{ path('main', { 'step':8 }) }}">Not Paid</a></li>
+                    <li class="list-group-item"><a style="" class="btn btn-link" href="{{ path('main', { 'step':9 }) }}">Complaints</a></li>
+                    <li class="list-group-item"><a style="" class="btn btn-link" href="{{ path('main', { 'step':10 }) }}">Other</a></li>
+                    <li class="list-group-item"><a class="btn btn-link" href="{{ path('all_customers') }}">All companies</a></li>
+                    <li class="list-group-item"><a class="btn btn-link" href="{{ path('personal') }}">Managers</a></li>
+                    <li class="list-group-item"><a class="btn btn-link" href="{{ path('reg_manager') }}">Add new manager</a></li>
+                    <li class="list-group-item"><a class="btn btn-link" href="{{ path("reports") }}">Reports</a></li>
+                    <li class="list-group-item"><a class="btn btn-link" href="{{ path("settings_page") }}">Settings</a></li>
+                </ul>
             </div>
             {% endif %}
         {% endblock %}

@@ -202,8 +202,7 @@ class CompanyController extends Controller
         return [
             'companies' => $pagination,
             'step' => $step,
-            'company' => $company,
-            "hide_add_btn" => true
+            'company' => $company
         ];
     }
 
@@ -330,11 +329,37 @@ class CompanyController extends Controller
 
     /**
      * @Route("/company/reports", name="reports")
+     * @Route("/company/reports/{id}", name="reported_company")
+     * @Template("ManagerBundle:Company:listReported.html.twig")
      * @Security("has_role('ROLE_SUPER_ADMIN')")
      */
-    public function reportsListAction(Request $request)
+    public function reportsListAction($id = 0,Request $request)
     {
+        $em = $this->getDoctrine()->getManager();
+        $step = new Step();
+        $step->setName('Reported companies');
+        $step->setStepLvl("reported");
+        $searchText = $request->get("search") ? $request->get("search") : "";
+        $companies = $em->getRepository("ManagerBundle:Company")->getReportedCompanies($searchText);
+        $company = new Company();
 
+        $paginator  = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $companies,
+            $request->query->get('page', 1)/*page number*/,
+            $this->container->getParameter("items_per_page")/*limit per page*/
+        );
+
+        if($id)
+        {
+            $company = $em->getRepository("ManagerBundle:Company")->find($id);
+        }
+
+        return [
+            'step' => $step,
+            'company' => $company,
+            'companies' => $pagination
+        ];
     }
 
 }

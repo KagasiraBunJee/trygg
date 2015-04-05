@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Manager\Bundle\Entity\User;
 use Manager\Bundle\Form\UserType;
+use Manager\Bundle\Entity\Step;
 
 /**
  * Class UserController
@@ -125,9 +126,15 @@ class UserController extends Controller
     {
         $searchText = $request->get("search") ? $request->get("search") : "";
         $users = $this->getDoctrine()->getRepository("ManagerBundle:User")->getManagers($searchText);
+        $step = new Step();
+        $step->setName('Managers');
+        $step->setStepLvl("manager_list");
 
         return [
-            'users' => $users
+            'users' => $users,
+            'step' => $step,
+            'show_manager_button' => true,
+            "hide_add_btn" => true
         ];
     }
 }

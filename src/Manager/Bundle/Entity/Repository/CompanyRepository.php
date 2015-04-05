@@ -36,8 +36,16 @@ class CompanyRepository extends EntityRepository
         return $query;
     }
 
-    public function getReportedCompamnies($searchText = "")
+    public function getReportedCompanies($searchText = "")
     {
         $em = $this->getEntityManager();
+        $date = strtotime("now");
+        $date = strtotime("-5 day", $date);
+        $searchDate = date('Y-m-d', $date)." 23:59:59";
+        $query = $em->createQuery(" SELECT p FROM ManagerBundle:Company p WHERE p.name LIKE '%$searchText%' and p.updated <= :dataTime");
+        $query->setParameter("dataTime",$searchDate);
+
+        return $query;
     }
+
 }

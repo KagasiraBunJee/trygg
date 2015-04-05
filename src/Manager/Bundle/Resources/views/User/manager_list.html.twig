@@ -1,7 +1,6 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-<h1>All managers</h1>
 <div>
     {% if users|length > 0 %}
         <ul class="list-group">
@@ -10,7 +9,7 @@
             {% endfor %}
         </ul>
     {% else %}
-        <h2>No managers found</h2>
+        <h2 style="margin: 0;"><small>No managers found</small></h2>
     {% endif %}
 </div>
 {% endblock %}
