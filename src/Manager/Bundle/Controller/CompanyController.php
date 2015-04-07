@@ -109,6 +109,10 @@ class CompanyController extends Controller
 
             return $this->redirectToRoute('home');
         }
+        else{
+            print_r($form->getErrorsAsString());
+        }
+
 
         return [
             'bar_title' => "Add new company",
