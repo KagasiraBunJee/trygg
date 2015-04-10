@@ -86,7 +86,7 @@ function showCompany(id,main){
             params = "?main_page=1";
         }
         jQuery.ajax({
-            url:"http://localhost:8080/trygg/web/app_dev.php/ajax/company/"+id+params
+            url:"http://104.236.61.177/web/app.php/ajax/company/"+id+params
         }).done(function(result) {
             if (result != "nothing")
             {
