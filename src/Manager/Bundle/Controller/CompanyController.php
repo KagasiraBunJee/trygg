@@ -136,6 +136,8 @@ class CompanyController extends Controller
         $image = $company->getImage();
         $form->handleRequest($request);
 
+
+
         if($form->isValid())
         {
             $company->setCreator($user);
@@ -233,6 +235,19 @@ class CompanyController extends Controller
     }
 
     /**
+     * @Route("/ajax/company/{id}", name="ajax_company")\
+     * @Template("ManagerBundle:Company:company.html.twig")
+     */
+    public function ajaxConpanyAction(Company $company, Request $request)
+    {
+        $main_page = $request->query->get('main_page') ? true : false;
+        return [
+            'company' => $company,
+            'main_page' => $main_page
+        ];
+    }
+
+    /**
      * @Route("/delete/{id}", name="delete")
      */
     public function deleteAction(Company $company)
@@ -258,7 +273,7 @@ class CompanyController extends Controller
      * @ParamConverter("company", class="ManagerBundle:Company", options={"id" = "id"})
      * @Security("has_role('ROLE_SUPER_ADMIN')")
      */
-    public function setStep(Step $step, Company $company)
+    public function setStep(Step $step, Company $company, Request $request)
     {
         $em = $this->getDoctrine()->getManager();
         $lastStep = $company->getStep();
@@ -275,6 +290,11 @@ class CompanyController extends Controller
         $em->persist($log);
         $company->addLog($log);
         $em->flush();
+        $main_page = $request->query->get('main_page') ? true : false;
+        if($main_page)
+        {
+            return $this->redirectToRoute("all_customers");
+        }
         return $this->redirectToRoute("main_with_item",["step"=>$lastStep->getId(), "id" => $company->getId()]);
     }
 

@@ -2,10 +2,12 @@
 
 namespace Manager\Bundle\Entity;
 
+use Doctrine\DBAL\Types\DateType;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * Company
@@ -69,7 +71,6 @@ class Company implements \JsonSerializable
 
     /**
      * @var string
-     * 
      * @ORM\Column(name="comment", type="string", length=255)
      */
     private $comment;
@@ -104,13 +105,41 @@ class Company implements \JsonSerializable
     private $trashed;
 
     /**
+     * @var integer
+     * @Assert\NotBlank()
+     * @ORM\Column(name="postalCode", type="string", length=255)
+     */
+    private $postalCode;
+
+    /**
+     * @var \DateTime
+     * @Assert\NotBlank()
+     * @ORM\Column(name="saleDate", type="datetime")
+     */
+    private $saleDate;
+
+    /**
+     * @var integer
+     * @Assert\NotBlank()
+     * @ORM\Column(name="price", type="string", length=255)
+     */
+    private $price;
+
+    /**
+     * @var string
+     * @Assert\NotBlank()
+     * @ORM\Column(name="product", type="string", length=255)
+     */
+    private $product;
+
+    /**
      * @var \DateTime
      * @ORM\Column(name="created", type="datetime")
      */
     private $created;
 
     /**
-     * @var \DateTime
+     * @var \DateTime $updated
      * @ORM\Column(name="updated", type="datetime")
      */
     private $updated;
@@ -380,6 +409,7 @@ class Company implements \JsonSerializable
      */
     public function uploadImage() {
         // the file property can be empty if the field is not required
+        $this->updated = new \DateTime();
         if (null === $this->image) {
             return;
         }
@@ -433,8 +463,8 @@ class Company implements \JsonSerializable
     public function __construct()
     {
         $this->logs = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->created = new \DateTime("now");
-        $this->updated = new \DateTime("now");
+        $this->created = new \DateTime();
+        $this->updated = new \DateTime();
     }
 
     /**
@@ -564,7 +594,7 @@ class Company implements \JsonSerializable
      */
     private function itemUpdated()
     {
-        $this->setUpdated(new \DateTime("now"));
+        $this->setUpdated(new \DateTime());
     }
 
     /**
@@ -572,6 +602,6 @@ class Company implements \JsonSerializable
      */
     private function itemAdded()
     {
-        $this->setCreated(new \DateTime("now"));
+        $this->setCreated(new \DateTime());
     }
 }

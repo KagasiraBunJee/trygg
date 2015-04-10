@@ -16,7 +16,7 @@
                     </tr>
                     {% if companies|length > 0 %}
                         {% for item in companies %}
-                            <tr>
+                            <tr data-id="{{ item.id }}">
                                 <td>{{ item.id }}</td>
                                 <td>{{ item.name }}</td>
                                 <td>{{ item.orgCode }}</td>
@@ -46,16 +46,24 @@
                     <h2 style="margin: 0;"><small>No companies found</small></h2>
                 {% endif %}
         </div>
-        {% if company.id is not null %}
-        <div style="background: #e6e6e6;" class="col-md-12">
+        <div style="background: #e6e6e6;" class="col-md-12 company_item">
+            {% if company.id is not null %}
             <div class="row">
                 <div class="col-sm-3">
-                    {% if company.image is not empty %}
-                        <img src="{{ asset('upload/' ~ company.id ~'/' ~ company.image)}}" alt="" height="100" />
-                    {% else %}
-                        <img src="{{ asset('upload/default.png')}}" alt="" height="100" />
-                    {% endif %}
-
+                    <div>
+                        {% if company.image is not empty %}
+                            <img src="{{ asset('upload/' ~ company.id ~'/' ~ company.image)}}" alt="" height="100" />
+                        {% else %}
+                            <img src="{{ asset('upload/default.png')}}" alt="" height="100" />
+                        {% endif %}
+                    </div>
+                    <div>
+                        {% if company.rejected %}
+                            Status: <span style="color:red;">Rejected</span>
+                        {% elseif company.trashed %}
+                            Status: <span style="color:red;">Deleted</span>
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="col-sm-5">
                     {% if company %}
@@ -91,8 +99,8 @@
                     </ul>
                 </div>
             </div>
+            {% endif %}
         </div>
-        {% endif %}
     </div>
 
 

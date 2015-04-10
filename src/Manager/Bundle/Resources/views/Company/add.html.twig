@@ -13,6 +13,23 @@
                         <label for="name">Company</label>
                         {{ form_widget(form.name, { "attr":{ "class":"form-control" }, "id":"name" }) }}
                     </div>
+                    <div class="form-group date">
+                        <label for="saleDate">Sales Date</label>
+                        {{ form_widget(form.saleDate, { "attr":{ "class":"form-control" },"id":"saleDate" }) }}
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="product">Product</label>
+                        {{ form_widget(form.product, { "attr":{ "class":"form-control" },"id":"product" }) }}
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Price</label>
+                        {{ form_widget(form.price, { "attr":{ "class":"form-control" },"id":"price" }) }}
+                    </div>
+                    <div class="form-group">
+                        <label for="postalCode">Postal Code</label>
+                        {{ form_widget(form.postalCode, { "attr":{ "class":"form-control" },"id":"postalCode" }) }}
+                    </div>
                     <div class="form-group">
                         <label for="orgCode">Org.nr.</label>
                         {{ form_widget(form.orgCode, { "attr":{ "class":"form-control" },"id":"orgCode" }) }}

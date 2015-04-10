@@ -14,6 +14,8 @@ class CompanyType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+
+        $date = new \DateTime("now");
         $builder
             ->add('name')
             ->add('orgCode')
@@ -24,7 +26,17 @@ class CompanyType extends AbstractType
                 "required" => false,
                 'data_class' => null
             ])
-            ->add('comment','textarea')
+            ->add('comment','textarea', [
+                'required' => false
+            ])
+            ->add('saleDate','date',[
+                'format' => 'yyyy-MM-dd',
+                'input' => 'datetime',
+                'widget' => 'single_text',
+            ])
+            ->add('postalCode')
+            ->add('price')
+            ->add('product')
         ;
     }
     

@@ -16,14 +16,30 @@
                         <td></td>
                     </tr>
                     {% for item in companies %}
-                        <tr>
+                        <tr data-id="{{ item.id }}" main_page="true">
                             <td>{{ item.id }}</td>
                             <td>{{ item.name }}</td>
                             <td>{{ item.orgCode }}</td>
                             <td>{{ item.address }}</td>
                             <td>{{ item.contact }}</td>
                             <td>{{ item.phone }}</td>
-                            <td><a href="{{ path('main_with_item', { "step":item.step.id, "id":item.id }) }}">[Edit]</a></td>
+                            <td>
+                                <div class="btn-group" aria-label="..." role="group">
+                                    <a title="Edit" href="{{ path('edit_company', { "id":item.id }) }}" type="button" class="btn btn-default btn-sm" aria-label="Left Align">
+                                        <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                                    </a>
+                                    {% if not item.rejected %}
+                                        <a title="Reject company" href="{{ path('reject', {"id":item.id}) }}" type="button" class="btn btn-default btn-sm" aria-label="Left Align">
+                                            <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
+                                        </a>
+                                    {% endif %}
+                                    {% if not item.trashed %}
+                                    <a title="Delete company" href="{{ path('delete', {"id":item.id}) }}" type="button" class="btn btn-default btn-sm" aria-label="Left Align">
+                                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
                         </tr>
                     {% endfor %}
                 </table>
@@ -31,6 +47,8 @@
             {% else %}
                 <h2>No companies found</h2>
             {% endif %}
+        </div>
+        <div style="background: #e6e6e6;" class="col-md-12 company_item">
         </div>
     </div>
 

@@ -1,0 +1,55 @@
+<div class="row">
+    <div class="col-sm-3">
+        <div>
+        {% if company.image is not empty %}
+            <img src="{{ asset('upload/' ~ company.id ~'/' ~ company.image)}}" alt="" height="100" />
+        {% else %}
+            <img src="{{ asset('upload/default.png')}}" alt="" height="100" />
+        {% endif %}
+        </div>
+        <div>
+            {% if company.rejected %}
+                Status: <span style="color:red;">Rejected</span>
+            {% elseif company.trashed %}
+                Status: <span style="color:red;">Deleted</span>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-sm-5">
+        {% if company %}
+            <h2>Selected company</h2>
+            <p>Company name: {{ company.name }}</p>
+            <p>Org. Number: {{ company.orgCode }}</p>
+            <p>Company id: {{ company.id }}</p>
+            <p>Sales date: {{ company.saleDate|date("Y-m-d") }}</p>
+            <p>Postal Code: {{ company.postalCode }}</p>
+            <p>Product: {{ company.product }}</p>
+            <p>Price: {{ company.price }}</p>
+        {% endif %}
+    </div>
+    <div class="col-sm-4">
+        {% if company %}
+            <h2>Notes</h2>
+            <p>
+                {{ company.comment }}
+            </p>
+        {% endif %}
+    </div>
+    <div class="col-sm-12">
+        <p>Added by: {{ company.creator.name }}</p>
+        <p>Last updated by: {{ company.logs.last.user.name }} [{{ company.logs.last.created|date('Y-m-d H:i:s') }}] - [Action: {{ company.logs.last.message }}]</p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <ul class="list-inline">
+            {% if is_granted('ROLE_SUPER_ADMIN') %}
+                {% for step in steps() %}
+                    {% if step.id > 1 %}
+                        <li><a {% if company.step.id >= step.id %}disabled="disabled"{% endif %} class="{% if company.step.id >= step.id %} btn-success {% endif %}btn btn-default btn-xs text-uppercase" href="{{ path('set_step', { 'stepId':step.id, "id":company.id }) }}{% if main_page %}?main_page=1{% endif %}"> {{ step.name }} </a></li>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </ul>
+    </div>
+</div>

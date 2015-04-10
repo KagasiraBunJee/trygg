@@ -44,4 +44,55 @@ jQuery("document").ready(function(){
 
     });
 
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth()+1; //January is 0!
+    var yyyy = today.getFullYear();
+    if(dd<10) {
+        dd='0'+dd
+    }
+
+    if(mm<10) {
+        mm='0'+mm
+    }
+    jQuery(".table.table-striped tr a").click(function(e){
+        e.stopPropagation();
+    });
+    jQuery(".table.table-striped > tbody > tr").click(function(){
+        var main_page = jQuery(this).attr('main_page');
+        var company_id = jQuery(this).attr('data-id');
+        showCompany(company_id,main_page);
+    });
+    $('.panel-body .form-group.date').datepicker({
+        format: "yyyy-mm-dd",
+        orientation: "bottom auto",
+        todayHighlight: true
+        //defaultViewDate: { year: yyyy, month: mm, day: dd }
+    });
+    var date = jQuery("#saleDate");
+    if(date.val() == "")
+    {
+        date.val(yyyy+"-"+mm+"-"+dd);
+    }
 });
+
+function showCompany(id,main){
+
+    if(id)
+    {
+        var params = "";
+        if(main)
+        {
+            params = "?main_page=1";
+        }
+        jQuery.ajax({
+            url:"http://localhost:8080/trygg/web/app_dev.php/ajax/company/"+id+params
+        }).done(function(result) {
+            if (result != "nothing")
+            {
+                jQuery(".company_item").html(result);
+            }
+        });
+    }
+
+}

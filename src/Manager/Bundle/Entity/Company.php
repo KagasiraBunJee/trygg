@@ -71,8 +71,7 @@ class Company implements \JsonSerializable
 
     /**
      * @var string
-     * 
-     * @ORM\Column(name="comment", type="string", length=255)
+     * @ORM\Column(name="comment", type="string", length=255, nullable=true)
      */
     private $comment;
 
@@ -104,6 +103,34 @@ class Company implements \JsonSerializable
      * @ORM\Column(name="trashed", type="boolean", options={"default":false})
      */
     private $trashed;
+
+    /**
+     * @var string
+     * @Assert\NotBlank()
+     * @ORM\Column(name="postalCode", type="string", length=255)
+     */
+    private $postalCode;
+
+    /**
+     * @var \DateTime
+     * @Assert\NotBlank()
+     * @ORM\Column(name="saleDate", type="datetime")
+     */
+    private $saleDate;
+
+    /**
+     * @var integer
+     * @Assert\NotBlank()
+     * @ORM\Column(name="price", type="string", length=255)
+     */
+    private $price;
+
+    /**
+     * @var string
+     * @Assert\NotBlank()
+     * @ORM\Column(name="product", type="string", length=255)
+     */
+    private $product;
 
     /**
      * @var \DateTime
@@ -381,6 +408,7 @@ class Company implements \JsonSerializable
      * @ORM\PreUpdate()
      */
     public function uploadImage() {
+        //$this->setSaleDate(new \DateTime($this->saleDate." 00:00:00"));
         // the file property can be empty if the field is not required
         $this->updated = new \DateTime();
         if (null === $this->image) {
@@ -576,5 +604,97 @@ class Company implements \JsonSerializable
     private function itemAdded()
     {
         $this->setCreated(new \DateTime());
+    }
+
+    /**
+     * Set postalCode
+     *
+     * @param string $postalCode
+     * @return Company
+     */
+    public function setPostalCode($postalCode)
+    {
+        $this->postalCode = $postalCode;
+
+        return $this;
+    }
+
+    /**
+     * Get postalCode
+     *
+     * @return string 
+     */
+    public function getPostalCode()
+    {
+        return $this->postalCode;
+    }
+
+    /**
+     * Set saleDate
+     *
+     * @param \DateTime $saleDate
+     * @return Company
+     */
+    public function setSaleDate($saleDate)
+    {
+        $this->saleDate = $saleDate;
+
+        return $this;
+    }
+
+    /**
+     * Get saleDate
+     *
+     * @return \DateTime 
+     */
+    public function getSaleDate()
+    {
+        return $this->saleDate;
+    }
+
+    /**
+     * Set price
+     *
+     * @param string $price
+     * @return Company
+     */
+    public function setPrice($price)
+    {
+        $this->price = $price;
+
+        return $this;
+    }
+
+    /**
+     * Get price
+     *
+     * @return string 
+     */
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    /**
+     * Set product
+     *
+     * @param string $product
+     * @return Company
+     */
+    public function setProduct($product)
+    {
+        $this->product = $product;
+
+        return $this;
+    }
+
+    /**
+     * Get product
+     *
+     * @return string 
+     */
+    public function getProduct()
+    {
+        return $this->product;
     }
 }
