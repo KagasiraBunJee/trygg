@@ -42,7 +42,7 @@ class CompanyController extends Controller
         {
             $company = $em->getRepository("ManagerBundle:Company")->find($id);
         }
-        
+
         return [
             'step' => $step,
             'company' => $company,
@@ -249,16 +249,15 @@ class CompanyController extends Controller
     }
 
     /**
-     * @Route("/ajax/company/{id}/{current_step}", name="ajax_company")\
+     * @Route("/ajax/company/{id}", name="ajax_company")\
      * @Template("ManagerBundle:Company:company.html.twig")
      */
-    public function ajaxConpanyAction(Company $company, Request $request, $current_step = 0)
+    public function ajaxConpanyAction(Company $company, Request $request)
     {
         $main_page = $request->query->get('main_page') ? true : false;
         return [
             'company' => $company,
-            'main_page' => $main_page,
-            'current_step' => $current_step
+            'main_page' => $main_page
         ];
     }
 
