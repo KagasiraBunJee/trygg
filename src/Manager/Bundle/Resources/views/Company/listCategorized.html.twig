@@ -109,7 +109,7 @@
                         {% if is_granted('ROLE_SUPER_ADMIN') %}
                             {% for step in steps() %}
                                 {% if step.id > 1 %}
-                                    <li><a {% if company.step.id >= step.id %}disabled="disabled"{% endif %} class="{% if company.step.id >= step.id %} btn-success {% endif %}btn btn-default btn-xs text-uppercase" href="{{ path('set_step', { 'stepId':step.id, "id":company.id }) }}"> {{ step.name }} </a></li>
+                                    <li><a class="{% if company.step.id >= step.id %} btn-success {% endif %}btn btn-default btn-xs text-uppercase" href="{{ path('set_step', { 'stepId':step.id, "id":company.id }) }}"> {{ step.name }} </a></li>
                                 {% endif %}
                             {% endfor %}
                         {% endif %}
