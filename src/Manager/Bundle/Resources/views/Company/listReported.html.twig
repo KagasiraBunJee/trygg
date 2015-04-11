@@ -14,6 +14,10 @@
                         <td>Phone</td>
                         {#<td>{% if companies.isSorted('p.created') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'Created', 'p.created') }}</td>
                         <td>{% if companies.isSorted('p.updated') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'Updated', 'p.updated') }}</td>#}
+                        <td>Postal Code</td>
+                        <td>{% if companies.isSorted('p.product') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'Product', 'p.product') }}</td>
+                        <td>Price</td>
+                        <td>{% if companies.isSorted('p.saleDate') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'Sales date', 'p.saleDate') }}</td>
                         <td></td>
                     </tr>
                     {% if companies|length > 0 %}
@@ -25,6 +29,12 @@
                                 <td>{{ item.address }}</td>
                                 <td>{{ item.contact }}</td>
                                 <td>{{ item.phone }}</td>
+
+                                <td>{{ item.postalCode }}</td>
+                                <td>{{ item.product }}</td>
+                                <td>{{ item.price }}</td>
+                                <td>{{ item.saleDate|date("Y-m-d") }}</td>
+
                                 {#<td>{{ item.created|date("Y-m-d H:i:s") }}</td>#}
                                 {#<td>{{ item.updated|date("Y-m-d H:i:s") }}</td>#}
                                 <td style="position: relative;">
