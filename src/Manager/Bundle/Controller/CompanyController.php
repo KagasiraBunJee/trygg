@@ -42,7 +42,7 @@ class CompanyController extends Controller
         {
             $company = $em->getRepository("ManagerBundle:Company")->find($id);
         }
-
+        
         return [
             'step' => $step,
             'company' => $company,
@@ -249,15 +249,16 @@ class CompanyController extends Controller
     }
 
     /**
-     * @Route("/ajax/company/{id}", name="ajax_company")\
+     * @Route("/ajax/company/{id}/{current_step}", name="ajax_company")\
      * @Template("ManagerBundle:Company:company.html.twig")
      */
-    public function ajaxConpanyAction(Company $company, Request $request)
+    public function ajaxConpanyAction(Company $company, Request $request, $current_step = 0)
     {
         $main_page = $request->query->get('main_page') ? true : false;
         return [
             'company' => $company,
-            'main_page' => $main_page
+            'main_page' => $main_page,
+            'current_step' => $current_step
         ];
     }
 
@@ -325,7 +326,8 @@ class CompanyController extends Controller
         $em->persist($log);
         $company->addLog($log);
         $em->flush();
-        $main_page = $request->query->get('main_page') ? true : false;
+        return $this->redirect($request->headers->get('referer'));
+        /*$main_page = $request->query->get('main_page') ? true : false;
         if($lastRejected)
         {
             return $this->redirectToRoute("rejected");
@@ -334,7 +336,7 @@ class CompanyController extends Controller
         {
             return $this->redirectToRoute("all_customers");
         }
-        return $this->redirectToRoute("main_with_item",["step" => $current_step->getId(), "id" => $company->getId()]);
+        return $this->redirectToRoute("main_with_item",["step" => $current_step->getId(), "id" => $company->getId()]);*/
     }
 
     /**
