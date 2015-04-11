@@ -298,6 +298,15 @@ class CompanyController extends Controller
         $lastTrashed = $company->getTrashed();
         $company->setRejected(false);
         $company->setTrashed(false);
+
+        if($step->getId() > 1)
+        {
+            $mainStep = $em->getRepository("ManagerBundle:Step")->find(1);
+            if($steps->contains($mainStep))
+            {
+                $company->removeStep($mainStep);
+            }
+        }
         if($steps->contains($step))
         {
             $company->removeStep($step);
