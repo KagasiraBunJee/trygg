@@ -98,7 +98,15 @@
                 </div>
                 <div class="col-sm-12">
                     <p>Added by: {{ company.creator.name }}</p>
-                    <p>Last updated by: {{ company.logs.last.user.name }} [{{ company.logs.last.created|date('Y-m-d H:i:s') }}] - [Action: {{ company.logs.last.message }}]</p>
+                    {% if company.logs|length > 0 %}
+                        {% for log in company.logs %}
+                            {% if loop.last %}
+                                <p>Last updated by: {{ log.user.name }} [{{ log.created|date('Y-m-d H:i:s') }}] - [Last Action: {{ log.message }}]</p>
+                            {% else %}
+                                <p>Updated by: {{ log.user.name }} [{{ log.created|date('Y-m-d H:i:s') }}] - [Action: {{ log.message }}]</p>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
                 </div>
             </div>
             <div class="row">

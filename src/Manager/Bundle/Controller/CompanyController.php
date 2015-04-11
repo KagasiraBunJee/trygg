@@ -293,6 +293,10 @@ class CompanyController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $lastStep = $company->getStep();
+        if($step->getId() <= $lastStep->getId())
+        {
+            $step = $em->getRepository("ManagerBundle:Step")->find(($step->getId()-1));
+        }
         $company->setStep($step);
         $step->addCompany($company);
         $log = new Log();

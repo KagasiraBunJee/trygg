@@ -74,35 +74,45 @@
             .infoCell{
                 background-color: #bce8f1 !important;
             }
+            @media (min-width: 768px) {
+                .navbar .navbar-nav {
+                    display: inline-block;
+                    float: none;
+                }
+
+                .navbar .navbar-collapse {
+                    text-align: center;
+                }
+            }
         </style>
     </head>
     <body style="overflow-x: hidden;">
         {% block usermenu %}
             {% if app.user %}
                 <nav style="margin-bottom:0;" class="navbar navbar-default">
-                    <div style="padding-left: 0;" class="container-fluid">
-
-                        <form class="navbar-form navbar-brand" role="search" method="get">
-                            <div class="form-group">
-                                <input style="width: 300px;" type="text" {% if step is defined %} step="{{ step.id }}" {% if step.name == "Rejected" %} rejected="true" {% endif %} {% endif %} id="searchAjax" class="form-control" placeholder="Search" name="search">
-                                <ul class="dropdown-menu smartSearchResult" role="menu">
-                                </ul>
-                            </div>
-                        </form>
-                        <div style="z-index: 3" class="navbar-header">
-
-                        </div>
-                        <div style="padding-left: 0;" class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                            <ul class="nav navbar-nav">
-                                <li class="hover-btn"><a style="padding:0;" href="{{ path('home') }}"><img height="50px" src="{{ asset('bundles/manager/images/logo.png') }}"></a></li>
-                                {#     <li class="hover-btn"><a href="{{ path('add_sale') }}" class="">Add new</a></li> #}
-                            </ul>
-
-                            <ul class="nav navbar-nav navbar-right">
-                                <li class="pull-right hover-btn"><a href="{{ path('logout') }}"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Sign out</a></li>
-                                <li class="pull-right hover-btn"><a href="#">Hi,<strong>{{ app.user.name }}</strong></a></li>
-                            </ul>
-                        </div>
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                    </div>
+                    <div class="collapse navbar-collapse navbar-ex1-collapse">
+                        <ul style="width: 1000px;" class="nav navbar-nav">
+                            <li><a style="padding:0;" href="{{ path('home') }}"><img height="50px" src="{{ asset('bundles/manager/images/logo.png') }}"></a></li>
+                            <li style="margin-left: 9%;">
+                                <form class="navbar-form" role="search" method="get">
+                                    <div class="form-group">
+                                        <input style="width: 300px;" type="text" {% if step is defined %} step="{{ step.id }}" {% if step.name == "Rejected" %} rejected="true" {% endif %} {% endif %} id="searchAjax" class="form-control" placeholder="Search" name="search">
+                                        <ul class="dropdown-menu smartSearchResult" role="menu">
+                                        </ul>
+                                    </div>
+                                </form>
+                            </li>
+                            <li class="pull-right"><a href="{{ path('logout') }}"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Sign out</a></li>
+                            <li class="pull-right"><a href="#">Hi,<strong>{{ app.user.name }}</strong></a></li>
+                        </ul>
                     </div>
                 </nav>
 
