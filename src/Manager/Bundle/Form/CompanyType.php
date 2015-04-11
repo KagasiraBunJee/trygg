@@ -21,6 +21,7 @@ class CompanyType extends AbstractType
             ->add('orgCode')
             ->add('address')
             ->add('contact')
+            ->add('email')
             ->add('phone')
             ->add('image','file', [
                 "required" => false,

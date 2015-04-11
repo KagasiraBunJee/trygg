@@ -37,7 +37,7 @@ class Step
     private $stepLvl;
 
     /**
-     * @ORM\OneToMany(targetEntity="Company", mappedBy="creator")
+     * @ORM\ManyToMany(targetEntity="Company", mappedBy="step")
      */
     private $companies;
 
@@ -95,5 +95,45 @@ class Step
     public function getStepLvl()
     {
         return $this->stepLvl;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->companies = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add companies
+     *
+     * @param \Manager\Bundle\Entity\Company $companies
+     * @return Step
+     */
+    public function addCompany(\Manager\Bundle\Entity\Company $companies)
+    {
+        $this->companies[] = $companies;
+
+        return $this;
+    }
+
+    /**
+     * Remove companies
+     *
+     * @param \Manager\Bundle\Entity\Company $companies
+     */
+    public function removeCompany(\Manager\Bundle\Entity\Company $companies)
+    {
+        $this->companies->removeElement($companies);
+    }
+
+    /**
+     * Get companies
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getCompanies()
+    {
+        return $this->companies;
     }
 }

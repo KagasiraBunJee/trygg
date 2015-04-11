@@ -15,10 +15,12 @@ class CompanyRepository extends EntityRepository
     public function getCompanies($step, $searchText = "")
     {
         $em = $this->getEntityManager();
-        $query = $em->createQuery("
-                    SELECT p FROM ManagerBundle:Company p WHERE p.step = :step and p.rejected = 0 and p.name LIKE '%$searchText%' and p.trashed = 0
-        ");
-        $query->setParameter('step', $step);
+        $repository = $em->getRepository("ManagerBundle:Company");
+        $query = $repository->createQueryBuilder('c')
+            ->innerJoin('c.step','u')
+            ->where("u = :step and c.name LIKE '%$searchText%' and c.rejected = 0 and c.trashed = 0")
+            ->setParameter('step', $step->getId())
+            ->getQuery();
         return $query;
     }
 

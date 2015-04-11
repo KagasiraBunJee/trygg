@@ -35,6 +35,14 @@ class Company implements \JsonSerializable
     private $name;
 
     /**
+     * @var string
+     * @ORM\Column(name="email", type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\Email()
+     */
+    private $email;
+
+    /**
      * @var string $image
      * @Assert\File( maxSize = "1024k", mimeTypesMessage = "Please upload a valid Image")
      * @ORM\Column(name="image", type="string", length=255, nullable=true, options={"default": "empty.jpg"})
@@ -71,7 +79,7 @@ class Company implements \JsonSerializable
 
     /**
      * @var string
-     * @ORM\Column(name="comment", type="string", length=255)
+     * @ORM\Column(name="comment", type="string", length=255, nullable=true)
      */
     private $comment;
 
@@ -82,8 +90,7 @@ class Company implements \JsonSerializable
     private $creator;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Step",inversedBy="companies")
-     * @ORM\JoinColumn(name="stepId", referencedColumnName="id")
+     * @ORM\ManyToMany(targetEntity="Step",inversedBy="companies")
      */
     private $step;
 
@@ -105,7 +112,7 @@ class Company implements \JsonSerializable
     private $trashed;
 
     /**
-     * @var integer
+     * @var string
      * @Assert\NotBlank()
      * @ORM\Column(name="postalCode", type="string", length=255)
      */
@@ -320,30 +327,6 @@ class Company implements \JsonSerializable
     }
 
     /**
-     * Set step
-     *
-     * @param \Manager\Bundle\Entity\Step $step
-     * @return Company
-     */
-    public function setStep(\Manager\Bundle\Entity\Step $step = null)
-    {
-        $this->step = $step;
-
-        return $this;
-    }
-
-    /**
-     * Get step
-     *
-     * @return \Manager\Bundle\Entity\Step 
-     */
-    public function getStep()
-    {
-        return $this->step;
-    }
-
-
-    /**
      * Set rejected
      *
      * @param boolean $rejected
@@ -408,6 +391,7 @@ class Company implements \JsonSerializable
      * @ORM\PreUpdate()
      */
     public function uploadImage() {
+        //$this->setSaleDate(new \DateTime($this->saleDate." 00:00:00"));
         // the file property can be empty if the field is not required
         $this->updated = new \DateTime();
         if (null === $this->image) {
@@ -603,5 +587,143 @@ class Company implements \JsonSerializable
     private function itemAdded()
     {
         $this->setCreated(new \DateTime());
+    }
+
+    /**
+     * Set postalCode
+     *
+     * @param string $postalCode
+     * @return Company
+     */
+    public function setPostalCode($postalCode)
+    {
+        $this->postalCode = $postalCode;
+
+        return $this;
+    }
+
+    /**
+     * Get postalCode
+     *
+     * @return string 
+     */
+    public function getPostalCode()
+    {
+        return $this->postalCode;
+    }
+
+    /**
+     * Set saleDate
+     *
+     * @param \DateTime $saleDate
+     * @return Company
+     */
+    public function setSaleDate($saleDate)
+    {
+        $this->saleDate = $saleDate;
+
+        return $this;
+    }
+
+    /**
+     * Get saleDate
+     *
+     * @return \DateTime 
+     */
+    public function getSaleDate()
+    {
+        return $this->saleDate;
+    }
+
+    /**
+     * Set price
+     *
+     * @param string $price
+     * @return Company
+     */
+    public function setPrice($price)
+    {
+        $this->price = $price;
+
+        return $this;
+    }
+
+    /**
+     * Get price
+     *
+     * @return string 
+     */
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    /**
+     * Set product
+     *
+     * @param string $product
+     * @return Company
+     */
+    public function setProduct($product)
+    {
+        $this->product = $product;
+
+        return $this;
+    }
+
+    /**
+     * Get product
+     *
+     * @return string 
+     */
+    public function getProduct()
+    {
+        return $this->product;
+    }
+
+    /**
+     * Set email
+     *
+     * @param string $email
+     * @return Company
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string 
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Add step
+     *
+     * @param \Manager\Bundle\Entity\Step $step
+     * @return Company
+     */
+    public function addStep(\Manager\Bundle\Entity\Step $step)
+    {
+        $this->step[] = $step;
+
+        return $this;
+    }
+
+    /**
+     * Remove step
+     *
+     * @param \Manager\Bundle\Entity\Step $step
+     */
+    public function removeStep(\Manager\Bundle\Entity\Step $step)
+    {
+        $this->step->removeElement($step);
     }
 }

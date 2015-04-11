@@ -11,6 +11,7 @@
                         <td>Number</td>
                         <td>Address</td>
                         <td>{% if companies.isSorted('p.contact') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'Contact', 'p.contact') }}</td>
+                        <td>Email</td>
                         <td>Phone</td>
                         <td>Postal Code</td>
                         <td>{% if companies.isSorted('p.product') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'Product', 'p.product') }}</td>
@@ -26,6 +27,7 @@
                                 <td>{{ item.orgCode }}</td>
                                 <td>{{ item.address }}</td>
                                 <td>{{ item.contact }}</td>
+                                <td>{{ item.email }}</td>
                                 <td>{{ item.phone }}</td>
 
                                 <td>{{ item.postalCode }}</td>
@@ -36,7 +38,7 @@
                                 <td style="position: relative;">
                                     <div class="btn-group" aria-label="..." role="group">
                                         <a href="{{ path('rejectedCom', { "id":item.id }) }}" type="button" class="btn btn-default btn-sm" aria-label="Left Align">
-                                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                                         </a>
                                         <a href="{{ path('edit_company', { "id":item.id }) }}" type="button" class="btn btn-default btn-sm" aria-label="Left Align">
                                             <span class="glyphicon glyphicon glyphicon-cog" aria-hidden="true"></span>
@@ -81,6 +83,7 @@
                     {% if company %}
                         <h2>{{ company.name }}</h2>
                         <p>Company name: {{ company.name }}</p>
+                        <p>Company email: {{ company.email }}</p>
                         <p>Org. Number: {{ company.orgCode }}</p>
                         <p>Company id: {{ company.id }}</p>
                         <p>Sales date: {{ company.saleDate|date("d-F-Y") }}</p>
@@ -102,7 +105,7 @@
                         {% if is_granted('ROLE_SUPER_ADMIN') %}
                             {% for step in steps() %}
                                 {% if step.id > 1 %}
-                                    <li><a class="{% if company.step.id == step.id %} btn-success {% endif %}btn btn-default btn-xs text-uppercase" href="{{ path('set_step', { 'stepId':step.id, "id":company.id }) }}"> {{ step.name }} </a></li>
+                                    <li><a class="{% if step in company.step %} btn-success {% endif %}btn btn-default btn-xs text-uppercase" href="{{ path('set_step', { 'stepId':step.id, "id":company.id, "current_step":1 }) }}"> {{ step.name }} </a></li>
                                 {% endif %}
                             {% endfor %}
                         {% endif %}
@@ -113,9 +116,9 @@
                     {% if company.logs|length > 0 %}
                         {% for log in company.logs|reverse %}
                             {% if loop.last %}
-                                <p>Last updated by: {{ log.user.name }} [{{ log.created|date('Y-m-d H:i:s') }}] - [Last Action: {{ log.message }}]</p>
+                                <p>Last updated by: {{ log.user.name }} [{{ log.created|date('Y-m-d H:i:s') }}] - [Last Action: {{ log.message|raw }}]</p>
                             {% else %}
-                                <p>Updated by: {{ log.user.name }} [{{ log.created|date('Y-m-d H:i:s') }}] - [Action: {{ log.message }}]</p>
+                                <p>Updated by: {{ log.user.name }} [{{ log.created|date('Y-m-d H:i:s') }}] - [Action: {{ log.message|raw }}]</p>
                             {% endif %}
                         {% endfor %}
                     {% endif %}

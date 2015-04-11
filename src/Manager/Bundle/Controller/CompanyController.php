@@ -91,7 +91,7 @@ class CompanyController extends Controller
         if($form->isValid())
         {
             $company->setCreator($user);
-            $company->setStep($step);
+            $company->addStep($step);
             $company->setRejected(false);
             $company->setTrashed(false);
             $user->addCompany($company);
@@ -99,7 +99,7 @@ class CompanyController extends Controller
             $log = new Log();
             $log->setUser($user);
             $log->setTitle("New");
-            $log->setMessage("User:".$user->getName()." has added new sale[".$company->getName()."]");
+            $log->setMessage("User: <strong>".$user->getName()."</strong> has added new sale[<strong>".$company->getName()."</strong>]");
             $log->setCreated(new \DateTime("now"));
             $log->setCompany($company);
             $em->persist($company);
@@ -139,8 +139,7 @@ class CompanyController extends Controller
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
         $form = $this->createForm(new CompanyType(), $company);
-        $step = $company->getStep();
-        $image = $company->getImage();
+        //$image = $company->getImage();
         $form->handleRequest($request);
 
         $result = "nothing";
@@ -148,14 +147,12 @@ class CompanyController extends Controller
         if($form->isValid())
         {
             $company->setCreator($user);
-            $company->setStep($step);
             $company->setRejected(false);
             $user->addCompany($company);
-            $step->addCompany($company);
             $log = new Log();
             $log->setUser($user);
             $log->setTitle("Update");
-            $log->setMessage("User:".$user->getName()." has added new sale[".$company->getName()."]");
+            $log->setMessage("User: <strong>".$user->getName()."</strong> has added new sale[<strong>".$company->getName()."]</strong>");
             $log->setCreated(new \DateTime("now"));
             $log->setCompany($company);
             $result = "success";
@@ -229,9 +226,10 @@ class CompanyController extends Controller
     }
 
     /**
-     * @Route("/reject/{id}", name="reject")
+     * @Route("/reject/{id}/{current_step}", name="reject")
+     * @ParamConverter("current_step", class="ManagerBundle:Step", options={"id" = "current_step"})
      */
-    public function rejectCompanyAction(Company $company)
+    public function rejectCompanyAction(Company $company, Step $current_step)
     {
         $em = $this->getDoctrine()->getManager();
         $company->setRejected(true);
@@ -240,14 +238,14 @@ class CompanyController extends Controller
         $company->setStep($step);
         $log = new Log();
         $log->setCreated(new \DateTime("now"));
-        $log->setMessage("Rejected ".$company->getName());
+        $log->setMessage("Rejected <strong>".$company->getName()."</strong>");
         $log->setUser($this->getUser());
         $log->setTitle("Update");
         $log->setCompany($company);
         $em->persist($log);
         $company->addLog($log);
         $em->flush();
-        return $this->redirectToRoute("main_with_item",["step"=>$lastStep->getId(), "id" => $company->getId()]);
+        return $this->redirectToRoute("main_with_item",["step"=>$current_step->getId(), "id" => $company->getId()]);
     }
 
     /**
@@ -270,10 +268,10 @@ class CompanyController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $company->setTrashed(true);
-        $lastStep = $company->getStep();
+        $lastStep = $company->getStep()->last();
         $log = new Log();
         $log->setCreated(new \DateTime("now"));
-        $log->setMessage("Deleted ".$company->getName());
+        $log->setMessage("Deleted <strong>".$company->getName()."</strong>");
         $log->setUser($this->getUser());
         $log->setTitle("Deleting company");
         $log->setCompany($company);
@@ -284,26 +282,34 @@ class CompanyController extends Controller
     }
 
     /**
-     * @Route("/company/setType/{stepId}/{id}", name="set_step")
+     * @Route("/company/setType/{stepId}/{id}/{current_step}", name="set_step")
      * @ParamConverter("step", class="ManagerBundle:Step", options={"id" = "stepId"})
      * @ParamConverter("company", class="ManagerBundle:Company", options={"id" = "id"})
+     * @ParamConverter("current_step", class="ManagerBundle:Step", options={"id" = "current_step"})
      * @Security("has_role('ROLE_SUPER_ADMIN')")
      */
-    public function setStep(Step $step, Company $company, Request $request)
+    public function setStep(Step $step, Company $company, Request $request, Step $current_step)
     {
         $em = $this->getDoctrine()->getManager();
-        $lastStep = $company->getStep();
-        if($step->getId() <= $lastStep->getId())
-        {
-            $step = $em->getRepository("ManagerBundle:Step")->find(($step->getId()-1));
-        }
-        $company->setStep($step);
-        $step->addCompany($company);
+        $steps = $company->getStep();
         $log = new Log();
         $log->setCreated(new \DateTime("now"));
+        $lastRejected = $company->getRejected();
+        $lastTrashed = $company->getTrashed();
         $company->setRejected(false);
         $company->setTrashed(false);
-        $log->setMessage("Updated status of ".$company->getName()." to status ".$step->getName());
+        if($steps->contains($step))
+        {
+            $company->removeStep($step);
+            $step->removeCompany($company);
+            $log->setMessage("Removed status <strong>".$step->getName()."</strong> of company <strong>".$company->getName()."</strong>");
+        }
+        else
+        {
+            $company->addStep($step);
+            $step->addCompany($company);
+            $log->setMessage("Updated status of <strong>".$company->getName()."</strong> to status <strong>".$step->getName()."</strong>");
+        }
         $log->setUser($this->getUser());
         $log->setCompany($company);
         $log->setTitle("Update");
@@ -311,11 +317,15 @@ class CompanyController extends Controller
         $company->addLog($log);
         $em->flush();
         $main_page = $request->query->get('main_page') ? true : false;
-        if($main_page)
+        if($lastRejected)
+        {
+            return $this->redirectToRoute("rejected");
+        }
+        elseif($lastTrashed)
         {
             return $this->redirectToRoute("all_customers");
         }
-        return $this->redirectToRoute("main_with_item",["step"=>$lastStep->getId(), "id" => $company->getId()]);
+        return $this->redirectToRoute("main_with_item",["step" => $current_step->getId(), "id" => $company->getId()]);
     }
 
     /**

@@ -37,7 +37,7 @@ class Step
     private $stepLvl;
 
     /**
-     * @ORM\OneToMany(targetEntity="Company", mappedBy="step")
+     * @ORM\ManyToMany(targetEntity="Company", mappedBy="step")
      */
     private $companies;
 

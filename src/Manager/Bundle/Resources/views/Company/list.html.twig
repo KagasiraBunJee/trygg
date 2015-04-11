@@ -12,6 +12,7 @@
                         <td>Number</td>
                         <td>Address</td>
                         <td>{% if companies.isSorted('p.contact') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'Contact', 'p.contact') }}</td>
+                        <td>Email</td>
                         <td>Phone</td>
                         <td>Postal Code</td>
                         <td>{% if companies.isSorted('p.product') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'Product', 'p.product') }}</td>
@@ -26,6 +27,7 @@
                             <td>{{ item.orgCode }}</td>
                             <td>{{ item.address }}</td>
                             <td>{{ item.contact }}</td>
+                            <td>{{ item.email }}</td>
                             <td>{{ item.phone }}</td>
 
                             <td>{{ item.postalCode }}</td>
@@ -39,7 +41,7 @@
                                         <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                                     </a>
                                     {% if not item.rejected %}
-                                        <a title="Reject company" href="{{ path('reject', {"id":item.id}) }}" type="button" class="btn btn-default btn-sm" aria-label="Left Align">
+                                        <a title="Reject company" href="{{ path('reject', {"id":item.id, "current_step":app.request.attributes.get('step')}) }}" type="button" class="btn btn-default btn-sm" aria-label="Left Align">
                                             <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
                                         </a>
                                     {% endif %}

@@ -35,6 +35,14 @@ class Company implements \JsonSerializable
     private $name;
 
     /**
+     * @var string
+     * @ORM\Column(name="email", type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\Email()
+     */
+    private $email;
+
+    /**
      * @var string $image
      * @Assert\File( maxSize = "1024k", mimeTypesMessage = "Please upload a valid Image")
      * @ORM\Column(name="image", type="string", length=255, nullable=true, options={"default": "empty.jpg"})
@@ -82,8 +90,7 @@ class Company implements \JsonSerializable
     private $creator;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Step",inversedBy="companies")
-     * @ORM\JoinColumn(name="stepId", referencedColumnName="id")
+     * @ORM\ManyToMany(targetEntity="Step",inversedBy="companies")
      */
     private $step;
 
@@ -318,30 +325,6 @@ class Company implements \JsonSerializable
     {
         return $this->creator;
     }
-
-    /**
-     * Set step
-     *
-     * @param \Manager\Bundle\Entity\Step $step
-     * @return Company
-     */
-    public function setStep(\Manager\Bundle\Entity\Step $step = null)
-    {
-        $this->step = $step;
-
-        return $this;
-    }
-
-    /**
-     * Get step
-     *
-     * @return \Manager\Bundle\Entity\Step 
-     */
-    public function getStep()
-    {
-        return $this->step;
-    }
-
 
     /**
      * Set rejected
@@ -696,5 +679,67 @@ class Company implements \JsonSerializable
     public function getProduct()
     {
         return $this->product;
+    }
+
+    /**
+     * Set email
+     *
+     * @param string $email
+     * @return Company
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string 
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Add step
+     *
+     * @param \Manager\Bundle\Entity\Step $step
+     * @return Company
+     */
+    public function addStep(\Manager\Bundle\Entity\Step $step)
+    {
+        $this->step[] = $step;
+
+        return $this;
+    }
+
+    /**
+     * Remove step
+     *
+     * @param \Manager\Bundle\Entity\Step $step
+     */
+    public function removeStep(\Manager\Bundle\Entity\Step $step)
+    {
+        $this->step->removeElement($step);
+    }
+
+    /**
+     * Get step
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getStep()
+    {
+        return $this->step;
+    }
+
+    public function setStep(\Manager\Bundle\Entity\Step $step)
+    {
+        $this->step = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->step[] = $step;
     }
 }
