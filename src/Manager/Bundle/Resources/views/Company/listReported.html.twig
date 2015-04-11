@@ -33,7 +33,7 @@
                                 <td>{{ item.postalCode }}</td>
                                 <td>{{ item.product }}</td>
                                 <td>{{ item.price }}</td>
-                                <td>{{ item.saleDate|date("Y-m-d") }}</td>
+                                <td>{{ item.saleDate|date("d-m-Y") }}</td>
 
                                 {#<td>{{ item.created|date("Y-m-d H:i:s") }}</td>#}
                                 {#<td>{{ item.updated|date("Y-m-d H:i:s") }}</td>#}
@@ -65,11 +65,13 @@
             <div class="row">
                 <div class="col-sm-3">
                     <div>
-                        {% if company.image is not empty %}
-                            <img src="{{ asset('upload/' ~ company.id ~'/' ~ company.image)}}" alt="" height="100" />
-                        {% else %}
-                            <img src="{{ asset('upload/default.png')}}" alt="" height="100" />
-                        {% endif %}
+                        <h1>
+                            {% if company.image is not empty %}
+                                <img src="{{ asset('upload/' ~ company.id ~'/' ~ company.image)}}" alt="" height="100" />
+                            {% else %}
+                                <img src="{{ asset('upload/default.png')}}" alt="" height="100" />
+                            {% endif %}
+                        </h1>
                     </div>
                     <div>
                         {% if company.rejected %}
@@ -82,7 +84,7 @@
                 </div>
                 <div class="col-sm-5">
                     {% if company %}
-                        <h2>Selected company</h2>
+                        <h2>{{ company.name }}</h2>
                         <p>Company name: {{ company.name }}</p>
                         <p>Org. Number: {{ company.orgCode }}</p>
                         <p>Company id: {{ company.id }}</p>
@@ -97,9 +99,20 @@
                     {% endif %}
                 </div>
                 <div class="col-sm-12">
+                    <ul class="list-inline">
+                        {% if is_granted('ROLE_SUPER_ADMIN') %}
+                            {% for step in steps() %}
+                                {% if step.id > 1 %}
+                                    <li><a class="{% if company.step.id == step.id %} btn-success {% endif %}btn btn-default btn-xs text-uppercase" href="{{ path('set_step', { 'stepId':step.id, "id":company.id }) }}"> {{ step.name }} </a></li>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="col-sm-12">
                     <p>Added by: {{ company.creator.name }}</p>
                     {% if company.logs|length > 0 %}
-                        {% for log in company.logs %}
+                        {% for log in company.logs|reverse %}
                             {% if loop.last %}
                                 <p>Last updated by: {{ log.user.name }} [{{ log.created|date('Y-m-d H:i:s') }}] - [Last Action: {{ log.message }}]</p>
                             {% else %}
@@ -107,19 +120,6 @@
                             {% endif %}
                         {% endfor %}
                     {% endif %}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <ul class="list-inline">
-                        {% if is_granted('ROLE_SUPER_ADMIN') %}
-                            {% for step in steps() %}
-                                {% if step.id > 1 %}
-                                    <li><a class="{% if company.step.id >= step.id %} btn-success {% endif %}btn btn-default btn-xs text-uppercase" href="{{ path('set_step', { 'stepId':step.id, "id":company.id }) }}"> {{ step.name }} </a></li>
-                                {% endif %}
-                            {% endfor %}
-                        {% endif %}
-                    </ul>
                 </div>
             </div>
             {% endif %}

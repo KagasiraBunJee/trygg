@@ -30,9 +30,13 @@ class Extension extends \Twig_Extension{
     }
 
 
-    public function getSteps()
+    public function getSteps($reverse = false)
     {
         $steps = $this->em->getRepository("ManagerBundle:Step")->findAll();
+        if($reverse)
+        {
+            $steps = array_reverse($steps);
+        }
         return $steps;
     }
 
