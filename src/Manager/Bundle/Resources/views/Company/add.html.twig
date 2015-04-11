@@ -3,48 +3,58 @@
 {% block body %}
     <div class="row">
         <div class="col-md-7">
+            {% if result == "success" %}
+                {% if action == "Save" %}
+                    <div class="alert alert-success" role="alert">Compnany has been successfully saved</div>
+                {% else %}
+                    <div class="alert alert-success" role="alert">Successfully created new company</div>
+                {% endif %}
+            {% elseif result == "nothing" %}
+            {% else %}
+                <div class="alert alert-danger" role="alert">Form is invalid. Check your data and try again.</div>
+            {% endif %}
             {{ form_start(form) }}
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">Company credentials</h3>
                 </div>
                 <div class="panel-body">
-                    <div class="form-group">
-                        <label for="name">Company</label>
-                        {{ form_widget(form.name, { "attr":{ "class":"form-control" }, "id":"name" }) }}
-                    </div>
                     <div class="form-group date">
-                        <label for="saleDate">Sales Date</label>
+                        <label for="saleDate">Sales Date*</label>
                         {{ form_widget(form.saleDate, { "attr":{ "class":"form-control" },"id":"saleDate" }) }}
                         <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
                     </div>
                     <div class="form-group">
-                        <label for="product">Product</label>
-                        {{ form_widget(form.product, { "attr":{ "class":"form-control" },"id":"product" }) }}
+                        <label for="name">Company Name*</label>
+                        {{ form_widget(form.name, { "attr":{ "class":"form-control" }, "id":"name" }) }}
                     </div>
                     <div class="form-group">
-                        <label for="price">Price</label>
-                        {{ form_widget(form.price, { "attr":{ "class":"form-control" },"id":"price" }) }}
-                    </div>
-                    <div class="form-group">
-                        <label for="postalCode">Postal Code</label>
-                        {{ form_widget(form.postalCode, { "attr":{ "class":"form-control" },"id":"postalCode" }) }}
-                    </div>
-                    <div class="form-group">
-                        <label for="orgCode">Org.nr.</label>
+                        <label for="orgCode">Org.nr.*</label>
                         {{ form_widget(form.orgCode, { "attr":{ "class":"form-control" },"id":"orgCode" }) }}
                     </div>
                     <div class="form-group">
-                        <label for="address">Adresse</label>
+                        <label for="address">Adresse*</label>
                         {{ form_widget(form.address, { "attr":{ "class":"form-control" }, "id":"address" }) }}
                     </div>
                     <div class="form-group">
-                        <label  for="contact">Kontakt</label>
+                        <label for="postalCode">Postal Code*</label>
+                        {{ form_widget(form.postalCode, { "attr":{ "class":"form-control" },"id":"postalCode" }) }}
+                    </div>
+                    <div class="form-group">
+                        <label  for="contact">Contact*</label>
                         {{ form_widget(form.contact, { "attr":{ "class":"form-control" }, "id":"contact" }) }}
                     </div>
                     <div class="form-group">
-                        <label  for="phone">Phone</label>
+                        <label  for="phone">Phone*</label>
                         {{ form_widget(form.phone, { "attr":{ "class":"form-control" }, "id":"phone" }) }}
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Price*</label>
+                        {{ form_widget(form.price, { "attr":{ "class":"form-control" },"id":"price" }) }}
+                    </div>
+                    <div class="form-group">
+                        <label for="product">Product*</label>
+                        {{ form_widget(form.product, { "attr":{ "class":"form-control" },"id":"product" }) }}
                     </div>
                     <div class="form-group">
                         <label  for="image">Image</label>
@@ -55,7 +65,7 @@
                         {{ form_widget(form.comment, { "attr":{ "class":"form-control" }, "id":"comment" }) }}
                     </div>
                     <div aria-label="..." role="group" class="btn-group entry-btn-group">
-                        <a href="#" onclick="history.go(-1);" class="btn btn-default"><i class="glyphicon glyphicon-arrow-left"></i> Back to list</a>
+                        <a href="javascript:history.go(-1)" class="btn btn-default"><i class="glyphicon glyphicon-arrow-left"></i> Back to list</a>
 
                         <button id="submit" class="btn btn-default" type="submit"><i class='glyphicon glyphicon-floppy-disk'></i> {{ action }}</button>
                     </div>

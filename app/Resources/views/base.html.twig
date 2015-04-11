@@ -65,6 +65,15 @@
             .showSmartSearch{
                 display: block;
             }
+            .saveCell{
+                background-color: #d6e9c6 !important;
+            }
+            .rejectCell{
+                background-color: #ebccd1 !important;
+            }
+            .infoCell{
+                background-color: #bce8f1 !important;
+            }
         </style>
     </head>
     <body style="overflow-x: hidden;">
@@ -119,8 +128,8 @@
             {% if app.user and is_granted('ROLE_SUPER_ADMIN') %}
             <div class="col-md-2 custom-menu">
                 <ul class="list-group">
-                    <li class="list-group-item"><a style="" class="btn btn-link" href="{{ path('main', { 'step':1 }) }}"> New Sales </a></li>
-                    <li class="list-group-item"><a style="" class="btn btn-link" href="{{ path('rejected') }}"> Not Accepted </a></li>
+                    <li class="list-group-item saveCell"><a style="" class="btn btn-link" href="{{ path('main', { 'step':1 }) }}"> New Sales </a></li>
+                    <li class="list-group-item rejectCell"><a style="" class="btn btn-link" href="{{ path('rejected') }}"> Not Accepted </a></li>
                 </ul>
                 <ul class="list-group">
                     {% for cat in steps() %}
@@ -128,11 +137,11 @@
                             <li class="list-group-item"><a class="btn btn-link" href="{{ path('main', { 'step':cat.id }) }}"> {{ cat.name }} </a></li>
                         {% endif %}
                     {% endfor %}
-                    <li class="list-group-item"><a style="" class="btn btn-link" href="{{ path('main', { 'step':8 }) }}">Not Paid</a></li>
                 </ul>
                 <ul class="list-group">
-                    <li class="list-group-item"><a style="" class="btn btn-link" href="{{ path('main', { 'step':9 }) }}">Complaints</a></li>
-                    <li class="list-group-item"><a style="" class="btn btn-link" href="{{ path('main', { 'step':10 }) }}">Other</a></li>
+                    <li class="list-group-item infoCell"><a style="" class="btn btn-link" href="{{ path('main', { 'step':8 }) }}">Not Paid</a></li>
+                    <li class="list-group-item infoCell"><a style="" class="btn btn-link" href="{{ path('main', { 'step':9 }) }}">Complaints</a></li>
+                    <li class="list-group-item infoCell"><a style="" class="btn btn-link" href="{{ path('main', { 'step':10 }) }}">Other</a></li>
                 </ul>
                 <ul class="list-group">
                     <li class="list-group-item"><a class="btn btn-link" href="{{ path('all_customers') }}">All companies</a></li>

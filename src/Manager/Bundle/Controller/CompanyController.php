@@ -87,7 +87,7 @@ class CompanyController extends Controller
         $user = $this->getUser();
         $form = $this->createForm(new CompanyType(), $company);
         $form->handleRequest($request);
-
+        $result = "nothing";
         if($form->isValid())
         {
             $company->setCreator($user);
@@ -106,19 +106,26 @@ class CompanyController extends Controller
             $em->persist($log);
             $company->addLog($log);
             $em->flush();
-
+            $result = "success";
             return $this->redirectToRoute('home');
         }
-        else{
-            print_r($form->getErrorsAsString());
+        else
+        {
+
+            if($request->isMethod("POST"))
+            {
+                $result = "invalid";
+            }
         }
+
 
 
         return [
             'bar_title' => "Add new company",
             'form' => $form->createView(),
             'action' => "Create",
-            "hide_add_btn" => true
+            "hide_add_btn" => true,
+            "result" => $result
         ];
     }
 
@@ -136,7 +143,7 @@ class CompanyController extends Controller
         $image = $company->getImage();
         $form->handleRequest($request);
 
-
+        $result = "nothing";
 
         if($form->isValid())
         {
@@ -151,6 +158,7 @@ class CompanyController extends Controller
             $log->setMessage("User:".$user->getName()." has added new sale[".$company->getName()."]");
             $log->setCreated(new \DateTime("now"));
             $log->setCompany($company);
+            $result = "success";
             /*if($form->getData()->getImage() != null)
             {
                 if($image)
@@ -164,12 +172,20 @@ class CompanyController extends Controller
 
             //return $this->redirectToRoute('edit_sale');
         }
+        else
+        {
+            if($request->isMethod("POST"))
+            {
+                $result = "invalid";
+            }
+        }
 
         return [
             'bar_title' => "Edit <strong>".$company->getName()."</strong>",
             'form' => $form->createView(),
             'action' => "Save",
-            "hide_add_btn" => true
+            "hide_add_btn" => true,
+            "result" => $result
         ];
     }
 
