@@ -249,7 +249,7 @@ class CompanyController extends Controller
     }
 
     /**
-     * @Route("/ajax/company/{id}", name="ajax_company")\
+     * @Route("/ajax/company/{id}", name="ajax_company")
      * @Template("ManagerBundle:Company:company.html.twig")
      */
     public function ajaxConpanyAction(Company $company, Request $request)
