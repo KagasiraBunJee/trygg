@@ -83,6 +83,10 @@
                         <p>Company name: {{ company.name }}</p>
                         <p>Org. Number: {{ company.orgCode }}</p>
                         <p>Company id: {{ company.id }}</p>
+                        <p>Sales date: {{ company.saleDate|date("d-F-Y") }}</p>
+                        <p>Postal Code: {{ company.postalCode }}</p>
+                        <p>Product: {{ company.product }}</p>
+                        <p>Price: {{ company.price }}</p>
                     {% endif %}
                 </div>
                 <div class="col-sm-4">
