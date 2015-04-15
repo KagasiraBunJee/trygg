@@ -432,7 +432,7 @@ class CompanyController extends Controller
 
             foreach($companies as $company)
             {
-                $url = $rejected ? $this->generateUrl("rejectedCom", ["id"=>$company->getId()]) : $this->generateUrl("main_with_item", ["id"=>$company->getId(), "step"=> $company->getStep()->getId()]);
+                $url = $rejected ? $this->generateUrl("rejectedCom", ["id"=>$company->getId()]) : $this->generateUrl("main_with_item", ["id"=>$company->getId(), "step"=> $company->getStep()->first()->getId()]);
                 $result[] = [
                     "id" => $company->getId(),
                     "name" => $company->getName(),
