@@ -32,10 +32,10 @@
                             <span class="icon-bar"></span>
                         </button>
                     </div>
-                    <div class="collapse navbar-collapse navbar-ex1-collapse">
-                        <ul style="width: 1000px;" class="nav navbar-nav">
+                    <div style="padding:0;" class="collapse navbar-collapse navbar-ex1-collapse">
+                        <ul style="width: 100%;" class="nav navbar-nav">
                             <li><a style="padding:0;" href="{{ path('home') }}"><img height="50px" src="{{ asset('bundles/manager/images/logo.png') }}"></a></li>
-                            <li style="margin-left: 9%;">
+                            <li style="">
                                 <form class="navbar-form" role="search" method="get">
                                     <div class="form-group">
                                         <input style="width: 300px;" type="text" {% if step is defined %} step="{{ step.id }}" {% if step.name == "Rejected" %} rejected="true" {% endif %} {% endif %} id="searchAjax" class="form-control" placeholder="Search" name="search">
@@ -52,7 +52,7 @@
 
             {% endif %}
         {% endblock %}
-        <div style="width: 1000px;margin-left: auto;margin-right: auto;" class="row">
+        <div style="margin-left: auto;margin-right: auto;" class="row">
             {% if app.user %}
                 <h2><small>
                     {% if step is defined %}
@@ -70,7 +70,7 @@
             {% endif %}
         {% block sidemenu %}
             {% if app.user and is_granted('ROLE_SUPER_ADMIN') %}
-            <div class="col-md-2 custom-menu">
+            <div class="col-md-1 custom-menu">
                 <ul class="list-group">
                     <li class="list-group-item saveCell"><a style="" class="btn btn-link" href="{{ path('main', { 'step':1 }) }}"> New Sales </a></li>
                     <li class="list-group-item rejectCell"><a style="" class="btn btn-link" href="{{ path('rejected') }}"> Not Accepted </a></li>
@@ -99,7 +99,7 @@
             </div>
             {% endif %}
         {% endblock %}
-            <div style="padding-right:0;" class="{% if app.user and is_granted('ROLE_SUPER_ADMIN') %}col-md-10{% else %}col-md-12{% endif %}">
+            <div style="padding-right:0;" class="{% if app.user and is_granted('ROLE_SUPER_ADMIN') %}col-md-11{% else %}col-md-12{% endif %}">
 
                 {% block body %}{% endblock %}
             </div>

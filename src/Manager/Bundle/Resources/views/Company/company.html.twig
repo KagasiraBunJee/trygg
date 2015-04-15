@@ -43,7 +43,7 @@
             {% if is_granted('ROLE_SUPER_ADMIN') %}
                 {% for step in steps() %}
                     {% if step.id > 1 %}
-                        <li><a class="{% if step in company.step %} btn-success {% endif %}btn btn-default btn-xs text-uppercase" href="{{ path('set_step', { 'stepId':step.id, "id":company.id,"current_step":1 }) }}{% if main_page %}?main_page=1{% endif %}"> {{ step.name }} </a></li>
+                        <li><a onclick="setStep('{{ step.id }}','{{ company.id }}',this); return false;" class="{% if step in company.step %} btn-success {% endif %}btn btn-default btn-xs text-uppercase" href="{{ path('set_step', { 'stepId':step.id, "id":company.id,"current_step":1 }) }}{% if main_page %}?main_page=1{% endif %}"> {{ step.name }} </a></li>
                     {% endif %}
                 {% endfor %}
             {% endif %}
@@ -52,7 +52,7 @@
     <div class="col-sm-12">
         <p>Added by: {{ company.creator.name }}</p>
         {% if company.logs|length > 0 %}
-            {% for log in company.logs|reverse %}
+            {% for log in company.logs|reverse|slice(0,2) %}
                 {% if loop.first %}
                     <p>Last updated by: {{ log.user.name }} [{{ log.created|date('Y-m-d H:i:s') }}] - [Last Action: {{ log.message|raw }}]</p>
                 {% else %}

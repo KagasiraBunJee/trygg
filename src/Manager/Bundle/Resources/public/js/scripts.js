@@ -1,6 +1,6 @@
 jQuery("document").ready(function(){
 
-    jQuery("#searchAjax").keyup(function(){
+    jQuery("#searchAjax").keydown(function(){
         var params = [];
         var searchInput = jQuery(this);
         var rejected = searchInput.attr("rejected") ? "rejected=1" : "";
@@ -55,13 +55,13 @@ jQuery("document").ready(function(){
     if(mm<10) {
         mm='0'+mm
     }
-    jQuery(".table.table-striped tr a").click(function(e){
+    jQuery(".table tr a").click(function(e){
         e.stopPropagation();
     });
-    jQuery(".table.table-striped > tbody > tr").click(function(){
+    jQuery(".table > tbody > tr").click(function(){
         var main_page = jQuery(this).attr('main_page');
         var company_id = jQuery(this).attr('data-id');
-        showCompany(company_id,main_page);
+        showCompany(company_id,main_page,this);
     });
     $('.panel-body .form-group.date').datepicker({
         format: "yyyy-mm-dd",
@@ -76,8 +76,8 @@ jQuery("document").ready(function(){
     }
 });
 
-function showCompany(id,main){
-
+function showCompany(id,main,obj)
+{
     if(id)
     {
         var params = "";
@@ -88,9 +88,31 @@ function showCompany(id,main){
         jQuery.ajax({
             url:"http://104.236.61.177/web/app.php/ajax/company/"+id+params
         }).done(function(result) {
+            jQuery(".company-card").addClass("empty");
+            jQuery(".company-card td").html("");
             if (result != "nothing")
             {
-                jQuery(".company_item").html(result);
+                jQuery(obj).next().removeClass("empty");
+                jQuery(obj).next().children("td").html(result);
+            }
+        });
+    }
+}
+
+function setStep(id,company_id,button)
+{
+    if(id)
+    {
+        jQuery.ajax({
+            url: "http://104.236.61.177/web/app.php/ajax/step/"+id+"/"+company_id
+        }).done(function(result){
+            switch (result.result){
+                case "added":
+                    jQuery(button).addClass("btn-success");
+                    break;
+                case "removed":
+                    jQuery(button).removeClass("btn-success");
+                    break;
             }
         });
     }

@@ -227,11 +227,14 @@ class CompanyController extends Controller
 
     /**
      * @Route("/reject/{id}/{current_step}", name="reject")
-     * @ParamConverter("current_step", class="ManagerBundle:Step", options={"id" = "current_step"})
      */
-    public function rejectCompanyAction(Company $company, Step $current_step)
+    public function rejectCompanyAction(Company $company, $curstep = 0)
     {
         $em = $this->getDoctrine()->getManager();
+        if($curstep > 0)
+        {
+            $current_step = $em->getRepository("ManagerBundle:Step")->find($curstep);
+        }
         $company->setRejected(true);
         $lastStep = $company->getStep();
         $step = $em->getRepository("ManagerBundle:Step")->find(1);
@@ -245,7 +248,11 @@ class CompanyController extends Controller
         $em->persist($log);
         $company->addLog($log);
         $em->flush();
-        return $this->redirectToRoute("main_with_item",["step"=>$current_step->getId(), "id" => $company->getId()]);
+        if($current_step)
+        {
+            return $this->redirectToRoute("main_with_item",["step"=>$current_step->getId(), "id" => $company->getId()]);
+        }
+        return $this->redirectToRoute("all_customers");
     }
 
     /**
@@ -336,6 +343,57 @@ class CompanyController extends Controller
             return $this->redirectToRoute("all_customers");
         }
         return $this->redirectToRoute("main_with_item",["step" => $current_step->getId(), "id" => $company->getId()]);*/
+    }
+
+    /**
+     * @Route("/ajax/step/{stepId}/{id}", name="set_ajax_step")
+     * @ParamConverter("step", class="ManagerBundle:Step", options={"id" = "stepId"})
+     * @ParamConverter("company", class="ManagerBundle:Company", options={"id" = "id"})
+     * @Security("has_role('ROLE_SUPER_ADMIN')")
+     */
+    public function setAjaxStepAction(Step $step, Company $company, Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $steps = $company->getStep();
+        $log = new Log();
+        $log->setCreated(new \DateTime("now"));
+        $company->setRejected(false);
+        $company->setTrashed(false);
+        $action = "added";
+        $mainStep = $em->getRepository("ManagerBundle:Step")->find(1);
+        if($step->getId() > 1)
+        {
+            if($steps->contains($mainStep))
+            {
+                $company->removeStep($mainStep);
+            }
+        }
+        if($steps->contains($step))
+        {
+            $action = "removed";
+            $company->removeStep($step);
+            $step->removeCompany($company);
+            $log->setMessage("Removed status <strong>".$step->getName()."</strong> of company <strong>".$company->getName()."</strong>");
+            if($company->getStep()->count() < 1)
+            {
+                $company->addStep($mainStep);
+            }
+        }
+        else
+        {
+            $company->addStep($step);
+            $step->addCompany($company);
+            $log->setMessage("Updated status of <strong>".$company->getName()."</strong> to status <strong>".$step->getName()."</strong>");
+        }
+        $log->setUser($this->getUser());
+        $log->setCompany($company);
+        $log->setTitle("Update");
+        $em->persist($log);
+        $company->addLog($log);
+        $em->flush();
+        return new JsonResponse([
+            'result' => $action
+        ]);
     }
 
     /**

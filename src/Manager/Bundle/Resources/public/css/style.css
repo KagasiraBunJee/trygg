@@ -1,8 +1,20 @@
-.table.table-striped tr {
+body{
+    font-family: "Helvetica Neue";
+}
+.table.custom tr {
     cursor: pointer;
 }
-.table.table-striped tr:hover {
-    background: #d9d9d9;
+.table.custom tr:hover {
+    background: #d9d9d9 !important;
+}
+.table.custom tr td{
+    padding: 6px;
+}
+.company-card{
+    background: #e6e6e6 !important;
+}
+.company-card.empty td{
+    padding:0 !important;
 }
 .navbar-brand
 {
@@ -49,7 +61,7 @@
 }
 .infoCell{
     background-color: #bce8f1 !important;
-}
+}/*
 @media (min-width: 768px) {
     .navbar .navbar-nav {
         display: inline-block;
@@ -59,8 +71,14 @@
     .navbar .navbar-collapse {
         text-align: center;
     }
-}
+}*/
 .list-inline li{
     padding:0 !important;
     margin:0 !important;
+}
+.table tr:nth-child(1n+3){
+
+}
+.table tr:nth-child(4n-6){
+    background: #f9f9f9;
 }
