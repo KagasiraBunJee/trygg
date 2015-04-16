@@ -70,7 +70,7 @@
             {% endif %}
         {% block sidemenu %}
             {% if app.user and is_granted('ROLE_SUPER_ADMIN') %}
-            <div class="col-md-1 custom-menu">
+            <div class="col-md-2 custom-menu">
                 <ul class="list-group">
                     <li class="list-group-item saveCell"><a style="" class="btn btn-link" href="{{ path('main', { 'step':1 }) }}"> New Sales </a></li>
                     <li class="list-group-item rejectCell"><a style="" class="btn btn-link" href="{{ path('rejected') }}"> Not Accepted </a></li>
@@ -99,7 +99,7 @@
             </div>
             {% endif %}
         {% endblock %}
-            <div style="padding-right:0;" class="{% if app.user and is_granted('ROLE_SUPER_ADMIN') %}col-md-11{% else %}col-md-12{% endif %}">
+            <div style="padding-right:0;" class="{% if app.user and is_granted('ROLE_SUPER_ADMIN') %}col-md-10{% else %}col-md-12{% endif %}">
 
                 {% block body %}{% endblock %}
             </div>
