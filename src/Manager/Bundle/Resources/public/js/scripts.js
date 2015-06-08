@@ -93,6 +93,7 @@ function showCompany(id,main,obj)
                 jQuery(".company-card").addClass("empty");
                 jQuery(".company-card td").html("");
                 if (result != "nothing") {
+                    openedCompany = id;
                     jQuery(obj).next().removeClass("empty");
                     jQuery(obj).next().children("td").html(result);
                 }
