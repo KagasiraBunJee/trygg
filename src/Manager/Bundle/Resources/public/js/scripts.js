@@ -1,3 +1,5 @@
+var openedCompany = 0;
+
 jQuery("document").ready(function(){
 
     jQuery("#searchAjax").keydown(function(){
@@ -80,22 +82,26 @@ function showCompany(id,main,obj)
 {
     if(id)
     {
-        var params = "";
-        if(main)
-        {
-            params = "?main_page=1";
+        if(openedCompany != id) {
+            var params = "";
+            if (main) {
+                params = "?main_page=1";
+            }
+            jQuery.ajax({
+                url: "http://104.236.61.177/web/app.php/ajax/company/" + id + params
+            }).done(function (result) {
+                jQuery(".company-card").addClass("empty");
+                jQuery(".company-card td").html("");
+                if (result != "nothing") {
+                    jQuery(obj).next().removeClass("empty");
+                    jQuery(obj).next().children("td").html(result);
+                }
+            });
         }
-        jQuery.ajax({
-            url:"http://104.236.61.177/web/app.php/ajax/company/"+id+params
-        }).done(function(result) {
+        else{
             jQuery(".company-card").addClass("empty");
             jQuery(".company-card td").html("");
-            if (result != "nothing")
-            {
-                jQuery(obj).next().removeClass("empty");
-                jQuery(obj).next().children("td").html(result);
-            }
-        });
+        }
     }
 }
 
