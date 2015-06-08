@@ -102,6 +102,7 @@ function showCompany(id,main,obj)
         else{
             jQuery(".company-card").addClass("empty");
             jQuery(".company-card td").html("");
+            openedCompany = 0;
         }
     }
 }
