@@ -726,4 +726,20 @@ class Company implements \JsonSerializable
     {
         $this->step->removeElement($step);
     }
+
+    /**
+     * Get step
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getStep()
+    {
+        return $this->step;
+    }
+
+    public function setStep(\Manager\Bundle\Entity\Step $step)
+    {
+        $this->step = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->step[] = $step;
+    }
 }

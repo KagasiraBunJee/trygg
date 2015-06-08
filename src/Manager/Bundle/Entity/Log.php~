@@ -46,7 +46,7 @@ class Log
      * @ORM\ManyToOne(targetEntity="Company",inversedBy="logs")
      * @ORM\JoinColumn(name="companyId", referencedColumnName="id")
      */
-    public $company;
+    private $company;
     
     /**
      * @var datetime
@@ -154,5 +154,28 @@ class Log
     public function getCreated()
     {
         return $this->created;
+    }
+
+    /**
+     * Set company
+     *
+     * @param \Manager\Bundle\Entity\Company $company
+     * @return Log
+     */
+    public function setCompany(\Manager\Bundle\Entity\Company $company = null)
+    {
+        $this->company = $company;
+
+        return $this;
+    }
+
+    /**
+     * Get company
+     *
+     * @return \Manager\Bundle\Entity\Company 
+     */
+    public function getCompany()
+    {
+        return $this->company;
     }
 }

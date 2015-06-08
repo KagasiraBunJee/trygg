@@ -8,6 +8,14 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class UserType extends AbstractType
 {
+
+    private $editing = false;
+
+    public function __construct($editing = false)
+    {
+        $this->editing = $editing;
+    }
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -17,7 +25,16 @@ class UserType extends AbstractType
         $builder
             ->add('email')
             ->add('name')
-            ->add('password')
+            ->add('last_name');
+            if(!$this->editing){
+                $builder->add('password');
+            }
+            $builder->add('role', 'choice', array(
+                'choices' => array(
+                    'ROLE_SUPER_ADMIN'   => 'Admin',
+                    'ROLE_ADMIN' => 'Manager',
+                )
+            ));
         ;
     }
     

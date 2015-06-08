@@ -16,11 +16,11 @@ class UserRepository extends EntityRepository
     {
         $em = $this->getEntityManager();
         $query = $em->createQuery('
-            SELECT p FROM ManagerBundle:User p WHERE p.role LIKE :role and p.name LIKE :name
+            SELECT p FROM ManagerBundle:User p WHERE p.name LIKE :name
         ');
-        $query->setParameter('role','%ROLE_ADMIN%');
         $query->setParameter('name','%'.$searchText.'%');
 
-        return $query->getResult();
+        return $query;
+        //return $query->getResult();
     }
 }

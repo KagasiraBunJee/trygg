@@ -130,11 +130,66 @@ class UserController extends Controller
         $step->setName('Managers');
         $step->setStepLvl("manager_list");
 
+        $paginator  = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $users,
+            $request->query->get('page', 1)/*page number*/,
+            $this->container->getParameter("users_per_page")/*limit per page*/
+        );
+
         return [
-            'users' => $users,
+            'users' => $pagination,
             'step' => $step,
             'show_manager_button' => true,
             "hide_add_btn" => true
         ];
+    }
+
+    /**
+     * @Route("/edit/{id}", name="edit_user")
+     * @Template()
+     */
+    public function editAction(User $user, Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $oldpass = $user->getPassword();
+
+        $form = $this->createForm(new UserType(true), $user);
+        $form->handleRequest($request);
+
+        if($form->isValid())
+        {
+            if(empty($user->getPassword()) || $user->getPassword() == $oldpass)
+            {
+
+                $user->setPassword($oldpass);
+            }
+            else
+            {
+                $factory = $this->get('security.encoder_factory');
+                $encoder = $factory->getEncoder($user);
+                $user->setPassword($encoder->encodePassword($user->getPassword(), $user->getSalt()));
+            }
+            $em->flush();
+        }
+
+        return [
+            'form' => $form->createView(),
+            'result'=>$form->getErrors(),
+            'show_manager_button' => true,
+            "hide_add_btn" => true
+        ];
+    }
+
+    /**
+     * @Route("/delete/{id}", name="delete_user")
+     */
+    public function deleteAction(User $user, Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($user);
+        $em->flush();
+        return $this->redirectToRoute("personal");
     }
 }

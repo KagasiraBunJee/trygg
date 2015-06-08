@@ -34,7 +34,7 @@
                     </div>
                     <div style="padding:0;" class="collapse navbar-collapse navbar-ex1-collapse">
                         <ul style="width: 100%;" class="nav navbar-nav">
-                            <li style="margin-right: 25%;"><a style="padding:0;" href="{{ path('home') }}"><img height="50px" src="{{ asset('bundles/manager/images/logo.png') }}"></a></li>
+                            <li style="margin-right: 25%;"><a style="padding:0;" href="{{ path('home') }}"><img height="50px" src="{{ asset('bundles/manager/images/logo.jpg') }}"></a></li>
                             <li style="">
                                 <form class="navbar-form" role="search" method="get">
                                     <div class="form-group">
@@ -64,7 +64,7 @@
                         <a style="" href="{{ path('add_sale') }}" class="btn btn-default pull-right"><i class="fa fa-plus"></i> Create new company</a>
                     {% endif %}
                     {% if show_manager_button is defined %}
-                        <a style="" href="{{ path('reg_manager') }}" class="btn btn-default pull-right"><i class="fa fa-plus"></i> Create new manager</a>
+                        <a style="" href="{{ path('reg_manager') }}" class="btn btn-default pull-right"><i class="fa fa-plus"></i> Create new user</a>
                     {% endif %}
                 </h2>
             {% endif %}
@@ -91,7 +91,7 @@
                     <li class="list-group-item"><a class="btn btn-link" href="{{ path('all_customers') }}">All companies</a></li>
                 </ul>
                 <ul class="list-group">
-                    <li class="list-group-item"><a class="btn btn-link" href="{{ path('personal') }}">Managers</a></li>
+                    <li class="list-group-item"><a class="btn btn-link" href="{{ path('personal') }}">Sales Managers</a></li>
                     <li class="list-group-item"><a class="btn btn-link" href="{{ path('reg_manager') }}">Add new manager</a></li>
                     <li class="list-group-item"><a class="btn btn-link" href="{{ path("reports") }}">Reports</a></li>
                     <li class="list-group-item"><a class="btn btn-link" href="{{ path("settings_page") }}">Settings</a></li>
