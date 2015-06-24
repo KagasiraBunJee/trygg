@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="Manager\Bundle\Entity\Repository\StepRepository")
  */
-class Step
+class Step implements \JsonSerializable
 {
     /**
      * @var integer
@@ -135,5 +135,13 @@ class Step
     public function getCompanies()
     {
         return $this->companies;
+    }
+
+    function jsonSerialize()
+    {
+        return [
+            "id" => $this->getId(),
+            "name" => $this->getName()
+        ];
     }
 }

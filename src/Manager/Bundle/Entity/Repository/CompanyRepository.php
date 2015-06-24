@@ -50,4 +50,14 @@ class CompanyRepository extends EntityRepository
         return $query;
     }
 
+    public function getCompaniesAjaxAction($page, $limit)
+    {
+        $offset = $limit*($page-1);
+        $em = $this->getEntityManager();
+        $query = $em->createQuery("SELECT p FROM ManagerBundle:Company p");
+        $query->setMaxResults($limit);
+        $query->setFirstResult($offset);
+
+        return $query->getResult();
+    }
 }

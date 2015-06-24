@@ -76,6 +76,13 @@ jQuery("document").ready(function(){
     {
         date.val(yyyy+"-"+mm+"-"+dd);
     }
+
+    $(window).scroll(function() {
+        if($(window).scrollTop() + $(window).height() == $(document).height()) {
+            //alert("bottom!");
+            loadCompanies(1);
+        }
+    });
 });
 
 function showCompany(id,main,obj)
@@ -124,4 +131,21 @@ function setStep(id,company_id,button)
             }
         });
     }
+}
+
+function loadCompanies(page)
+{
+    var table = document.getElementById("companies");
+    var tableItems = jQuery(table).find(".companyItem").length;
+    var url = "http://"+host+"/ajax/companies/"+tableItems;
+    jQuery.ajax({
+        url: url
+    }).done(function(result){
+        jQuery(table).children("tbody").append(result.render);
+        jQuery(".table > tbody > tr").click(function(){
+            var main_page = jQuery(this).attr('main_page');
+            var company_id = jQuery(this).attr('data-id');
+            showCompany(company_id,main_page,this);
+        });
+    });
 }
