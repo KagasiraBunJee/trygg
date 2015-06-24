@@ -1,3 +1,5 @@
+var openedCompany = 0;
+var host = window.location.host;
 jQuery("document").ready(function(){
 
     jQuery("#searchAjax").keydown(function(){
@@ -14,7 +16,7 @@ jQuery("document").ready(function(){
             //console.log(params.join("&"));
             var dropdownmenu = jQuery(".smartSearchResult");
             jQuery.ajax({
-                url:"http://104.236.61.177/web/app.php/company/search?"+params.join("&")
+                url:"http://"+host+"/company/search?"+params.join("&")
             }).done(function(result) {
                 if (result.result != "nothing")
                 {
@@ -80,22 +82,28 @@ function showCompany(id,main,obj)
 {
     if(id)
     {
-        var params = "";
-        if(main)
-        {
-            params = "?main_page=1";
+        if(openedCompany != id) {
+            var params = "";
+            if (main) {
+                params = "?main_page=1";
+            }
+            jQuery.ajax({
+                url: "http://"+host+"/ajax/company/" + id + params
+            }).done(function (result) {
+                jQuery(".company-card").addClass("empty");
+                jQuery(".company-card td").html("");
+                if (result != "nothing") {
+                    openedCompany = id;
+                    jQuery(obj).next().removeClass("empty");
+                    jQuery(obj).next().children("td").html(result);
+                }
+            });
         }
-        jQuery.ajax({
-            url:"http://104.236.61.177/web/app.php/ajax/company/"+id+params
-        }).done(function(result) {
+        else{
             jQuery(".company-card").addClass("empty");
             jQuery(".company-card td").html("");
-            if (result != "nothing")
-            {
-                jQuery(obj).next().removeClass("empty");
-                jQuery(obj).next().children("td").html(result);
-            }
-        });
+            openedCompany = 0;
+        }
     }
 }
 
@@ -104,7 +112,7 @@ function setStep(id,company_id,button)
     if(id)
     {
         jQuery.ajax({
-            url: "http://104.236.61.177/web/app.php/ajax/step/"+id+"/"+company_id
+            url: "http://"+host+"/ajax/step/"+id+"/"+company_id
         }).done(function(result){
             switch (result.result){
                 case "added":
