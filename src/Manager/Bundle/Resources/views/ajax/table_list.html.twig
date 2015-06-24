@@ -1,0 +1,37 @@
+{% for item in companies %}
+    <tr class="companyItem" data-id="{{ item.id }}" main_page="true">
+        <td>{{ item.creator.id }}</td>
+        <td>{{ item.saleDate|date("Y-m-d") }}</td>
+        <td>{{ item.name }}</td>
+        <td>{{ item.orgCode }}</td>
+        <td>{{ item.contact }}</td>
+        <td>{{ item.email }}</td>
+        <td>{{ item.phone }}</td>
+        <td>{{ item.postalCode }}</td>
+        <td>{{ item.product }}</td>
+        <td>{{ item.price }}</td>
+
+        <td>
+            <div class="btn-group" aria-label="..." role="group">
+                <a title="Edit" href="{{ path('edit_company', { "id":item.id }) }}" type="button" class="btn btn-default btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                </a>
+                {% if not item.rejected %}
+                    <a title="Reject company" href="{{ path('reject', {"id":item.id, "current_step":0}) }}" type="button" class="btn btn-default btn-sm" aria-label="Left Align">
+                        <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
+                    </a>
+                {% endif %}
+                {% if not item.trashed %}
+                    <a title="Delete company" href="{{ path('delete', {"id":item.id}) }}" type="button" class="btn btn-default btn-sm" aria-label="Left Align">
+                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                    </a>
+                {% endif %}
+            </div>
+        </td>
+    </tr>
+    <tr class="company-card empty">
+        <td colspan="12">
+
+        </td>
+    </tr>
+{% endfor %}

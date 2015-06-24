@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-md-12">
             {% if companies|length > 0 %}
-                <table class="table custom">
+                <table id="companies" class="table custom">
                     <tr>
                         <td>{% if companies.isSorted('p.creator.id') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'ID', 'p.creator.id') }}</td>
                         <td>{% if companies.isSorted('p.saleDate') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'Sales date', 'p.saleDate') }}</td>
@@ -20,7 +20,7 @@
                         <td></td>
                     </tr>
                     {% for item in companies %}
-                        <tr data-id="{{ item.id }}" main_page="true">
+                        <tr class="companyItem" data-id="{{ item.id }}" main_page="true">
                             <td>{{ item.creator.id }}</td>
                             <td>{{ item.saleDate|date("Y-m-d") }}</td>
                             <td>{{ item.name }}</td>
@@ -57,7 +57,7 @@
                         </tr>
                     {% endfor %}
                 </table>
-                {{ knp_pagination_render(companies) }}
+
             {% else %}
                 <h2>No companies found</h2>
             {% endif %}

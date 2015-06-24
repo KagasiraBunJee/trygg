@@ -508,10 +508,16 @@ class Company implements \JsonSerializable
     {
         return [
             "id" => $this->getId(),
+            "managerId" => $this->getCreator()->getId(),
             "name" => $this->getName(),
-            "step" => $this->getStep(),
-            "rejected" => $this->getRejected(),
-            "trashed" => $this->getTrashed()
+            "saleDate" => $this->getSaleDate()->format("c"),
+            "orgNumber" => $this->getOrgCode(),
+            "contact" => $this->getContact(),
+            "email" => $this->getEmail(),
+            "phone" => $this->getPhone(),
+            "postal" => $this->getPostalCode(),
+            "product" => $this->getProduct(),
+            "price" => $this->getPrice()
         ];
     }
 
