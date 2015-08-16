@@ -22,7 +22,7 @@
                     {% for item in companies %}
                         <tr class="companyItem" data-id="{{ item.id }}" main_page="true">
                             <td>{{ item.creator.id }}</td>
-                            <td>{{ item.saleDate|date("Y-m-d") }}</td>
+                            <td>{{ item.saleDate|date("d-m-Y") }}</td>
                             <td>{{ item.name }}</td>
                             <td>{{ item.orgCode }}</td>
                             <td>{{ item.contact }}</td>
