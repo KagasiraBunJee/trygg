@@ -21,7 +21,7 @@ class CompanyRepository extends EntityRepository
             ->where("u = :step and p.name LIKE '%$searchText%' and p.rejected = 0 and p.trashed = 0")
             ->setParameter('step', $step->getId())
             ->getQuery();
-        return $query;
+        return $query->getResult();
     }
 
     public function getAllCompaniesQuery($searchText = "")
