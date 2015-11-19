@@ -58,7 +58,8 @@ class CompanyController extends Controller
         $pagination = $paginator->paginate(
             $companies,
             $request->query->get('page', 1)/*page number*/,
-            $this->container->getParameter("items_per_page")/*limit per page*/
+            $this->container->getParameter("items_per_page")/*limit per page*/,
+            array('wrap-queries'=>true)
         );
 
         if($id)
@@ -308,7 +309,7 @@ class CompanyController extends Controller
      * @Route("/ajax/company/{id}", name="ajax_company")
      * @Template("ManagerBundle:Company:company.html.twig")
      */
-    public function ajaxConpanyAction(Company $company, Request $request)
+    public function ajaxCompanyAction(Company $company, Request $request)
     {
         $main_page = $request->query->get('main_page') ? true : false;
         return [
@@ -426,7 +427,25 @@ class CompanyController extends Controller
 
             $result = [];
 
-            $companies = $companies->getResult();
+//            $companies = $companies->getResult();
+
+            /**
+             * @var Company $company
+             */
+            foreach($companies as $index=>$company)
+            {
+                $steps = $company->getStep();
+                /**
+                 * @var Step $cStep
+                 */
+                foreach($steps as $cStep)
+                {
+                    if($cStep->getId() > $step->getId())
+                    {
+                        unset($companies[$index]);
+                    }
+                }
+            }
 
             foreach($companies as $company)
             {
