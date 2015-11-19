@@ -1,64 +1,168 @@
-<div class="row">
-    <div class="col-sm-3">
-        <div>
-            <h1>
-                {% if company.image is not empty %}
-                    <img src="{{ asset('upload/' ~ company.id ~'/' ~ company.image)}}" alt="" height="100" />
-                {% else %}
-                    <img src="{{ asset('upload/default.png')}}" alt="" height="100" />
-                {% endif %}
-            </h1>
-        </div>
-        <div>
-            {% if company.rejected %}
-                Status: <span style="color:red;">Rejected</span>
-            {% elseif company.trashed %}
-                Status: <span style="color:red;">Deleted</span>
-            {% endif %}
-        </div>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h1 style="font-size: 30px;" class="panel-title">{{ company.contact }}</h1>
     </div>
-    <div class="col-sm-5">
-        {% if company %}
-            <h2>{{ company.name }}</h2>
-            <p>Company name: {{ company.name }}</p>
-            <p>Company email: {{ company.email }}</p>
-            <p>Org. Number: {{ company.orgCode }}</p>
-            <p>Company id: {{ company.id }}</p>
-            <p>Sales date: {{ company.saleDate|date("d-m-Y") }}</p>
-            <p>Postal Code: {{ company.postalCode }}</p>
-            <p>Product: {{ company.product }}</p>
-            <p>Price: {{ company.price }}</p>
-        {% endif %}
-    </div>
-    <div class="col-sm-4">
-        {% if company %}
-            <h2>Notes</h2>
-            <p>
-                {{ company.comment }}
-            </p>
-        {% endif %}
-    </div>
-    <div class="col-sm-12">
-        <ul class="list-inline">
-            {% if is_granted('ROLE_SUPER_ADMIN') %}
-                {% for step in steps() %}
-                    {% if step.id > 1 %}
-                        <li><a onclick="setStep('{{ step.id }}','{{ company.id }}',this); return false;" class="{% if step in company.step %} btn-success {% endif %}btn btn-default btn-xs text-uppercase" href="{{ path('set_step', { 'stepId':step.id, "id":company.id,"current_step":1 }) }}{% if main_page %}?main_page=1{% endif %}"> {{ step.name }} </a></li>
+    <div class="panel-body">
+
+
+        <div class="row company_style" style="">
+
+            <div class="col-sm-2" style="">
+                <div class="list-group">
+                    {% if is_granted('ROLE_SUPER_ADMIN') %}
+                        {% for step in steps() %}
+                            {% if step.id > 2 %}
+                                <a onclick="setStep('{{ step.id }}','{{ company.id }}',this); return false;" class="list-margin list-group-item {% if (step not in company.step and step.id != 3) or (step in company.step and step.id == 3 ) %} list-group-item-info {% else %} list-group-item-danger {% endif %}btn btn-default btn-xs text-uppercase" href="{{ path('set_step', { 'stepId':step.id, "id":company.id,"current_step":1 }) }}{% if main_page %}?main_page=1{% endif %}"> {{ step.name }} </a>
+                            {% endif %}
+                        {% endfor %}
                     {% endif %}
-                {% endfor %}
-            {% endif %}
-        </ul>
-    </div>
-    <div class="col-sm-12">
-        <p>Added by: {{ company.creator.name }}</p>
-        {% if company.logs|length > 0 %}
-            {% for log in company.logs|reverse|slice(0,2) %}
-                {% if loop.first %}
-                    <p>Last updated by: {{ log.user.name }} [{{ log.created|date('Y-m-d H:i:s') }}] - [Last Action: {{ log.message|raw }}]</p>
-                {% else %}
-                    <p>Updated by: {{ log.user.name }} [{{ log.created|date('Y-m-d H:i:s') }}] - [Action: {{ log.message|raw }}]</p>
-                {% endif %}
-            {% endfor %}
-        {% endif %}
+                </div>
+            </div>
+            <div class="col-sm-5">
+                <div class="row company-details">
+                    <div class="col-md-6">COMPANY NAME</div><div class="col-md-6">{{ company.name }}</div>
+                    <div class="col-md-6">ORG.NR</div><div class="col-md-6">{{ company.orgCode }}</div>
+                    <div class="col-md-6">ADRESS</div><div class="col-md-6">{{ company.address }}</div>
+                    <div class="col-md-6">POSTAL CODE</div><div class="col-md-6">{{ company.postalCode }}</div>
+                    <div class="col-md-6">CONTACT</div><div class="col-md-6">{{ company.contact }}</div>
+                    <div class="col-md-6">EMAIL</div><div class="col-md-6">{{ company.email }}</div>
+                    <div class="col-md-6">PHONE</div><div class="col-md-6">{{ company.phone }}</div>
+                    <div class="col-md-6">PRICE</div><div class="col-md-6">{{ company.price }}</div>
+
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1>NOTES & DOCUMENTS</h1>
+                    </div>
+                </div>
+
+                <div class="row row-margin">
+                    <div class="col-md-3">
+                        <a href="{{ path('note_list', {'id': company.id}) }}" role="button" class="btn btn-info btn-default btn-block">VIEW NOTES</a>
+                    </div>
+
+                    <div class="col-md-4">
+                        <a href="{{ path('document_list', {'id': company.id}) }}" role="button" class="btn btn-info btn-default btn-block">VIEW DOCUMENTS</a>
+                    </div>
+                </div>
+                <div class="row row-margin">
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-success btn-default btn-block" data-toggle="modal" data-target="#myModal">
+                            ADD NOTE
+                        </button>
+
+                        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog modal-sm" role="document">
+                                {{ render(controller('ManagerBundle:Note:form',{ 'id' : company.id})) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-success btn-default btn-block" data-toggle="modal" data-target="#documentModal">
+                            ADD DOCUMENT
+                        </button>
+
+                        <div class="modal fade" id="documentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog modal-sm" role="document">
+                                {{ render(controller('ManagerBundle:Document:create',{ 'id' : company.id})) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <h2><span class="label label-primary">{{ company.saleDate|date("F Y") }}</span></h2>
+                    </div>
+                    <div class="col-md-2">
+                        <h2>
+                    <span class="label label-success">
+                        Week
+                        {% if company.saleDate|date("j") < 8 %}
+                            1
+                        {% elseif company.saleDate|date("j") < 15 %}
+                            2
+                        {% elseif company.saleDate|date("j") < 22 %}
+                            3
+                        {% else %}
+                            4
+                        {% endif %}
+                    </span>
+                        </h2>
+                    </div>
+                    <div class="col-md-3">
+                        <h2><span class="label label-warning">{{ company.creator.name~' '~company.creator.lastName }}</span></h2>
+                    </div>
+                </div>
+            </div>
+
+            {#<div class="col-sm-3">#}
+            {#<div>#}
+            {#<h1>#}
+            {#{% if company.image is not empty %}#}
+            {#<img src="{{ asset('upload/' ~ company.id ~'/' ~ company.image)}}" alt="" height="100" />#}
+            {#{% else %}#}
+            {#<img src="{{ asset('upload/default.png')}}" alt="" height="100" />#}
+            {#{% endif %}#}
+            {#</h1>#}
+            {#</div>#}
+            {#<div>#}
+            {#{% if company.rejected %}#}
+            {#Status: <span style="color:red;">Rejected</span>#}
+            {#{% elseif company.trashed %}#}
+            {#Status: <span style="color:red;">Deleted</span>#}
+            {#{% endif %}#}
+            {#</div>#}
+            {#</div>#}
+            {#<div class="col-sm-5">#}
+            {#{% if company %}#}
+            {#<h2>{{ company.name }}</h2>#}
+            {#<p>Company name: {{ company.name }}</p>#}
+            {#<p>Company email: {{ company.email }}</p>#}
+            {#<p>Org. Number: {{ company.orgCode }}</p>#}
+            {#<p>Company id: {{ company.id }}</p>#}
+            {#<p>Sales date: {{ company.saleDate|date("d-m-Y") }}</p>#}
+            {#<p>Postal Code: {{ company.postalCode }}</p>#}
+            {#<p>Product: {{ company.product }}</p>#}
+            {#<p>Price: {{ company.price }}</p>#}
+            {#{% endif %}#}
+            {#</div>#}
+            {#<div class="col-sm-4">#}
+            {#{% if company %}#}
+            {#<h2>Notes</h2>#}
+            {#<p>#}
+            {#{{ company.comment }}#}
+            {#</p>#}
+            {#{% endif %}#}
+            {#</div>#}
+            {#<div class="col-sm-12">#}
+            {#<ul class="list-inline">#}
+            {#{% if is_granted('ROLE_SUPER_ADMIN') %}#}
+            {#{% for step in steps() %}#}
+            {#{% if step.id > 1 %}#}
+            {#<li><a onclick="setStep('{{ step.id }}','{{ company.id }}',this); return false;" class="{% if step in company.step %} btn-success {% endif %}btn btn-default btn-xs text-uppercase" href="{{ path('set_step', { 'stepId':step.id, "id":company.id,"current_step":1 }) }}{% if main_page %}?main_page=1{% endif %}"> {{ step.name }} </a></li>#}
+            {#{% endif %}#}
+            {#{% endfor %}#}
+            {#{% endif %}#}
+            {#</ul>#}
+            {#</div>#}
+            {#<div class="col-sm-12">#}
+            {#<p>Added by: {{ company.creator.name }}</p>#}
+            {#{% if company.logs|length > 0 %}#}
+            {#{% for log in company.logs|reverse|slice(0,2) %}#}
+            {#{% if loop.first %}#}
+            {#<p>Last updated by: {{ log.user.name }} [{{ log.created|date('Y-m-d H:i:s') }}] - [Last Action: {{ log.message|raw }}]</p>#}
+            {#{% else %}#}
+            {#<p>Updated by: {{ log.user.name }} [{{ log.created|date('Y-m-d H:i:s') }}] - [Action: {{ log.message|raw }}]</p>#}
+            {#{% endif %}#}
+            {#{% endfor %}#}
+            {#{% endif %}#}
+
+
+            {#</div>#}
+        </div>
+
     </div>
 </div>

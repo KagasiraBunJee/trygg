@@ -84,6 +84,11 @@ class Company implements \JsonSerializable
     private $comment;
 
     /**
+     * @ORM\OneToMany(targetEntity="Note", mappedBy="company")
+     */
+    private $notes;
+
+    /**
      * @ORM\ManyToOne(targetEntity="User",inversedBy="companies")
      * @ORM\JoinColumn(name="creatorId", referencedColumnName="id")
      */
@@ -150,6 +155,11 @@ class Company implements \JsonSerializable
      * @ORM\Column(name="updated", type="datetime")
      */
     private $updated;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Manager\Bundle\Entity\Document", mappedBy="company")
+     */
+    private $documents;
 
     private $updateWIthoutImage = false;
 
@@ -449,6 +459,7 @@ class Company implements \JsonSerializable
         $this->logs = new \Doctrine\Common\Collections\ArrayCollection();
         $this->created = new \DateTime();
         $this->updated = new \DateTime();
+        $this->notes = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -508,10 +519,16 @@ class Company implements \JsonSerializable
     {
         return [
             "id" => $this->getId(),
+            "managerId" => $this->getCreator()->getId(),
             "name" => $this->getName(),
-            "step" => $this->getStep(),
-            "rejected" => $this->getRejected(),
-            "trashed" => $this->getTrashed()
+            "saleDate" => $this->getSaleDate()->format("c"),
+            "orgNumber" => $this->getOrgCode(),
+            "contact" => $this->getContact(),
+            "email" => $this->getEmail(),
+            "phone" => $this->getPhone(),
+            "postal" => $this->getPostalCode(),
+            "product" => $this->getProduct(),
+            "price" => $this->getPrice()
         ];
     }
 
@@ -741,5 +758,39 @@ class Company implements \JsonSerializable
     {
         $this->step = new \Doctrine\Common\Collections\ArrayCollection();
         $this->step[] = $step;
+    }
+
+    /**
+     * Add note
+     *
+     * @param \Manager\Bundle\Entity\Note $note
+     *
+     * @return Company
+     */
+    public function addNote(\Manager\Bundle\Entity\Note $note)
+    {
+        $this->notes[] = $note;
+
+        return $this;
+    }
+
+    /**
+     * Remove note
+     *
+     * @param \Manager\Bundle\Entity\Note $note
+     */
+    public function removeNote(\Manager\Bundle\Entity\Note $note)
+    {
+        $this->notes->removeElement($note);
+    }
+
+    /**
+     * Get notes
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getNotes()
+    {
+        return $this->notes;
     }
 }

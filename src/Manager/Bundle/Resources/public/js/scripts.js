@@ -1,5 +1,6 @@
 var openedCompany = 0;
-var host = window.location.host;
+//var host = window.location.host;
+var host = "localhost:8080/trygg/web";
 jQuery("document").ready(function(){
 
     jQuery("#searchAjax").keydown(function(){
@@ -61,6 +62,7 @@ jQuery("document").ready(function(){
         e.stopPropagation();
     });
     jQuery(".table > tbody > tr").click(function(){
+
         var main_page = jQuery(this).attr('main_page');
         var company_id = jQuery(this).attr('data-id');
         showCompany(company_id,main_page,this);
@@ -77,11 +79,37 @@ jQuery("document").ready(function(){
         date.val(yyyy+"-"+mm+"-"+dd);
     }
 
-    $(window).scroll(function() {
-        if($(window).scrollTop() + $(window).height() == $(document).height()) {
-            //alert("bottom!");
-            loadCompanies(1);
+    $('.table-scrollable').scroll(function() {
+        if(($('.table-scrollable').scrollTop() + $('.table-scrollable').height()) >= $('.table.custom').height()) {
+
+            var infiniteLoad = $('.custom').attr('infinite-load');
+            if (infiniteLoad)
+            {
+                loadCompanies(1, $('#filter'));
+            }
         }
+    });
+
+    $("#filter select").change(function(){
+        jQuery("#filter").submit();
+    });
+
+    //$('.selectpicker-1').ddslick();
+    //$('.selectpicker-2').ddslick();
+    //$('.selectpicker-3').ddslick({
+    //    onSelected: function(data) {
+    //        jQuery("#filter").submit();
+    //    }
+    //});
+
+    $('.selectpicker-1').selectric({
+        expandToItemText: true
+    });
+    $('.selectpicker-2').selectric({
+        expandToItemText: true
+    });
+    $('.selectpicker-3').selectric({
+        expandToItemText: true
     });
 });
 
@@ -89,7 +117,8 @@ function showCompany(id,main,obj)
 {
     if(id)
     {
-        if(openedCompany != id) {
+        showLoaderFor(jQuery('.company_item'));
+        //if(openedCompany != id) {
             var params = "";
             if (main) {
                 params = "?main_page=1";
@@ -97,20 +126,23 @@ function showCompany(id,main,obj)
             jQuery.ajax({
                 url: "http://"+host+"/ajax/company/" + id + params
             }).done(function (result) {
-                jQuery(".company-card").addClass("empty");
-                jQuery(".company-card td").html("");
+                //jQuery(".company-card").addClass("empty");
+                //jQuery(".company-card td").html("");
                 if (result != "nothing") {
                     openedCompany = id;
-                    jQuery(obj).next().removeClass("empty");
-                    jQuery(obj).next().children("td").html(result);
+                    jQuery('.company_item').html(result);
+
+                    hideLoaderFor(jQuery('.company_item'));
+                    //jQuery(obj).next().removeClass("empty");
+                    //jQuery(obj).next().children("td").html(result);
                 }
             });
-        }
-        else{
-            jQuery(".company-card").addClass("empty");
-            jQuery(".company-card td").html("");
-            openedCompany = 0;
-        }
+        //}
+        //else{
+            //jQuery(".company-card").addClass("empty");
+            //jQuery(".company-card td").html("");
+            //openedCompany = 0;
+        //}
     }
 }
 
@@ -123,23 +155,41 @@ function setStep(id,company_id,button)
         }).done(function(result){
             switch (result.result){
                 case "added":
-                    jQuery(button).addClass("btn-success");
+                    jQuery(button).addClass("access");
                     break;
                 case "removed":
-                    jQuery(button).removeClass("btn-success");
+                    jQuery(button).removeClass("list-group-item-info");
                     break;
             }
+
+            showCompany(openedCompany,false,{});
         });
     }
 }
 
-function loadCompanies(page)
+function showLoaderFor(object)
+{
+    $(object).waitMe({
+        effect : 'roundBounce',
+        bg : 'rgba(255,255,255,0.7)',
+        color : '#000',
+        text : 'Please wait...'
+    });
+}
+
+function hideLoaderFor(object)
+{
+    $(object).waitMe('hide');
+}
+
+function loadCompanies(page, $form)
 {
     var table = document.getElementById("companies");
     var tableItems = jQuery(table).find(".companyItem").length;
-    var url = "http://"+host+"/ajax/companies/"+tableItems;
-    jQuery.ajax({
-        url: url
+    var url = "http://"+host+"/ajax/companies/"+tableItems+window.location.search;
+
+    $.ajax({
+        url: url,
     }).done(function(result){
         jQuery(table).children("tbody").append(result.render);
         jQuery(".table > tbody > tr").click(function(){
@@ -147,5 +197,31 @@ function loadCompanies(page)
             var company_id = jQuery(this).attr('data-id');
             showCompany(company_id,main_page,this);
         });
+    });
+}
+
+function postForm( $form, callback ){
+
+    /*
+     * Get all form values
+     */
+    var values = {};
+    $.each( $form.serializeArray(), function(i, field) {
+        values[field.name] = field.value;
+    });
+
+    var formData = new FormData($form[0]);
+    /*
+     * Throw the form values to the server!
+     */
+    $.ajax({
+        type        : $form.attr( 'method' ),
+        url         : 'http://'+window.location.host+$form.attr( 'action' ),
+        data        : formData,
+        processData: false,
+        contentType: false,
+        success     : function(data) {
+            callback( data );
+        }
     });
 }

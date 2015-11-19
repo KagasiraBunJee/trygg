@@ -18,6 +18,15 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CompanyController extends Controller
 {
+    const STEPSTOENTER = [
+        4,
+        5,
+        6,
+        7,
+        9,
+        10
+    ];
+
     /**
      * @Route("/", defaults={"step" = 1, "id" = 0}, name="home")
      * @Route("/home/{step}" , name="main", defaults={"step" = 1, "id" = 0})
@@ -28,8 +37,21 @@ class CompanyController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $step = $em->getRepository("ManagerBundle:Step")->find($step);
-        $searchText = $request->get("search") ? $request->get("search") : "";
-        $companies = $em->getRepository("ManagerBundle:Company")->getCompanies($step,$searchText);
+
+        //filter
+        $searchText = $request->get("search", "");
+        $month = $request->get("month", 0);
+        $week = $request->get("week", 0);
+        $managerId = $request->get("manager", null);
+
+        $manager = null;
+        if ($managerId != null)
+        {
+            /** @var User $manager **/
+            $manager = $em->getRepository("ManagerBundle:User")->find($managerId);
+        }
+
+        $companies = $em->getRepository("ManagerBundle:Company")->getCompanies($step, $searchText,$month, $week, $manager);
         $company = new Company();
 
         $paginator  = $this->get('knp_paginator');
@@ -43,6 +65,8 @@ class CompanyController extends Controller
         {
             $company = $em->getRepository("ManagerBundle:Company")->find($id);
         }
+
+        $managers = $em->getRepository("ManagerBundle:User")->findAll();
 
         return [
             'step' => $step,
@@ -58,8 +82,20 @@ class CompanyController extends Controller
      */
     public function allCompaniesAction(Request $request)
     {
-        $searchText = $request->get("search") ? $request->get("search") : "";
-        $companies = $this->getDoctrine()->getRepository("ManagerBundle:Company")->getAllCompaniesQuery($searchText);
+        $em = $this->getDoctrine()->getManager();
+        $searchText = $request->get("search", "");
+        $month = $request->get("month", 0);
+        $week = $request->get("week", 0);
+        $managerId = $request->get("manager", null);
+
+        $manager = null;
+        if ($managerId != null)
+        {
+            /** @var User $manager **/
+            $manager = $em->getRepository("ManagerBundle:User")->find($managerId);
+        }
+
+        $companies = $em->getRepository("ManagerBundle:Company")->getAllCompaniesQuery($searchText, $month, $week, $manager);
         $step = new Step();
         $step->setName('All Customers');
 
@@ -200,8 +236,20 @@ class CompanyController extends Controller
         $step->setName('Rejected');
         $step->setStepLvl("rejected");
         $company = new Company();
-        $searchText = $request->get("search") ? $request->get("search") : "";
-        $companies = $em->getRepository("ManagerBundle:Company")->getRejectedListQuery($searchText);
+
+        $searchText = $request->get("search", "");
+        $month = $request->get("month", 0);
+        $week = $request->get("week", 0);
+        $managerId = $request->get("manager", null);
+
+        $manager = null;
+        if ($managerId != null)
+        {
+            /** @var User $manager **/
+            $manager = $em->getRepository("ManagerBundle:User")->find($managerId);
+        }
+
+        $companies = $em->getRepository("ManagerBundle:Company")->getRejectedListQuery($searchText, $month, $week, $manager);
 
         $paginator  = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
@@ -411,8 +459,20 @@ class CompanyController extends Controller
         $step = new Step();
         $step->setName('Reported companies');
         $step->setStepLvl("reported");
-        $searchText = $request->get("search") ? $request->get("search") : "";
-        $companies = $em->getRepository("ManagerBundle:Company")->getReportedCompanies($searchText);
+
+        $searchText = $request->get("search", "");
+        $month = $request->get("month", 0);
+        $week = $request->get("week", 0);
+        $managerId = $request->get("manager", null);
+
+        $manager = null;
+        if ($managerId != null)
+        {
+            /** @var User $manager **/
+            $manager = $em->getRepository("ManagerBundle:User")->find($managerId);
+        }
+
+        $companies = $em->getRepository("ManagerBundle:Company")->getReportedCompanies($searchText, $month, $week, $manager);
         $company = new Company();
 
         $paginator  = $this->get('knp_paginator');
@@ -470,6 +530,21 @@ class CompanyController extends Controller
         }
         else
         {
+            if($step->getId() == 3)
+            {
+                foreach (CompanyController::STEPSTOENTER as $newStepId)
+                {
+                    $newStep = $em->getRepository("ManagerBundle:Step")->find($newStepId);
+                    if ($newStep != null)
+                    {
+                        if (!$steps->contains($newStep))
+                        {
+                            $company->addStep($newStep);
+                        }
+                    }
+                }
+            }
+
             $company->addStep($step);
             $step->addCompany($company);
             $log->setMessage("Updated status of <strong>".$company->getName()."</strong> to status <strong>".$step->getName()."</strong>");
@@ -480,6 +555,7 @@ class CompanyController extends Controller
         $company->addLog($log);
         $em->persist($log);
         $em->flush();
+
         return new JsonResponse([
             'result' => $action
         ]);
@@ -491,7 +567,20 @@ class CompanyController extends Controller
      */
     public function getAjaxCompaniesByPage(Request $request, $items)
     {
-        $searchText = $request->get("search") ? $request->get("search") : "";
+        $em = $this->getDoctrine()->getManager();
+
+        $searchText = $request->get("search", "");
+        $month = $request->get("month", 0);
+        $week = $request->get("week", 0);
+        $managerId = $request->get("manager", null);
+
+        $manager = null;
+        if ($managerId != null)
+        {
+            /** @var User $manager **/
+            $manager = $em->getRepository("ManagerBundle:User")->find($managerId);
+        }
+
         $limit = $this->container->getParameter("items_per_page");
 
         $currentItems = $items;
@@ -503,7 +592,7 @@ class CompanyController extends Controller
             throw new NotFoundHttpException("Found no companies");
         }
 
-        $companies = $this->getDoctrine()->getRepository("ManagerBundle:Company")->getAllCompaniesQuery($searchText);
+        $companies = $em->getRepository("ManagerBundle:Company")->getAllCompaniesQuery($searchText, $month, $week, $manager);
 
         $paginator  = $this->get('knp_paginator');
         $pagination = $paginator->paginate(

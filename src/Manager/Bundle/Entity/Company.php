@@ -84,6 +84,11 @@ class Company implements \JsonSerializable
     private $comment;
 
     /**
+     * @ORM\OneToMany(targetEntity="Note", mappedBy="company")
+     */
+    private $notes;
+
+    /**
      * @ORM\ManyToOne(targetEntity="User",inversedBy="companies")
      * @ORM\JoinColumn(name="creatorId", referencedColumnName="id")
      */
@@ -150,6 +155,11 @@ class Company implements \JsonSerializable
      * @ORM\Column(name="updated", type="datetime")
      */
     private $updated;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Manager\Bundle\Entity\Document", mappedBy="company")
+     */
+    private $documents;
 
     private $updateWIthoutImage = false;
 
@@ -449,6 +459,8 @@ class Company implements \JsonSerializable
         $this->logs = new \Doctrine\Common\Collections\ArrayCollection();
         $this->created = new \DateTime();
         $this->updated = new \DateTime();
+        $this->notes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->documents = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -747,5 +759,73 @@ class Company implements \JsonSerializable
     {
         $this->step = new \Doctrine\Common\Collections\ArrayCollection();
         $this->step[] = $step;
+    }
+
+    /**
+     * Add note
+     *
+     * @param \Manager\Bundle\Entity\Note $note
+     *
+     * @return Company
+     */
+    public function addNote(\Manager\Bundle\Entity\Note $note)
+    {
+        $this->notes[] = $note;
+
+        return $this;
+    }
+
+    /**
+     * Remove note
+     *
+     * @param \Manager\Bundle\Entity\Note $note
+     */
+    public function removeNote(\Manager\Bundle\Entity\Note $note)
+    {
+        $this->notes->removeElement($note);
+    }
+
+    /**
+     * Get notes
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getNotes()
+    {
+        return $this->notes;
+    }
+
+    /**
+     * Add document
+     *
+     * @param \Manager\Bundle\Entity\Document $document
+     *
+     * @return Company
+     */
+    public function addDocument(\Manager\Bundle\Entity\Document $document)
+    {
+        $this->documents[] = $document;
+
+        return $this;
+    }
+
+    /**
+     * Remove document
+     *
+     * @param \Manager\Bundle\Entity\Document $document
+     */
+    public function removeDocument(\Manager\Bundle\Entity\Document $document)
+    {
+        $this->documents->removeElement($document);
+    }
+
+    /**
+     * Get documents
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getDocuments()
+    {
+        return $this->documents;
     }
 }

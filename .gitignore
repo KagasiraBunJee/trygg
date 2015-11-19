@@ -30,5 +30,8 @@
 /composer.phar
 #IDE
 .idea
+*.php~
 nbproject
 web/upload
+/web/css
+/web/js

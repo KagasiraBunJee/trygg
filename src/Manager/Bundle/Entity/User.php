@@ -66,7 +66,17 @@ class User implements UserInterface
      * @ORM\OneToMany(targetEntity="Log", mappedBy="user")
      */
     private $logs;
-    
+
+    /**
+     * @ORM\OneToMany(targetEntity="Note", mappedBy="creator")
+     */
+    private $notes;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Manager\Bundle\Entity\Document", mappedBy="user")
+     */
+    private $documents;
+
     /**
      * Get id
      *
@@ -104,6 +114,8 @@ class User implements UserInterface
     {
         $this->companies = new \Doctrine\Common\Collections\ArrayCollection();
         $this->logs = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->notes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->documents = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -275,5 +287,73 @@ class User implements UserInterface
     public function getLastName()
     {
         return $this->last_name;
+    }
+
+    /**
+     * Add note
+     *
+     * @param \Manager\Bundle\Entity\Note $note
+     *
+     * @return User
+     */
+    public function addNote(\Manager\Bundle\Entity\Note $note)
+    {
+        $this->notes[] = $note;
+
+        return $this;
+    }
+
+    /**
+     * Remove note
+     *
+     * @param \Manager\Bundle\Entity\Note $note
+     */
+    public function removeNote(\Manager\Bundle\Entity\Note $note)
+    {
+        $this->notes->removeElement($note);
+    }
+
+    /**
+     * Get notes
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getNotes()
+    {
+        return $this->notes;
+    }
+
+    /**
+     * Add document
+     *
+     * @param \Manager\Bundle\Entity\Document $document
+     *
+     * @return User
+     */
+    public function addDocument(\Manager\Bundle\Entity\Document $document)
+    {
+        $this->documents[] = $document;
+
+        return $this;
+    }
+
+    /**
+     * Remove document
+     *
+     * @param \Manager\Bundle\Entity\Document $document
+     */
+    public function removeDocument(\Manager\Bundle\Entity\Document $document)
+    {
+        $this->documents->removeElement($document);
+    }
+
+    /**
+     * Get documents
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getDocuments()
+    {
+        return $this->documents;
     }
 }
