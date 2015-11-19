@@ -18,15 +18,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CompanyController extends Controller
 {
-    const STEPSTOENTER = [
-        4,
-        5,
-        6,
-        7,
-        9,
-        10
-    ];
-
     /**
      * @Route("/", defaults={"step" = 1, "id" = 0}, name="home")
      * @Route("/home/{step}" , name="main", defaults={"step" = 1, "id" = 0})
@@ -551,7 +542,17 @@ class CompanyController extends Controller
         {
             if($step->getId() == 3)
             {
-                foreach (CompanyController::STEPSTOENTER as $newStepId)
+
+                $stepstoenter = [
+                    4,
+                    5,
+                    6,
+                    7,
+                    9,
+                    10
+                ];
+
+                foreach ($stepstoenter as $newStepId)
                 {
                     $newStep = $em->getRepository("ManagerBundle:Step")->find($newStepId);
                     if ($newStep != null)
