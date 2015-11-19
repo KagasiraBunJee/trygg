@@ -1,6 +1,5 @@
 var openedCompany = 0;
-//var host = window.location.host;
-var host = "localhost:8080/trygg/web";
+var host = window.location.host;
 jQuery("document").ready(function(){
 
     jQuery("#searchAjax").keydown(function(){
