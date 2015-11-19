@@ -188,7 +188,7 @@ function loadCompanies(page, $form)
     var tableItems = jQuery(table).find(".companyItem").length;
     var url = "http://"+host+"/ajax/companies/"+tableItems+window.location.search;
 
-    var loading = true;
+    loading = true;
     $.ajax({
         url: url,
     }).done(function(result){
@@ -199,7 +199,7 @@ function loadCompanies(page, $form)
             showCompany(company_id,main_page,this);
         });
 
-        var loading = false;
+        loading = false;
     });
 }
 
