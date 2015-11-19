@@ -1,5 +1,6 @@
 var openedCompany = 0;
 var host = window.location.host;
+var loading = false;
 jQuery("document").ready(function(){
 
     jQuery("#searchAjax").keydown(function(){
@@ -82,7 +83,7 @@ jQuery("document").ready(function(){
         if(($('.table-scrollable').scrollTop() + $('.table-scrollable').height()) >= $('.table.custom').height()) {
 
             var infiniteLoad = $('.custom').attr('infinite-load');
-            if (infiniteLoad)
+            if (infiniteLoad && !loading)
             {
                 loadCompanies(1, $('#filter'));
             }
@@ -187,6 +188,7 @@ function loadCompanies(page, $form)
     var tableItems = jQuery(table).find(".companyItem").length;
     var url = "http://"+host+"/ajax/companies/"+tableItems+window.location.search;
 
+    var loading = true;
     $.ajax({
         url: url,
     }).done(function(result){
@@ -196,6 +198,8 @@ function loadCompanies(page, $form)
             var company_id = jQuery(this).attr('data-id');
             showCompany(company_id,main_page,this);
         });
+
+        var loading = false;
     });
 }
 
