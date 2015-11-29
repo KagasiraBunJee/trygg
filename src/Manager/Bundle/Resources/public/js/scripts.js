@@ -1,48 +1,79 @@
 var openedCompany = 0;
 var host = window.location.host;
 var loading = false;
+
+var run = (function(){
+    var timer = 0;
+    return function(callback, ms){
+        clearTimeout (timer);
+        timer = setTimeout(callback, ms);
+    };
+})();
+
 jQuery("document").ready(function(){
 
-    jQuery("#searchAjax").keydown(function(){
+    jQuery("#searchAjax").keyup(function(){
         var params = [];
         var searchInput = jQuery(this);
         var rejected = searchInput.attr("rejected") ? "rejected=1" : "";
         var step = searchInput.attr("step") ? "stepId="+searchInput.attr("step") : "";
         params.push(rejected);
         params.push(step);
-        if(searchInput.val() != "")
+        if(searchInput.val().trim())
         {
+            console.log(searchInput.val());
             params.push("smartSearch="+searchInput.val());
             params = params.filter(function(n){ return n != "" });
             //console.log(params.join("&"));
             var dropdownmenu = jQuery(".smartSearchResult");
-            jQuery.ajax({
-                url:"http://"+host+"/company/search?"+params.join("&")
-            }).done(function(result) {
-                if (result.result != "nothing")
+
+            run(function(){
+
+                if(searchInput.val().trim())
                 {
-                    if(result.result.length > 0)
-                    {
-                        var resultData = result.result.reduce(function (a, b) {
-                            return "<li><a href='"+a.url+"'>"+a.name+"</a></li>" + "<li><a href='"+b.url+"'>"+b.name+"</a></li>";
-                        });
-                        if(typeof resultData === 'object')
+                    jQuery.ajax({
+                        url:"http://"+host+"/company/search?"+params.join("&")
+                    }).done(function(result) {
+                        if (result.result != "nothing")
                         {
-                            resultData = "<li><a href='"+resultData.url+"'>"+resultData.name+"</a></li>";
+                            if(result.result.length > 0)
+                            {
+                                var resultData = "";
+                                for(var i = 0; i < result.result.length; i++)
+                                {
+                                    var object = result.result[i];
+                                    resultData += "<li><a onclick='showCompany("+object.id+", false);' href='#companyID="+object.id+"'>"+object.name+"</a></li>";
+                                }
+
+                                //var resultData = result.result.reduce(function (a, b) {
+                                //    return "<li><a href='"+a.url+"'>"+a.name+"</a></li>" + "<li><a href='"+b.url+"'>"+b.name+"</a></li>";
+                                //});
+                                //if(typeof resultData === 'object')
+                                //{
+                                //    resultData = "<li><a href='"+resultData.url+"'>"+resultData.name+"</a></li>";
+                                //}
+                                dropdownmenu.html(resultData);
+                                dropdownmenu.addClass("showSmartSearch");
+                                return false;
+                            }
+                            else
+                            {
+                                if(dropdownmenu.hasClass("showSmartSearch"))
+                                {
+                                    dropdownmenu.removeClass("showSmartSearch");
+                                }
+                            }
                         }
-                        dropdownmenu.html(resultData);
-                        dropdownmenu.addClass("showSmartSearch");
-                        return false;
-                    }
-                    else
+                    });
+                }
+                else
+                {
+                    if(dropdownmenu.hasClass("showSmartSearch"))
                     {
-                        if(dropdownmenu.hasClass("showSmartSearch"))
-                        {
-                            dropdownmenu.removeClass("showSmartSearch");
-                        }
+                        dropdownmenu.removeClass("showSmartSearch");
                     }
                 }
-            });
+            }, 1000 );
         }
 
     });

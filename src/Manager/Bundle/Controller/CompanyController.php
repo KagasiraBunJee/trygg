@@ -402,7 +402,7 @@ class CompanyController extends Controller
             {
 
                 $step = $em->getRepository("ManagerBundle:Step")->find($searchWithStep);
-                $companies = $em->getRepository("ManagerBundle:Company")->getCompanies($step,$searchTxt);
+                $companies = $em->getRepository("ManagerBundle:Company")->getCompanies($step,$searchTxt)->getResult();
             }
             elseif($rejected)
             {
@@ -423,20 +423,20 @@ class CompanyController extends Controller
             /**
              * @var Company $company
              */
-            foreach($companies as $index=>$company)
-            {
-                $steps = $company->getStep();
-                /**
-                 * @var Step $cStep
-                 */
-                foreach($steps as $cStep)
-                {
-                    if($cStep->getId() > $step->getId())
-                    {
-                        unset($companies[$index]);
-                    }
-                }
-            }
+//            foreach($companies as $index=>$company)
+//            {
+//                $steps = $company->getStep();
+//                /**
+//                 * @var Step $cStep
+//                 */
+//                foreach($steps as $cStep)
+//                {
+//                    if($cStep->getId() > $step->getId())
+//                    {
+//                        unset($companies[$index]);
+//                    }
+//                }
+//            }
 
             foreach($companies as $company)
             {
