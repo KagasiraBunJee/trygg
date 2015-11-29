@@ -21,7 +21,7 @@ class CompanyRepository extends EntityRepository
         $queryBuilder = $repository->createQueryBuilder('p');
         $queryBuilder
             ->innerJoin('p.step','u')
-            ->where("u = :step and p.name LIKE :text and p.rejected = 0 and p.trashed = 0")
+            ->where("u = :step and (p.name LIKE :text OR p.email LIKE :text OR p.orgCode LIKE :text OR p.address LIKE :text OR p.contact LIKE :text OR p.phone LIKE :text OR p.postalCode LIKE :text OR p.product LIKE :text) and p.rejected = 0 and p.trashed = 0")
             ->setParameter('step', $step->getId())
             ->setParameter("text","%$searchText%");
 

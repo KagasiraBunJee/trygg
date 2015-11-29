@@ -111,12 +111,19 @@ jQuery("document").ready(function(){
     $('.selectpicker-3').selectric({
         expandToItemText: true
     });
+
+    var hash = window.location.hash.split("=");
+    if (hash[0] == "#companyID")
+    {
+        showCompany(hash[1], false);
+    }
 });
 
 function showCompany(id,main,obj)
 {
     if(id)
     {
+        window.location.hash = "#companyID="+id;
         showLoaderFor(jQuery('.company_item'));
         //if(openedCompany != id) {
             var params = "";

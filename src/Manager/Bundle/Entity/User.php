@@ -63,12 +63,12 @@ class User implements UserInterface
     private $companies;
     
     /**
-     * @ORM\OneToMany(targetEntity="Log", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Log", mappedBy="user", orphanRemoval=true, cascade={"remove"})
      */
     private $logs;
 
     /**
-     * @ORM\OneToMany(targetEntity="Note", mappedBy="creator")
+     * @ORM\OneToMany(targetEntity="Note", mappedBy="creator", orphanRemoval=true, cascade={"remove"})
      */
     private $notes;
 

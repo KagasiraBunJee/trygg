@@ -12,7 +12,7 @@
                     {% if is_granted('ROLE_SUPER_ADMIN') %}
                         {% for step in steps() %}
                             {% if step.id > 2 %}
-                                <a onclick="setStep('{{ step.id }}','{{ company.id }}',this); return false;" class="list-margin list-group-item {% if (step not in company.step and step.id != 3) or (step in company.step and step.id == 3 ) %} list-group-item-info {% else %} list-group-item-danger {% endif %}btn btn-default btn-xs text-uppercase" href="{{ path('set_step', { 'stepId':step.id, "id":company.id,"current_step":1 }) }}{% if main_page %}?main_page=1{% endif %}"> {{ step.name }} </a>
+                                <a onclick="setStep('{{ step.id }}','{{ company.id }}',this); return false;" class="list-margin list-group-item list-group-item-trygg {% if (step not in company.step and step.id != 3) or (step in company.step and step.id == 3 ) %} trygg-active {% else %} list-group-item-danger {% endif %}btn btn-default btn-xs text-uppercase" href="{{ path('set_step', { 'stepId':step.id, "id":company.id,"current_step":1 }) }}{% if main_page %}?main_page=1{% endif %}"> {{ step.name }} </a>
                             {% endif %}
                         {% endfor %}
                     {% endif %}
@@ -39,16 +39,16 @@
                 </div>
 
                 <div class="row row-margin">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <a href="{{ path('note_list', {'id': company.id}) }}" role="button" class="btn btn-info btn-default btn-block">VIEW NOTES</a>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-5">
                         <a href="{{ path('document_list', {'id': company.id}) }}" role="button" class="btn btn-info btn-default btn-block">VIEW DOCUMENTS</a>
                     </div>
                 </div>
                 <div class="row row-margin">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <button type="button" class="btn btn-success btn-default btn-block" data-toggle="modal" data-target="#myModal">
                             ADD NOTE
                         </button>
@@ -60,7 +60,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-5">
                         <button type="button" class="btn btn-success btn-default btn-block" data-toggle="modal" data-target="#documentModal">
                             ADD DOCUMENT
                         </button>
@@ -72,12 +72,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-3">
-                        <h2><span class="label label-primary">{{ company.saleDate|date("F Y") }}</span></h2>
-                    </div>
-                    <div class="col-md-2">
-                        <h2>
+                <table class="status">
+                    <tr>
+                        <td><h2><span class="label label-primary">{{ company.saleDate|date("F Y") }}</span></h2></td>
+                        <td><h2>
                     <span class="label label-success">
                         Week
                         {% if company.saleDate|date("j") < 8 %}
@@ -90,12 +88,11 @@
                             4
                         {% endif %}
                     </span>
-                        </h2>
-                    </div>
-                    <div class="col-md-3">
-                        <h2><span class="label label-warning">{{ company.creator.name~' '~company.creator.lastName }}</span></h2>
-                    </div>
-                </div>
+                            </h2>
+                        </td>
+                        <td><h2><span class="label label-warning">{{ company.creator.name~' '~company.creator.lastName }}</span></h2></td>
+                    </tr>
+                </table>
             </div>
 
             {#<div class="col-sm-3">#}

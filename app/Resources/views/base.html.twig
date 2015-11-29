@@ -89,17 +89,17 @@
             {% if app.user and is_granted('ROLE_SUPER_ADMIN') %}
             <div style="padding-top: 5px; padding-left: 50px; padding-right: 50px;" class="col-md-3">
                 <div class="list-group">
-                    <a href="{{ path('main', { 'step':1 }) }}" class="list-margin list-group-item list-group-item-info text-uppercase btn btn-default btn-xs">New Sales</a>
-                    <a href="{{ path('rejected') }}" class="list-margin list-group-item list-group-item-danger text-uppercase btn btn-default btn-xs">Not Accepted</a>
+                    {#<a href="{{ path('main', { 'step':1 }) }}" class="list-margin list-group-item list-group-item-info text-uppercase btn list-group-item-trygg">New Sales</a>#}
+                    {#<a href="{{ path('rejected') }}" class="list-margin list-group-item list-group-item-danger text-uppercase btn btn-default btn-xs">Not Accepted</a>#}
 
                     {% for cat in steps() %}
-                        {% if cat.id > 1 %}
-                            <a class="list-margin list-group-item list-group-item-info text-uppercase btn btn-default btn-xs" href="{{ path('main', { 'step':cat.id }) }}"> {{ cat.otherName }} </a>
-                        {% endif %}
+                        {#{% if cat.id > 1 %}#}
+                            <a class="list-margin list-group-item text-uppercase btn list-group-item-trygg {% if app.request.get('step') is not null %} {% if app.request.get('step') == cat.id %} trygg-active {% endif %} {% endif %}" href="{{ path('main', { 'step':cat.id }) }}"> {{ cat.otherName }} </a>
+                        {#{% endif %}#}
                     {% endfor %}
                 </div>
                 <div class="list-group">
-                    <a class="list-margin list-group-item active text-uppercase btn btn-default btn-xs" href="{{ path('all_customers') }}">All companies</a>
+                    <a class="list-margin list-group-item text-uppercase btn list-group-item-trygg {% if app.request.attributes.get('_route') == "all_customers" %}trygg-active{% endif %}" href="{{ path('all_customers') }}"> All companies</a>
                 </div>
 
                 {#<ul class="list-group">#}
