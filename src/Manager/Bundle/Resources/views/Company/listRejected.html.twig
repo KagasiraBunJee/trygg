@@ -79,14 +79,15 @@
                         {% endfor %}
                     {% endif %}
                 </table>
-                <div class="row">
-                    <div class="col-md-12 text-center">
-                        {{ knp_pagination_render(companies) }}
-                    </div>
-                </div>
+
                 {% if companies|length < 1 %}
                     <h2 style="margin: 0;"><small>No companies found</small></h2>
                 {% endif %}
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                {{ knp_pagination_render(companies) }}
+            </div>
         </div>
         {#<div style="background: #e6e6e6;" class="col-md-12 company_item">
             {% if company.id is not null %}
