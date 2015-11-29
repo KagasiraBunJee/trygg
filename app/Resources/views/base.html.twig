@@ -46,7 +46,7 @@
                                 <li style="">
                                     <form class="navbar-form" role="search" method="get">
                                         <div class="form-group">
-                                            <input style="width: 300px;" type="text" {% if step is defined %} step="{{ step.id }}" {% if step.name == "Rejected" %} rejected="true" {% endif %} {% endif %} id="searchAjax" class="form-control" placeholder="Search" name="search">
+                                            <input style="width: 300px;" type="text" {% if step is defined %} step="{{ step.id }}" {% if step.name == "Rejected" %} rejected="true" {% endif %} {% endif %} id="searchAjax" class="form-control" placeholder="Search" name="search" value="{{ app.request.get('search') }}">
                                             <ul class="dropdown-menu smartSearchResult" role="menu">
                                             </ul>
                                         </div>

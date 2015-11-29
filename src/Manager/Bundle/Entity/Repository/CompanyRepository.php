@@ -21,7 +21,9 @@ class CompanyRepository extends EntityRepository
         $queryBuilder = $repository->createQueryBuilder('p');
         $queryBuilder
             ->innerJoin('p.step','u')
-            ->where("u = :step and (p.name LIKE :text OR p.email LIKE :text OR p.orgCode LIKE :text OR p.address LIKE :text OR p.contact LIKE :text OR p.phone LIKE :text OR p.postalCode LIKE :text OR p.product LIKE :text) and p.rejected = 0 and p.trashed = 0")
+            ->where("u = :step")
+            ->andWhere("(p.name LIKE :text OR p.email LIKE :text OR p.orgCode LIKE :text OR p.address LIKE :text OR p.contact LIKE :text OR p.phone LIKE :text OR p.postalCode LIKE :text OR p.product LIKE :text)")
+            ->andWhere("p.rejected = 0 and p.trashed = 0")
             ->setParameter('step', $step->getId())
             ->setParameter("text","%$searchText%");
 
@@ -50,7 +52,8 @@ class CompanyRepository extends EntityRepository
         $repository = $em->getRepository("ManagerBundle:Company");
         $queryBuilder = $repository->createQueryBuilder('p');
 
-        $queryBuilder->where("p.name LIKE :text")
+        $queryBuilder
+            ->where("(p.name LIKE :text OR p.email LIKE :text OR p.orgCode LIKE :text OR p.address LIKE :text OR p.contact LIKE :text OR p.phone LIKE :text OR p.postalCode LIKE :text OR p.product LIKE :text)")
             ->setParameter("text","%$searchText%");
 
         if ($month)
@@ -78,7 +81,7 @@ class CompanyRepository extends EntityRepository
         $repository = $em->getRepository("ManagerBundle:Company");
         $queryBuilder = $repository->createQueryBuilder('p');
 
-        $queryBuilder->where("p.rejected = 1 and p.name LIKE :text and p.trashed = 0")
+        $queryBuilder->where("p.rejected = 1 and (p.name LIKE :text OR p.email LIKE :text OR p.orgCode LIKE :text OR p.address LIKE :text OR p.contact LIKE :text OR p.phone LIKE :text OR p.postalCode LIKE :text OR p.product LIKE :text) and p.trashed = 0")
             ->setParameter("text","%$searchText%");
 
         if ($month)
@@ -110,7 +113,7 @@ class CompanyRepository extends EntityRepository
         $date = strtotime("-5 day", $date);
         $searchDate = date('Y-m-d', $date)." 23:59:59";
 
-        $queryBuilder->where("p.name LIKE :text and p.updated <= :dataTime")
+        $queryBuilder->where("(p.name LIKE :text OR p.email LIKE :text OR p.orgCode LIKE :text OR p.address LIKE :text OR p.contact LIKE :text OR p.phone LIKE :text OR p.postalCode LIKE :text OR p.product LIKE :text) and p.updated <= :dataTime")
             ->setParameter("text","%$searchText%")
             ->setParameter('dataTime', $searchDate);
 
