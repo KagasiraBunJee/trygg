@@ -121,9 +121,9 @@ jQuery("document").ready(function(){
         }
     });
 
-    $("#filter select").change(function(){
-        jQuery("#filter").submit();
-    });
+    //$("#filter select").change(function(){
+    //    jQuery("#filter").submit();
+    //});
 
     //$('.selectpicker-1').ddslick();
     //$('.selectpicker-2').ddslick();
