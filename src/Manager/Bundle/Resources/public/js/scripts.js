@@ -121,18 +121,6 @@ jQuery("document").ready(function(){
         }
     });
 
-    //$("#filter select").change(function(){
-    //    jQuery("#filter").submit();
-    //});
-
-    //$('.selectpicker-1').ddslick();
-    //$('.selectpicker-2').ddslick();
-    //$('.selectpicker-3').ddslick({
-    //    onSelected: function(data) {
-    //        jQuery("#filter").submit();
-    //    }
-    //});
-
     $('.selectpicker-1').selectric({
         expandToItemText: true
     });
@@ -265,4 +253,11 @@ function postForm( $form, callback ){
             callback( data );
         }
     });
+}
+
+function goToWithAlert(http, message) {
+
+    if (confirm(message)) {
+        window.location.href = http;
+    }
 }

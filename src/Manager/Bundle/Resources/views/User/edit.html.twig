@@ -2,9 +2,9 @@
 
 
 {% block body %}
-    <div class="row">
+    <div style="margin-top:17px;" class="row">
         <div class="col-md-6">
-            {% if result == true %}
+            {% if result == 2 %}
                 <div class="alert alert-success" role="alert">You have successfully saved this manager.</div>
             {% elseif form.email.vars.errors|length > 0 %}
                 <div class="alert alert-danger" role="alert">Form is invalid!</div>
@@ -26,6 +26,10 @@
                     <div class="form-group">
                         <label for="last_name">Last Name</label>
                         {{ form_widget(form.last_name, { "attr" : { "class" : "form-control" }, "id" : "last_name" }) }}
+                    </div>
+                    <div class="form-group">
+                        <label for="last_name">Password</label>
+                        {{ form_widget(form.password, { "attr" : { "class" : "form-control" }, "id" : "password" }) }}
                     </div>
                     <div class="form-group">
                         <label for="role">User type</label>

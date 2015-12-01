@@ -31,7 +31,7 @@
                                     <a title="Edit" href="{{ path('edit_user', {'id':user.id}) }}" type="button" class="btn btn-default btn-sm" aria-label="Left Align">
                                         <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                                     </a>
-                                    <a title="Delete company" href="{{ path("delete_user",{"id":user.id}) }}" type="button" class="btn btn-default btn-sm" aria-label="Left Align">
+                                    <a onclick="goToWithAlert('{{ path("delete_user",{"id":user.id}) }}','Are you sure you want to delete manager?');" title="Delete company" href="#" type="button" class="btn btn-default btn-sm" aria-label="Left Align">
                                         <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                                     </a>
                                 </div>
