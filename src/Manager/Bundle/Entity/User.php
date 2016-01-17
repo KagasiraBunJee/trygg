@@ -200,6 +200,14 @@ class User implements UserInterface
         return $this->role;
     }
 
+    public function isManager()
+    {
+        if ($this->getRole() == "ROLE_ADMIN")
+        {
+            return true;
+        }
+        return false;
+    }
     /**
      * Add companies
      *

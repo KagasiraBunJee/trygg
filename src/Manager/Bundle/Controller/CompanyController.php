@@ -10,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+use Manager\Bundle\Entity\User;
 use Manager\Bundle\Entity\Company;
 use Manager\Bundle\Form\CompanyType;
 use Manager\Bundle\Entity\Step;
@@ -28,6 +29,8 @@ class CompanyController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $step = $em->getRepository("ManagerBundle:Step")->find($step);
+        /** @var User $user **/
+        $user = $this->getUser();
 
         //filter
         $searchText = $request->get("search", "");
@@ -36,10 +39,17 @@ class CompanyController extends Controller
         $managerId = $request->get("manager", null);
 
         $manager = null;
-        if ($managerId != null)
+        if ($managerId != null || $user->isManager())
         {
             /** @var User $manager **/
-            $manager = $em->getRepository("ManagerBundle:User")->find($managerId);
+            if ($user->isManager())
+            {
+                $manager = $em->getRepository("ManagerBundle:User")->find($user->getId());
+            }
+            else
+            {
+                $manager = $em->getRepository("ManagerBundle:User")->find($managerId);
+            }
         }
 
         $companies = $em->getRepository("ManagerBundle:Company")->getCompanies($step, $searchText,$month, $week, $manager);
