@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div style="margin-top: 15px;" class="table-responsive table-scrollable">
+        <table class="table">
+
+            <thead>
+            <tr>
+                <td>
+                    ID
+                </td>
+                <td>
+                    Document
+                </td>
+                <td>
+                    Manager
+                </td>
+                <td>
+                    Created
+                </td>
+            </tr>
+            </thead>
+            <tbody>
+            {% for document in documents %}
+
+                <tr>
+                    <td>{{ document.id }}</td>
+                    <td> <a href="{{ asset('upload/documents/'~document.path) }}">{% if document.name is not null %}{{ document.name }}{% else %}File{% endif %}</a> </td>
+                    <td>{{ document.user.name~' '~document.user.lastName }}</td>
+                    <td>{{ document.created|date('d-F-Y H:i:s') }}</td>
+                </tr>
+
+            {% endfor %}
+            </tbody>
+
+
+        </table>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-center">
+            {{ knp_pagination_render(documents) }}
+        </div>
+    </div>
+
+{% endblock %}

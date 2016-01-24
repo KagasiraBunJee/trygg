@@ -5,104 +5,196 @@
         <title>{% block title %}Welcome!{% endblock %}</title>
         {% stylesheets 'bundles/manager/css/*' filter='cssrewrite' %}
         {% endstylesheets %}
-        <link href="{{ asset('bundles/manager/css/bootstrap.min.css') }}" rel="stylesheet">
 
+        <link href="{{ asset('bundles/manager/css/spinner.css') }}" rel="stylesheet">
+        <link href="{{ asset('bundles/manager/css/bootstrap.min.css') }}" rel="stylesheet">
         <link href="{{ asset('bundles/manager/css/bootstrap-datepicker3.min.css') }}" rel="stylesheet">
         <link href="{{ asset('bundles/manager/css/bootstrap-datepicker3.standalone.min.css') }}" rel="stylesheet">
         <link href="{{ asset('bundles/manager/css/style.css') }}" rel="stylesheet">
+        <link href="{{ asset('bundles/manager/css/selectric.css') }}" rel="stylesheet">
+        <link href="{{ asset('bundles/manager/css/waitMe.css') }}" rel="stylesheet">
         {#<link href="{{ asset('bundles/manager/css/bootstrap-theme.min.css') }}" rel="stylesheet">#}
+
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         {% javascripts 'bundles/manager/js/*' %}
         {% endjavascripts %}
         <script src="{{ asset('bundles/manager/js/scripts.js') }}"></script>
+        <script src="{{ asset('bundles/manager/js/waitMe.min.js') }}"></script>
+        <script src="{{ asset('bundles/manager/js/jquery.selectric.min.js') }}"></script>
         <script src="{{ asset('bundles/manager/js/bootstrap.min.js') }}"></script>
         <script src="{{ asset('bundles/manager/js/bootstrap-datepicker.min.js') }}"></script>
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
-
     </head>
     <body style="overflow-x: hidden;">
         {% block usermenu %}
             {% if app.user %}
                 <nav style="margin-bottom:0;" class="navbar navbar-default">
-                    <div class="navbar-header">
-                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </button>
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a style="padding-top:0;padding-bottom: 0;" class="navbar-brand" href="{{ path('home') }}"><img height="50px" src="{{ asset('bundles/manager/images/logo.jpg') }}"></a>
+                        </div>
+
+                        <div style="padding:0;" class="collapse navbar-collapse navbar-ex1-collapse">
+                            <ul style="width: 100%;" class="nav navbar-nav">
+                                <li style="">
+                                    <form class="navbar-form" role="search" method="get">
+                                        <div class="form-group">
+                                            <input style="width: 300px;" type="text" {% if step is defined %} step="{{ step.id }}" {% if step.name == "Rejected" %} rejected="true" {% endif %} {% endif %} id="searchAjax" class="form-control" placeholder="Search" name="search" value="{{ app.request.get('search') }}">
+                                            <ul class="dropdown-menu smartSearchResult" role="menu">
+                                            </ul>
+                                        </div>
+                                    </form>
+                                </li>
+                                <li class="pull-right"><a href="{{ path('logout') }}"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Sign out</a></li>
+                                <li class="pull-right"><a href="#">Hi,<strong>{{ app.user.name }}</strong></a></li>
+                            </ul>
+                        </div>
                     </div>
-                    <div style="padding:0;" class="collapse navbar-collapse navbar-ex1-collapse">
-                        <ul style="width: 100%;" class="nav navbar-nav">
-                            <li style="margin-right: 25%;"><a style="padding:0;" href="{{ path('home') }}"><img height="50px" src="{{ asset('bundles/manager/images/logo.jpg') }}"></a></li>
-                            <li style="">
-                                <form class="navbar-form" role="search" method="get">
-                                    <div class="form-group">
-                                        <input style="width: 300px;" type="text" {% if step is defined %} step="{{ step.id }}" {% if step.name == "Rejected" %} rejected="true" {% endif %} {% endif %} id="searchAjax" class="form-control" placeholder="Search" name="search">
-                                        <ul class="dropdown-menu smartSearchResult" role="menu">
-                                        </ul>
-                                    </div>
-                                </form>
-                            </li>
-                            <li class="pull-right"><a href="{{ path('logout') }}"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Sign out</a></li>
-                            <li class="pull-right"><a href="#">Hi,<strong>{{ app.user.name }}</strong></a></li>
-                        </ul>
+                </nav>
+
+                <nav class="navbar navbar-inverse" role="navigation">
+                    <div class="container-fluid">
+                        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                            <ul class="nav navbar-nav">
+
+                                <li class=""><a class="btn btn-link" href="{{ path('reg_manager') }}">New Manager</a></li>
+                                <li class=""><a class="btn btn-link" href="{{ path('personal') }}">Sales Managers</a></li>
+                                <li class=""><a class="btn btn-link" href="{{ path("reports") }}">Reports</a></li>
+                                <li class=""><a class="btn btn-link" href="{{ path("settings_page") }}">Settings</a></li>
+
+                                <li class="social pull-right">
+                                    {% if hide_add_btn is not defined %}
+                                        <a href="{{ path('add_sale') }}" class=""><i class="fa fa-plus"></i> Create new company</a>
+                                    {% endif %}
+                                    {% if show_manager_button is defined %}
+                                        <a href="{{ path('reg_manager') }}" class=""><i class="fa fa-plus"></i> Create new user</a>
+                                    {% endif %}
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </nav>
 
             {% endif %}
         {% endblock %}
         <div style="margin-left: auto;margin-right: auto;" class="row">
-            {% if app.user %}
-                <h2><small>
-                    {% if step is defined %}
-                        {{ step.name }} list
-                    {% elseif bar_title is defined %}
-                        {{ bar_title|raw() }}
-                    {% endif %}</small>
-                    {% if hide_add_btn is not defined %}
-                        <a style="" href="{{ path('add_sale') }}" class="btn btn-default pull-right"><i class="fa fa-plus"></i> Create new company</a>
-                    {% endif %}
-                    {% if show_manager_button is defined %}
-                        <a style="" href="{{ path('reg_manager') }}" class="btn btn-default pull-right"><i class="fa fa-plus"></i> Create new user</a>
-                    {% endif %}
-                </h2>
-            {% endif %}
         {% block sidemenu %}
             {% if app.user and is_granted('ROLE_SUPER_ADMIN') %}
-            <div class="col-md-2 custom-menu">
-                <ul class="list-group">
-                    <li class="list-group-item saveCell"><a style="" class="btn btn-link" href="{{ path('main', { 'step':1 }) }}"> New Sales </a></li>
-                    <li class="list-group-item rejectCell"><a style="" class="btn btn-link" href="{{ path('rejected') }}"> Not Accepted </a></li>
-                </ul>
-                <ul class="list-group">
+            <div style="padding-top: 5px; padding-left: 50px; padding-right: 50px;" class="col-md-3">
+                <div class="list-group">
+                    {#<a href="{{ path('main', { 'step':1 }) }}" class="list-margin list-group-item list-group-item-info text-uppercase btn list-group-item-trygg">New Sales</a>#}
+                    {#<a href="{{ path('rejected') }}" class="list-margin list-group-item list-group-item-danger text-uppercase btn btn-default btn-xs">Not Accepted</a>#}
+
                     {% for cat in steps() %}
-                        {% if cat.id > 1 and cat.id < 8%}
-                            <li class="list-group-item"><a class="btn btn-link" href="{{ path('main', { 'step':cat.id }) }}"> {{ cat.name }} </a></li>
-                        {% endif %}
+                        {#{% if cat.id > 1 %}#}
+                            <a class="list-margin list-group-item text-uppercase btn list-group-item-trygg {% if app.request.get('step') is not null %} {% if app.request.get('step') == cat.id %} trygg-active {% endif %} {% endif %}" href="{{ path('main', { 'step':cat.id }) }}"> {{ cat.otherName }} </a>
+                        {#{% endif %}#}
                     {% endfor %}
-                </ul>
-                <ul class="list-group">
-                    <li class="list-group-item infoCell"><a style="" class="btn btn-link" href="{{ path('main', { 'step':8 }) }}">Not Paid</a></li>
-                    <li class="list-group-item infoCell"><a style="" class="btn btn-link" href="{{ path('main', { 'step':9 }) }}">Complaints</a></li>
-                    <li class="list-group-item infoCell"><a style="" class="btn btn-link" href="{{ path('main', { 'step':10 }) }}">Other</a></li>
-                </ul>
-                <ul class="list-group">
-                    <li class="list-group-item"><a class="btn btn-link" href="{{ path('all_customers') }}">All companies</a></li>
-                </ul>
-                <ul class="list-group">
-                    <li class="list-group-item"><a class="btn btn-link" href="{{ path('personal') }}">Sales Managers</a></li>
-                    <li class="list-group-item"><a class="btn btn-link" href="{{ path('reg_manager') }}">Add new user</a></li>
-                    <li class="list-group-item"><a class="btn btn-link" href="{{ path("reports") }}">Reports</a></li>
-                    <li class="list-group-item"><a class="btn btn-link" href="{{ path("settings_page") }}">Settings</a></li>
-                </ul>
+                </div>
+                <div class="list-group">
+                    <a class="list-margin list-group-item text-uppercase btn list-group-item-trygg {% if app.request.attributes.get('_route') == "all_customers" %}trygg-active{% endif %}" href="{{ path('all_customers') }}"> All companies</a>
+                </div>
+
+                {#<ul class="list-group">#}
+                    {#<li class="list-group-item saveCell"><a style="" class="btn btn-link" href="{{ path('main', { 'step':1 }) }}"> New Sales </a></li>#}
+                    {#<li class="list-group-item rejectCell"><a style="" class="btn btn-link" href="{{ path('rejected') }}"> Not Accepted </a></li>#}
+                {#</ul>#}
+                {#<ul class="list-group">#}
+                    {#{% for cat in steps() %}#}
+                        {#{% if cat.id > 1 %}#}
+                            {#<li class="list-margin list-group-item text-uppercase"><a class="btn btn-link" href="{{ path('main', { 'step':cat.id }) }}"> {{ cat.otherName }} </a></li>#}
+                        {#{% endif %}#}
+                    {#{% endfor %}#}
+                {#</ul>#}
+                {#<ul class="list-group">#}
+                    {#<li class="list-group-item infoCell"><a class="btn btn-link" href="{{ path('all_customers') }}">All companies</a></li>#}
+                {#</ul>#}
             </div>
             {% endif %}
         {% endblock %}
-            <div style="padding-right:0;" class="{% if app.user and is_granted('ROLE_SUPER_ADMIN') %}col-md-10{% else %}col-md-12{% endif %}">
+            <div style="padding-left: 50px;padding-right: 100px;" class="{% if app.user and is_granted('ROLE_SUPER_ADMIN') %}col-md-9{% else %}col-md-12{% endif %}">
 
                 {% block body %}{% endblock %}
             </div>
+
+            <div class="col-md-12 company_item">
+            </div>
+
+
+            {#{% if company.id is not null %}#}
+                {#<div class="row company-style">#}
+                    {#<div class="col-sm-3">#}
+                        {#<div>#}
+                            {#<h1>#}
+                                {#{% if company.image is not empty %}#}
+                                    {#<img src="{{ asset('upload/' ~ company.id ~'/' ~ company.image)}}" alt="" height="100" />#}
+                                {#{% else %}#}
+                                    {#<img src="{{ asset('upload/default.png')}}" alt="" height="100" />#}
+                                {#{% endif %}#}
+                            {#</h1>#}
+                        {#</div>#}
+                        {#<div>#}
+                            {#{% if company.rejected %}#}
+                                {#Status: <span style="color:red;">Rejected</span>#}
+                            {#{% elseif company.trashed %}#}
+                                {#Status: <span style="color:red;">Deleted</span>#}
+                            {#{% endif %}#}
+                        {#</div>#}
+                    {#</div>#}
+                    {#<div class="col-sm-5">#}
+                        {#{% if company %}#}
+                            {#<h2>{{ company.name }}</h2>#}
+                            {#<p>Company name: {{ company.name }}</p>#}
+                            {#<p>Company email: {{ company.email }}</p>#}
+                            {#<p>Org. Number: {{ company.orgCode }}</p>#}
+                            {#<p>Company id: {{ company.id }}</p>#}
+                            {#<p>Sales date: {{ company.saleDate|date("d-F-Y") }}</p>#}
+                            {#<p>Postal Code: {{ company.postalCode }}</p>#}
+                            {#<p>Product: {{ company.product }}</p>#}
+                            {#<p>Price: {{ company.price }}</p>#}
+                        {#{% endif %}#}
+                    {#</div>#}
+                    {#<div class="col-sm-4">#}
+                        {#{% if company %}#}
+                            {#<h2>Notes</h2>#}
+                            {#<p>#}
+                                {#{{ company.comment }}#}
+                            {#</p>#}
+                        {#{% endif %}#}
+                    {#</div>#}
+                    {#<div class="col-sm-12">#}
+                        {#<ul class="list-inline">#}
+                            {#{% if is_granted('ROLE_SUPER_ADMIN') %}#}
+                                {#{% for step in steps() %}#}
+                                    {#{% if step.id > 1 %}#}
+                                        {#<li><a class="{% if step in company.step %} btn-success {% endif %}btn btn-default btn-xs text-uppercase" href="{{ path('set_step', { 'stepId':step.id, "id":company.id, "current_step":app.request.attributes.get('step') }) }}"> {{ step.name }} </a></li>#}
+                                    {#{% endif %}#}
+                                {#{% endfor %}#}
+                            {#{% endif %}#}
+                        {#</ul>#}
+                    {#</div>#}
+                    {#<div class="col-sm-12">#}
+                        {#<p>Added by: {{ company.creator.name }}</p>#}
+                        {#{% if company.logs|length > 0 %}#}
+                            {#{% for log in company.logs|reverse|slice(0, 2) %}#}
+                                {#{% if loop.first %}#}
+                                    {#<p>Last updated by: {{ log.user.name }} [{{ log.created|date('Y-m-d H:i:s') }}] - [Last Action: {{ log.message|raw }}]</p>#}
+                                {#{% else %}#}
+                                    {#<p>Updated by: {{ log.user.name }} [{{ log.created|date('Y-m-d H:i:s') }}] - [Action: {{ log.message|raw }}]</p>#}
+                                {#{% endif %}#}
+                            {#{% endfor %}#}
+                        {#{% endif %}#}
+                    {#</div>#}
+                {#</div>#}
+            {#{% endif %}#}
+
         </div>
     </body>
 </html>

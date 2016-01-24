@@ -6,16 +6,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class UserType extends AbstractType
+class NoteType extends AbstractType
 {
-
-    private $editing = false;
-
-    public function __construct($editing = false)
-    {
-        $this->editing = $editing;
-    }
-
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -23,20 +15,7 @@ class UserType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('email')
-            ->add('name')
-            ->add('last_name');
-
-            $builder->add('password','password', [
-                'required' => !$this->editing
-            ]);
-
-            $builder->add('role', 'choice', array(
-                'choices' => array(
-                    'ROLE_SUPER_ADMIN'   => 'Admin',
-                    'ROLE_ADMIN' => 'Manager',
-                )
-            ));
+            ->add('text', 'textarea')
         ;
     }
     
@@ -46,7 +25,7 @@ class UserType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Manager\Bundle\Entity\User'
+            'data_class' => 'Manager\Bundle\Entity\Note'
         ));
     }
 
@@ -55,6 +34,6 @@ class UserType extends AbstractType
      */
     public function getName()
     {
-        return 'user';
+        return 'note';
     }
 }

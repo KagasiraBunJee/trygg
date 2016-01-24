@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="Manager\Bundle\Entity\Repository\StepRepository")
  */
-class Step
+class Step implements \JsonSerializable
 {
     /**
      * @var integer
@@ -30,11 +30,25 @@ class Step
     private $name;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="otherName", type="string", length=255)
+     */
+    private $otherName;
+
+    /**
      * @var integer
      *
      * @ORM\Column(name="stepLvl", type="integer")
      */
     private $stepLvl;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="active", type="integer")
+     */
+    private $active;
 
     /**
      * @ORM\ManyToMany(targetEntity="Company", mappedBy="step")
@@ -135,5 +149,37 @@ class Step
     public function getCompanies()
     {
         return $this->companies;
+    }
+
+    function jsonSerialize()
+    {
+        return [
+            "id" => $this->getId(),
+            "name" => $this->getName()
+        ];
+    }
+
+    /**
+     * Set otherName
+     *
+     * @param string $otherName
+     *
+     * @return Step
+     */
+    public function setOtherName($otherName)
+    {
+        $this->otherName = $otherName;
+
+        return $this;
+    }
+
+    /**
+     * Get otherName
+     *
+     * @return string
+     */
+    public function getOtherName()
+    {
+        return $this->otherName;
     }
 }
