@@ -531,6 +531,16 @@ class CompanyController extends Controller
         $action = "added";
         $mainStep = $em->getRepository("ManagerBundle:Step")->find(1);
         $secondStep = $em->getRepository("ManagerBundle:Step")->find(2);
+
+        $stepstoenter = [
+            4,
+            5,
+            6,
+            7,
+            9,
+            10
+        ];
+
         if($step->getId() > 1)
         {
             if($steps->contains($mainStep))
@@ -544,6 +554,22 @@ class CompanyController extends Controller
             $company->removeStep($step);
             $step->removeCompany($company);
             $log->setMessage("Removed status <strong>".$step->getName()."</strong> of company <strong>".$company->getName()."</strong>");
+
+            if ($step->getId() == 3)
+            {
+                foreach ($stepstoenter as $newStepId)
+                {
+                    $newStep = $em->getRepository("ManagerBundle:Step")->find($newStepId);
+                    if ($newStep != null)
+                    {
+                        if ($steps->contains($newStep))
+                        {
+                            $company->removeStep($newStep);
+                        }
+                    }
+                }
+            }
+
             if($company->getStep()->count() < 1)
             {
                 $company->addStep($mainStep);
@@ -553,16 +579,6 @@ class CompanyController extends Controller
         {
             if($step->getId() == 3)
             {
-
-                $stepstoenter = [
-                    4,
-                    5,
-                    6,
-                    7,
-                    9,
-                    10
-                ];
-
                 foreach ($stepstoenter as $newStepId)
                 {
                     $newStep = $em->getRepository("ManagerBundle:Step")->find($newStepId);
@@ -579,18 +595,12 @@ class CompanyController extends Controller
                     $company->removeStep($secondStep);
                 }
             }
-            else
-            {
-                if ($company->getStep()->count() < 3 && !$company->getStep()->contains($secondStep))
-                {
-                    $company->addStep($secondStep);
-                }
-            }
 
             $company->addStep($step);
             $step->addCompany($company);
             $log->setMessage("Updated status of <strong>".$company->getName()."</strong> to status <strong>".$step->getName()."</strong>");
         }
+
         $log->setUser($this->getUser());
         $log->setCompany($company);
         $log->setTitle("Update");
