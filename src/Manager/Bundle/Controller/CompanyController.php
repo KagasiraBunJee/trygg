@@ -570,7 +570,7 @@ class CompanyController extends Controller
                 }
             }
 
-            if($company->getStep()->count() < 1)
+            if($company->getStep()->count() < 2)
             {
                 $company->addStep($mainStep);
             }
