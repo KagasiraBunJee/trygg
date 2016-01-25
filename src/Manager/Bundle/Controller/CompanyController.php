@@ -29,6 +29,7 @@ class CompanyController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $step = $em->getRepository("ManagerBundle:Step")->find($step);
+<<<<<<< HEAD
         /** @var User $user **/
         $user = $this->getUser();
 
@@ -53,14 +54,17 @@ class CompanyController extends Controller
 
         $companies = $em->getRepository("ManagerBundle:Company")->getCompanies($step, $searchText,$month, $week, $manager);
 
+=======
+        $searchText = $request->get("search") ? $request->get("search") : "";
+        $companies = $em->getRepository("ManagerBundle:Company")->getCompanies($step,$searchText);
+>>>>>>> parent of 3e17a5b... Merge branch 'master' of https://github.com/KagasiraBunJee/trygg
         $company = new Company();
 
         $paginator  = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
             $companies,
             $request->query->get('page', 1)/*page number*/,
-            $this->container->getParameter("items_per_page")/*limit per page*/,
-            array('wrap-queries'=>true)
+            $this->container->getParameter("items_per_page")/*limit per page*/
         );
 
         if($id)
@@ -310,7 +314,7 @@ class CompanyController extends Controller
      * @Route("/ajax/company/{id}", name="ajax_company")
      * @Template("ManagerBundle:Company:company.html.twig")
      */
-    public function ajaxCompanyAction(Company $company, Request $request)
+    public function ajaxConpanyAction(Company $company, Request $request)
     {
         $main_page = $request->query->get('main_page') ? true : false;
         return [
@@ -428,6 +432,7 @@ class CompanyController extends Controller
 
             $result = [];
 
+<<<<<<< HEAD
 //            $companies = $companies->getResult();
 
             /**
@@ -447,6 +452,9 @@ class CompanyController extends Controller
 //                    }
 //                }
 //            }
+=======
+            $companies = $companies->getResult();
+>>>>>>> parent of 3e17a5b... Merge branch 'master' of https://github.com/KagasiraBunJee/trygg
 
             foreach($companies as $company)
             {

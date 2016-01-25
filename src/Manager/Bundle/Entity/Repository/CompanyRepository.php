@@ -25,6 +25,7 @@ class CompanyRepository extends EntityRepository
             ->andWhere("(p.name LIKE :text OR p.email LIKE :text OR p.orgCode LIKE :text OR p.address LIKE :text OR p.contact LIKE :text OR p.phone LIKE :text OR p.postalCode LIKE :text OR p.product LIKE :text)")
             ->andWhere("p.rejected = 0 and p.trashed = 0")
             ->setParameter('step', $step->getId())
+<<<<<<< HEAD
             ->setParameter("text","%$searchText%");
 
         if ($month)
@@ -44,6 +45,10 @@ class CompanyRepository extends EntityRepository
         }
 
         return $queryBuilder->getQuery();
+=======
+            ->getQuery();
+        return $query;
+>>>>>>> parent of 3e17a5b... Merge branch 'master' of https://github.com/KagasiraBunJee/trygg
     }
 
     public function getAllCompaniesQuery($searchText = "",  $month = 0, $week = 0, User $manager = null)
