@@ -24,6 +24,7 @@ class CompanyRepository extends EntityRepository
             ->where("u = :step")
             ->andWhere("(p.name LIKE :text OR p.email LIKE :text OR p.orgCode LIKE :text OR p.address LIKE :text OR p.contact LIKE :text OR p.phone LIKE :text OR p.postalCode LIKE :text OR p.product LIKE :text)")
             ->andWhere("p.rejected = 0 and p.trashed = 0")
+            ->orderBy('p.saleDate','DESC')
             ->setParameter('step', $step->getId())
             ->setParameter("text","%$searchText%");
 
@@ -54,6 +55,7 @@ class CompanyRepository extends EntityRepository
 
         $queryBuilder
             ->where("(p.name LIKE :text OR p.email LIKE :text OR p.orgCode LIKE :text OR p.address LIKE :text OR p.contact LIKE :text OR p.phone LIKE :text OR p.postalCode LIKE :text OR p.product LIKE :text)")
+            ->orderBy('p.saleDate','DESC')
             ->setParameter("text","%$searchText%");
 
         if ($month)
@@ -82,6 +84,7 @@ class CompanyRepository extends EntityRepository
         $queryBuilder = $repository->createQueryBuilder('p');
 
         $queryBuilder->where("p.rejected = 1 and (p.name LIKE :text OR p.email LIKE :text OR p.orgCode LIKE :text OR p.address LIKE :text OR p.contact LIKE :text OR p.phone LIKE :text OR p.postalCode LIKE :text OR p.product LIKE :text) and p.trashed = 0")
+            ->orderBy('p.saleDate','DESC')
             ->setParameter("text","%$searchText%");
 
         if ($month)
@@ -114,6 +117,7 @@ class CompanyRepository extends EntityRepository
         $searchDate = date('Y-m-d', $date)." 23:59:59";
 
         $queryBuilder->where("(p.name LIKE :text OR p.email LIKE :text OR p.orgCode LIKE :text OR p.address LIKE :text OR p.contact LIKE :text OR p.phone LIKE :text OR p.postalCode LIKE :text OR p.product LIKE :text) and p.updated <= :dataTime")
+            ->orderBy('p.saleDate','DESC')
             ->setParameter("text","%$searchText%")
             ->setParameter('dataTime', $searchDate);
 
@@ -141,7 +145,7 @@ class CompanyRepository extends EntityRepository
         $em = $this->getEntityManager();
         $repository = $em->getRepository("ManagerBundle:Company");
         $queryBuilder = $repository->createQueryBuilder('p');
-
+        $queryBuilder->orderBy('p.saleDate','DESC');
         if ($month)
         {
             $queryBuilder->andWhere("MONTH(p.saleDate) = :month")
