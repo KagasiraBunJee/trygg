@@ -37,7 +37,6 @@ class CompanyController extends Controller
         $month = $request->get("month", 0);
         $week = $request->get("week", 0);
         $managerId = $request->get("manager", null);
-
         $manager = null;
         if ($managerId != null || $user->isManager())
         {
@@ -53,6 +52,7 @@ class CompanyController extends Controller
         }
 
         $companies = $em->getRepository("ManagerBundle:Company")->getCompanies($step, $searchText,$month, $week, $manager);
+
         $company = new Company();
 
         $paginator  = $this->get('knp_paginator');
@@ -530,6 +530,7 @@ class CompanyController extends Controller
         $company->setTrashed(false);
         $action = "added";
         $mainStep = $em->getRepository("ManagerBundle:Step")->find(1);
+        $secondStep = $em->getRepository("ManagerBundle:Step")->find(2);
         if($step->getId() > 1)
         {
             if($steps->contains($mainStep))
@@ -572,6 +573,17 @@ class CompanyController extends Controller
                             $company->addStep($newStep);
                         }
                     }
+                }
+                if ($company->getStep()->contains($secondStep))
+                {
+                    $company->removeStep($secondStep);
+                }
+            }
+            else
+            {
+                if (!$company->getStep()->contains($secondStep))
+                {
+                    $company->addStep($secondStep);
                 }
             }
 
@@ -639,6 +651,64 @@ class CompanyController extends Controller
 
         return new JsonResponse([
             "render" => $renderedView
+        ]);
+    }
+
+    /**
+     * @Route("/viceversa", name="viceversa")
+     */
+    public function viceVersaCompaniesAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $companies = $em->getRepository("ManagerBundle:Company")->findAll();
+        $steps = $em->getRepository("ManagerBundle:Step")->findAll();
+        $sentOrderStep = $em->getRepository("ManagerBundle:Step")->find(3);
+        $acceptedStep = $em->getRepository("ManagerBundle:Step")->find(2);
+
+        $deleted = 0;
+        $added = 0;
+        $companies_c = 0;
+        $companies_sent = 0;
+
+        /** @var Company $company **/
+        foreach($acceptedStep->getCompanies()->getValues() as $company)
+        {
+//            if ($sentOrderStep->getCompanies()->contains($company))
+//            {
+//                /** @var Step $step **/
+//                foreach($steps as $step)
+//                {
+//                    if ($step->getCompanies()->contains($company) and $step->getId() > 3)
+//                    {
+//                        $deleted++;
+//                        $company->removeStep($step);
+//                        $step->removeCompany($company);
+//                    }
+//                    else if (!$step->getCompanies()->contains($company) and $step->getId() > 3)
+//                    {
+//                        $added++;
+//                        $company->addStep($step);
+//                        $step->addCompany($company);
+//                    }
+//                }
+//                $companies_sent++;
+//            }
+            if ($sentOrderStep->getCompanies()->contains($company))
+            {
+                $company->removeStep($acceptedStep);
+                $acceptedStep->removeCompany($company);
+                $deleted++;
+            }
+            $companies_c++;
+        }
+        $em->flush();
+        return new JsonResponse([
+            "result" => "ok",
+            "deleted" => $deleted,
+            "added" => $added,
+            "companies" => $companies_c,
+            "companies_sent" => $companies_sent
         ]);
     }
 }
