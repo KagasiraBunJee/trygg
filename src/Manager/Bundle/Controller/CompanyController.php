@@ -37,7 +37,6 @@ class CompanyController extends Controller
         $month = $request->get("month", 0);
         $week = $request->get("week", 0);
         $managerId = $request->get("manager", null);
-
         $manager = null;
         if ($managerId != null || $user->isManager())
         {
@@ -53,6 +52,7 @@ class CompanyController extends Controller
         }
 
         $companies = $em->getRepository("ManagerBundle:Company")->getCompanies($step, $searchText,$month, $week, $manager);
+
         $company = new Company();
 
         $paginator  = $this->get('knp_paginator');
@@ -530,6 +530,7 @@ class CompanyController extends Controller
         $company->setTrashed(false);
         $action = "added";
         $mainStep = $em->getRepository("ManagerBundle:Step")->find(1);
+        $secondStep = $em->getRepository("ManagerBundle:Step")->find(2);
         if($step->getId() > 1)
         {
             if($steps->contains($mainStep))
@@ -572,6 +573,17 @@ class CompanyController extends Controller
                             $company->addStep($newStep);
                         }
                     }
+                }
+                if ($company->getStep()->contains($secondStep))
+                {
+                    $company->removeStep($secondStep);
+                }
+            }
+            else
+            {
+                if ($company->getStep()->count() < 3 && !$company->getStep()->contains($secondStep))
+                {
+                    $company->addStep($secondStep);
                 }
             }
 

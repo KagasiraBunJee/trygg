@@ -731,6 +731,7 @@ class Company implements \JsonSerializable
     public function addStep(\Manager\Bundle\Entity\Step $step)
     {
         $this->step[] = $step;
+        $step->addCompany($this);
 
         return $this;
     }
