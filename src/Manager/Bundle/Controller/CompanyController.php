@@ -38,6 +38,11 @@ class CompanyController extends Controller
         $month = $request->get("month", 0);
         $week = $request->get("week", 0);
         $managerId = $request->get("manager", null);
+
+        //sort hacks
+        $sortDirection = $request->get("direction", 'desc');
+        $sortField = $request->get("sort", 'p.saleDate');
+
         $manager = null;
         if ($managerId != null || $user->isManager())
         {
@@ -52,7 +57,16 @@ class CompanyController extends Controller
             }
         }
 
-        $companies = $em->getRepository("ManagerBundle:Company")->getCompanies($step, $searchText,$month, $week, $manager)->getResult();
+        //creating query with filter
+        $companies = $em->getRepository("ManagerBundle:Company")->getCompanies(
+            $step, //by step
+            $searchText, //by text
+            $month, //by month
+            $week, //by week of month
+            $manager, // by manager
+            $sortField, //trick with sorting, since 5.7 mysql is confliting with knppaginator sorting methods, going to use this trick
+            $sortDirection //if somebody knows better solution let me know, or if i find out it i'll change
+        )->getResult();
 
         /** @var Company $row **/
         foreach($companies as $index=>$row)

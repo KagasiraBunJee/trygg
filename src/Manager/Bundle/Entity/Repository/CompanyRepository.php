@@ -13,7 +13,7 @@ use Manager\Bundle\Entity\User;
  */
 class CompanyRepository extends EntityRepository
 {
-    public function getCompanies($step, $searchText = "",  $month = 0, $week = 0, User $manager = null)
+    public function getCompanies($step, $searchText = "",  $month = 0, $week = 0, User $manager = null, $sortFields = 'p.saleDate', $sortDirection = 'desc')
     {
         $em = $this->getEntityManager();
         $repository = $em->getRepository("ManagerBundle:Company");
@@ -26,7 +26,7 @@ class CompanyRepository extends EntityRepository
             ->andWhere("p.rejected = 0 and p.trashed = 0")
             ->setParameter('step', $step->getId())
             ->setParameter("text","%$searchText%")
-            ->orderBy('p.saleDate', 'DESC')
+            ->orderBy($sortFields, $sortDirection)
             ;
 
         if ($month)

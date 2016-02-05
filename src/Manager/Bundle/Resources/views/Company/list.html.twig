@@ -45,7 +45,7 @@
             {% if companies|length > 0 %}
                 <table infinite-load="true" id="companies" class="table custom" cellspacing="1" cellpadding="1">
                     <tr>
-                        <td>{% if companies.isSorted('p.creator.id') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'ID', 'p.creator.id') }}</td>
+                        <td>{% if companies.isSorted('p.creator.id') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'ID', 'p.creator') }}</td>
                         <td>{% if companies.isSorted('p.saleDate') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'Sales date', 'p.saleDate') }}</td>
                         <td>{% if companies.isSorted('p.name') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'Company', 'p.name') }}</td>
                         <td>{% if companies.isSorted('p.contact') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'Contact', 'p.contact') }}</td>

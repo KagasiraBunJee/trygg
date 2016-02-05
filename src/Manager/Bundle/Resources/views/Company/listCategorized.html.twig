@@ -44,7 +44,7 @@
         <div class="col-md-12 table-scrollable">
                <table class="table custom">
                     <tr>
-                        <td>{% if companies.isSorted('p.creator.id') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'NR', 'p.creator.id') }}</td>
+                        <td>{% if companies.isSorted('p.creator.id') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'NR', 'p.creator') }}</td>
                         <td>{% if companies.isSorted('p.saleDate') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'Sales date', 'p.saleDate') }}</td>
                         <td>{% if companies.isSorted('p.name') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'Company', 'p.name') }}</td>
                         <td>{% if companies.isSorted('p.contact') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'Contact', 'p.contact') }}</td>
