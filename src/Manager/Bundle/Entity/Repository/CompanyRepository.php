@@ -24,9 +24,10 @@ class CompanyRepository extends EntityRepository
             ->where("u = :step")
             ->andWhere("(p.name LIKE :text OR p.email LIKE :text OR p.orgCode LIKE :text OR p.address LIKE :text OR p.contact LIKE :text OR p.phone LIKE :text OR p.postalCode LIKE :text OR p.product LIKE :text)")
             ->andWhere("p.rejected = 0 and p.trashed = 0")
-            ->orderBy('p.saleDate','DESC')
             ->setParameter('step', $step->getId())
-            ->setParameter("text","%$searchText%");
+            ->setParameter("text","%$searchText%")
+            ->orderBy('p.saleDate', 'DESC')
+            ;
 
         if ($month)
         {

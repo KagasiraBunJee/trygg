@@ -29,6 +29,7 @@ class CompanyController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $step = $em->getRepository("ManagerBundle:Step")->find($step);
+        $steps = $em->getRepository("ManagerBundle:Step")->findAll();
         /** @var User $user **/
         $user = $this->getUser();
 
@@ -51,7 +52,30 @@ class CompanyController extends Controller
             }
         }
 
-        $companies = $em->getRepository("ManagerBundle:Company")->getCompanies($step, $searchText,$month, $week, $manager);
+        $companies = $em->getRepository("ManagerBundle:Company")->getCompanies($step, $searchText,$month, $week, $manager)->getResult();
+
+        /** @var Company $row **/
+        foreach($companies as $index=>$row)
+        {
+            /** @var Step $cStep **/
+            foreach($steps as $cStep)
+            {
+                if ($cStep->getId() > 3 && $step->getId() < 4)
+                {
+                    if(!$cStep->getCompanies()->contains($row) && $row->getStep()->count() > 1)
+                    {
+                        unset($companies[$index]);
+                    }
+                }
+                else if ($cStep->getId() < 3 && $step->getId() < 3)
+                {
+                    if ($cStep->getCompanies()->contains($row) && $row->getStep()->count() > 1)
+                    {
+                        unset($companies[$index]);
+                    }
+                }
+            }
+        }
 
         $company = new Company();
 
@@ -661,6 +685,61 @@ class CompanyController extends Controller
 
         return new JsonResponse([
             "render" => $renderedView
+        ]);
+    }
+
+    /**
+     * @Route("/viceversa", name="vice_versa")
+     * @Security("has_role('ROLE_SUPER_ADMIN')")
+     */
+    public function viceVersa()
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $companies = $em->getRepository("ManagerBundle:Company")->findAll();
+        $steps = $em->getRepository("ManagerBundle:Step")->findAll();
+
+        $added = 0;
+        $removed = 0;
+        $ignored = 0;
+
+        /** @var Company $company */
+        foreach($companies as $company)
+        {
+            if ($company->getStep()->count() > 1)
+            {
+                /** @var Step $step */
+                foreach($steps as $step)
+                {
+                    if ($step->getId() > 3)
+                    {
+                        if ($step->getCompanies()->contains($company))
+                        {
+                            $removed++;
+                            $step->removeCompany($company);
+                            $company->removeStep($step);
+                        }
+                        else if (!$step->getCompanies()->contains($company))
+                        {
+                            $added++;
+                            $company->addStep($step);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                $ignored++;
+            }
+        }
+
+        $em->flush();
+
+        return new JsonResponse([
+            'result' => "ok",
+            'added' => $added,
+            'removed' => $removed,
+            'ignored' => $ignored
         ]);
     }
 }
