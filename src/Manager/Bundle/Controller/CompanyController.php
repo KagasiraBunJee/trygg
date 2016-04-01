@@ -10,7 +10,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-use Manager\Bundle\Entity\User;
 use Manager\Bundle\Entity\Company;
 use Manager\Bundle\Form\CompanyType;
 use Manager\Bundle\Entity\Step;
@@ -29,35 +28,8 @@ class CompanyController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $step = $em->getRepository("ManagerBundle:Step")->find($step);
-<<<<<<< HEAD
-        /** @var User $user **/
-        $user = $this->getUser();
-
-        //filter
-        $searchText = $request->get("search", "");
-        $month = $request->get("month", 0);
-        $week = $request->get("week", 0);
-        $managerId = $request->get("manager", null);
-        $manager = null;
-        if ($managerId != null || $user->isManager())
-        {
-            /** @var User $manager **/
-            if ($user->isManager())
-            {
-                $manager = $em->getRepository("ManagerBundle:User")->find($user->getId());
-            }
-            else
-            {
-                $manager = $em->getRepository("ManagerBundle:User")->find($managerId);
-            }
-        }
-
-        $companies = $em->getRepository("ManagerBundle:Company")->getCompanies($step, $searchText,$month, $week, $manager);
-
-=======
         $searchText = $request->get("search") ? $request->get("search") : "";
         $companies = $em->getRepository("ManagerBundle:Company")->getCompanies($step,$searchText);
->>>>>>> parent of 3e17a5b... Merge branch 'master' of https://github.com/KagasiraBunJee/trygg
         $company = new Company();
 
         $paginator  = $this->get('knp_paginator');
@@ -71,8 +43,6 @@ class CompanyController extends Controller
         {
             $company = $em->getRepository("ManagerBundle:Company")->find($id);
         }
-
-        $managers = $em->getRepository("ManagerBundle:User")->findAll();
 
         return [
             'step' => $step,
@@ -88,20 +58,8 @@ class CompanyController extends Controller
      */
     public function allCompaniesAction(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
-        $searchText = $request->get("search", "");
-        $month = $request->get("month", 0);
-        $week = $request->get("week", 0);
-        $managerId = $request->get("manager", null);
-
-        $manager = null;
-        if ($managerId != null)
-        {
-            /** @var User $manager **/
-            $manager = $em->getRepository("ManagerBundle:User")->find($managerId);
-        }
-
-        $companies = $em->getRepository("ManagerBundle:Company")->getAllCompaniesQuery($searchText, $month, $week, $manager);
+        $searchText = $request->get("search") ? $request->get("search") : "";
+        $companies = $this->getDoctrine()->getRepository("ManagerBundle:Company")->getAllCompaniesQuery($searchText);
         $step = new Step();
         $step->setName('All Customers');
 
@@ -242,20 +200,8 @@ class CompanyController extends Controller
         $step->setName('Rejected');
         $step->setStepLvl("rejected");
         $company = new Company();
-
-        $searchText = $request->get("search", "");
-        $month = $request->get("month", 0);
-        $week = $request->get("week", 0);
-        $managerId = $request->get("manager", null);
-
-        $manager = null;
-        if ($managerId != null)
-        {
-            /** @var User $manager **/
-            $manager = $em->getRepository("ManagerBundle:User")->find($managerId);
-        }
-
-        $companies = $em->getRepository("ManagerBundle:Company")->getRejectedListQuery($searchText, $month, $week, $manager);
+        $searchText = $request->get("search") ? $request->get("search") : "";
+        $companies = $em->getRepository("ManagerBundle:Company")->getRejectedListQuery($searchText);
 
         $paginator  = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
@@ -416,7 +362,7 @@ class CompanyController extends Controller
             {
 
                 $step = $em->getRepository("ManagerBundle:Step")->find($searchWithStep);
-                $companies = $em->getRepository("ManagerBundle:Company")->getCompanies($step,$searchTxt)->getResult();
+                $companies = $em->getRepository("ManagerBundle:Company")->getCompanies($step,$searchTxt);
             }
             elseif($rejected)
             {
@@ -432,29 +378,7 @@ class CompanyController extends Controller
 
             $result = [];
 
-<<<<<<< HEAD
-//            $companies = $companies->getResult();
-
-            /**
-             * @var Company $company
-             */
-//            foreach($companies as $index=>$company)
-//            {
-//                $steps = $company->getStep();
-//                /**
-//                 * @var Step $cStep
-//                 */
-//                foreach($steps as $cStep)
-//                {
-//                    if($cStep->getId() > $step->getId())
-//                    {
-//                        unset($companies[$index]);
-//                    }
-//                }
-//            }
-=======
             $companies = $companies->getResult();
->>>>>>> parent of 3e17a5b... Merge branch 'master' of https://github.com/KagasiraBunJee/trygg
 
             foreach($companies as $company)
             {
@@ -487,20 +411,8 @@ class CompanyController extends Controller
         $step = new Step();
         $step->setName('Reported companies');
         $step->setStepLvl("reported");
-
-        $searchText = $request->get("search", "");
-        $month = $request->get("month", 0);
-        $week = $request->get("week", 0);
-        $managerId = $request->get("manager", null);
-
-        $manager = null;
-        if ($managerId != null)
-        {
-            /** @var User $manager **/
-            $manager = $em->getRepository("ManagerBundle:User")->find($managerId);
-        }
-
-        $companies = $em->getRepository("ManagerBundle:Company")->getReportedCompanies($searchText, $month, $week, $manager);
+        $searchText = $request->get("search") ? $request->get("search") : "";
+        $companies = $em->getRepository("ManagerBundle:Company")->getReportedCompanies($searchText);
         $company = new Company();
 
         $paginator  = $this->get('knp_paginator');
@@ -538,17 +450,6 @@ class CompanyController extends Controller
         $company->setTrashed(false);
         $action = "added";
         $mainStep = $em->getRepository("ManagerBundle:Step")->find(1);
-        $secondStep = $em->getRepository("ManagerBundle:Step")->find(2);
-
-        $stepstoenter = [
-            4,
-            5,
-            6,
-            7,
-            9,
-            10
-        ];
-
         if($step->getId() > 1)
         {
             if($steps->contains($mainStep))
@@ -562,60 +463,23 @@ class CompanyController extends Controller
             $company->removeStep($step);
             $step->removeCompany($company);
             $log->setMessage("Removed status <strong>".$step->getName()."</strong> of company <strong>".$company->getName()."</strong>");
-
-            if ($step->getId() == 3)
-            {
-                foreach ($stepstoenter as $newStepId)
-                {
-                    $newStep = $em->getRepository("ManagerBundle:Step")->find($newStepId);
-                    if ($newStep != null)
-                    {
-                        if ($steps->contains($newStep))
-                        {
-                            $company->removeStep($newStep);
-                        }
-                    }
-                }
-            }
-
-            if($company->getStep()->count() < 2)
+            if($company->getStep()->count() < 1)
             {
                 $company->addStep($mainStep);
             }
         }
         else
         {
-            if($step->getId() == 3)
-            {
-                foreach ($stepstoenter as $newStepId)
-                {
-                    $newStep = $em->getRepository("ManagerBundle:Step")->find($newStepId);
-                    if ($newStep != null)
-                    {
-                        if (!$steps->contains($newStep))
-                        {
-                            $company->addStep($newStep);
-                        }
-                    }
-                }
-                if ($company->getStep()->contains($secondStep))
-                {
-                    $company->removeStep($secondStep);
-                }
-            }
-
             $company->addStep($step);
             $step->addCompany($company);
             $log->setMessage("Updated status of <strong>".$company->getName()."</strong> to status <strong>".$step->getName()."</strong>");
         }
-
         $log->setUser($this->getUser());
         $log->setCompany($company);
         $log->setTitle("Update");
         $company->addLog($log);
         $em->persist($log);
         $em->flush();
-
         return new JsonResponse([
             'result' => $action
         ]);
@@ -627,20 +491,7 @@ class CompanyController extends Controller
      */
     public function getAjaxCompaniesByPage(Request $request, $items)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $searchText = $request->get("search", "");
-        $month = $request->get("month", 0);
-        $week = $request->get("week", 0);
-        $managerId = $request->get("manager", null);
-
-        $manager = null;
-        if ($managerId != null)
-        {
-            /** @var User $manager **/
-            $manager = $em->getRepository("ManagerBundle:User")->find($managerId);
-        }
-
+        $searchText = $request->get("search") ? $request->get("search") : "";
         $limit = $this->container->getParameter("items_per_page");
 
         $currentItems = $items;
@@ -652,7 +503,7 @@ class CompanyController extends Controller
             throw new NotFoundHttpException("Found no companies");
         }
 
-        $companies = $em->getRepository("ManagerBundle:Company")->getAllCompaniesQuery($searchText, $month, $week, $manager);
+        $companies = $this->getDoctrine()->getRepository("ManagerBundle:Company")->getAllCompaniesQuery($searchText);
 
         $paginator  = $this->get('knp_paginator');
         $pagination = $paginator->paginate(

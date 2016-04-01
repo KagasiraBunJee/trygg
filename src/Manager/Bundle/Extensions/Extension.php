@@ -10,8 +10,8 @@ namespace Manager\Bundle\Extensions;
 
 use Doctrine\ORM\EntityManager;
 
-class Extension extends \Twig_Extension
-{
+class Extension extends \Twig_Extension{
+
     /**
      * Constructor
      * @param EntityManager $em
@@ -25,8 +25,7 @@ class Extension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            new \Twig_SimpleFunction("steps", array($this, 'getSteps')),
-            new \Twig_SimpleFunction("managers", array($this, 'getManagers'))
+            new \Twig_SimpleFunction("steps", array($this, 'getSteps'))
         );
     }
 
@@ -34,16 +33,6 @@ class Extension extends \Twig_Extension
     public function getSteps($reverse = false)
     {
         $steps = $this->em->getRepository("ManagerBundle:Step")->findAll();
-        if($reverse)
-        {
-            $steps = array_reverse($steps);
-        }
-        return $steps;
-    }
-
-    public function getManagers($reverse = false)
-    {
-        $steps = $this->em->getRepository("ManagerBundle:User")->findAll();
         if($reverse)
         {
             $steps = array_reverse($steps);

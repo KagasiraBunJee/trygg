@@ -64,14 +64,6 @@ doctrine:
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
         auto_mapping: true
-        dql:
-          numeric_functions:
-            MONTH: DoctrineExtensions\Query\Mysql\Month
-            YEAR: DoctrineExtensions\Query\Mysql\Year
-            WEEK: DoctrineExtensions\Query\Mysql\Week
-            WEEKDAY: DoctrineExtensions\Query\Mysql\WeekDay
-            DAYOFMONTH: Oro\ORM\Query\AST\Functions\SimpleFunction
-            FLOOR: DoctrineExtensions\Query\Mysql\Floor
 
 # Swiftmailer Configuration
 swiftmailer:
@@ -91,10 +83,3 @@ knp_paginator:
     template:
         pagination: pagination.html.twig     # sliding pagination controls template
         sortable: KnpPaginatorBundle:Pagination:sortable_link.html.twig # sort link template
-
-stof_doctrine_extensions:
-    default_locale: en_US
-    orm:
-        default:
-            timestampable: true
-#            sluggable: true

@@ -1,37 +1,14 @@
 body{
-    font-family: "Arial, Helvetica, sans-serif";
-    background-color: #f8f8f8;
-    color:#888;
-}
-.table-scrollable{
-    height:430px;
-    overflow: auto;
-}
-.navbar {
-    margin-bottom: 0;
-}
-.table.custom {
-    border-collapse:collapse;
-    /*font-size: 20px;*/
+    font-family: "Helvetica Neue";
 }
 .table.custom tr {
     cursor: pointer;
-    background: white;
-    margin-top:10px;
-    margin-bottom:10px;
 }
 .table.custom tr:hover {
     background: #d9d9d9 !important;
 }
 .table.custom tr td{
     padding: 6px;
-    border: none;
-}
-.company_item {
-    margin-top: 10px;
-}
-.company-style {
-    background: #e6e6e6;
 }
 .company-card{
     background: #e6e6e6 !important;
@@ -50,13 +27,9 @@ body{
 .navbar-brand .form-group{
     margin-top:8px;
 }
-.navbar-inverse {
-    background-color: #071b24;
-    border-color: #071b24;
-}
 .custom-menu{
-    padding-left: 50px;
-    padding-right: 100px;
+    padding-right: 0;
+    padding-left: 0;
 
 }
 .custom-menu .list-group{
@@ -69,9 +42,6 @@ body{
 }
 .custom-menu .list-group .list-group-item a{
     padding: 0 10px;
-}
-.selectric-wrapper {
-    /*width:300px;*/
 }
 .selected-row{
     background-color: #f5f5f5;
@@ -110,84 +80,5 @@ table.custom tr:nth-child(1n+3){
 
 }
 table.custom tr:nth-child(4n-6){
-    /*background: #f9f9f9;*/
-}
-
-.hide {
-    display:none;
-}
-.company-details {
-    font-size:20px;
-}
-.company-details div {
-    text-transform:uppercase;
-    margin-top:5px;
-    margin-bottom: 5px;
-}
-.row-margin div{
-    margin-top:5px;
-    margin-bottom: 5px;
-}
-
-.list-margin {
-    margin-top:12px;
-    padding: 5px;
-    font-size: 16px;
-}
-.navbar-nav {
-    width: 100%;
-    text-align: center;
-}
-.navbar-nav > li {
-    float: none;
-    display: inline-block;
-}
-
-.go-button {
-    background: #f8f8f8 none repeat scroll 0 0;
-    border: 1px solid #ddd;
-    display:inline-block;
-    cursor:pointer;
-    color:#444;
-    font-family:Helvetica Neue;
-    font-size:12px;
-    font-weight:700;
-    padding:9px 0;
-    text-decoration:none;
-    width: 100%;
-    height:40px;
-}
-.go-button:hover {
-    border-color: #C4C4C4;
-}
-.go-button:active {
-    position:relative;
-}
-
-.btn {
-    white-space: normal;
-    border-radius: 0 !important;
-}
-table.status {
-    border-collapse:separate;
-}
-table.status tr td {
-    padding: 0 10px 0 0;
-}
-.list-group-item-trygg {
-    background-color: #0b485a;
-    border-color: #0b485a;
-    color:white !important;
-}
-.list-group-item-trygg:hover,.list-group-item-trygg:focus {
-    background-color: #3a6961 !important;
-    border-color: #3a6961 !important;
-}
-.trygg-active {
-    background-color: #3a6961;
-    border-color: #3a6961;
-}
-
-.label {
-    border-radius: 0 !important;
+    background: #f9f9f9;
 }

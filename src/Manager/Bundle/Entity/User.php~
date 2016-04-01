@@ -48,6 +48,7 @@ class User implements UserInterface
     /**
      * @var string
      * @ORM\Column(name="password", type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $password;
     
@@ -66,17 +67,7 @@ class User implements UserInterface
      * @ORM\OneToMany(targetEntity="Log", mappedBy="user")
      */
     private $logs;
-
-    /**
-     * @ORM\OneToMany(targetEntity="Note", mappedBy="creator")
-     */
-    private $notes;
-
-    /**
-     * @ORM\OneToMany(targetEntity="Manager\Bundle\Entity\Document", mappedBy="user")
-     */
-    private $documents;
-
+    
     /**
      * Get id
      *
@@ -114,7 +105,6 @@ class User implements UserInterface
     {
         $this->companies = new \Doctrine\Common\Collections\ArrayCollection();
         $this->logs = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->notes = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -263,62 +253,5 @@ class User implements UserInterface
     public function getLogs()
     {
         return $this->logs;
-    }
-
-    /**
-     * Set last_name
-     *
-     * @param string $lastName
-     * @return User
-     */
-    public function setLastName($lastName)
-    {
-        $this->last_name = $lastName;
-
-        return $this;
-    }
-
-    /**
-     * Get last_name
-     *
-     * @return string 
-     */
-    public function getLastName()
-    {
-        return $this->last_name;
-    }
-
-    /**
-     * Add note
-     *
-     * @param \Manager\Bundle\Entity\Note $note
-     *
-     * @return User
-     */
-    public function addNote(\Manager\Bundle\Entity\Note $note)
-    {
-        $this->notes[] = $note;
-
-        return $this;
-    }
-
-    /**
-     * Remove note
-     *
-     * @param \Manager\Bundle\Entity\Note $note
-     */
-    public function removeNote(\Manager\Bundle\Entity\Note $note)
-    {
-        $this->notes->removeElement($note);
-    }
-
-    /**
-     * Get notes
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getNotes()
-    {
-        return $this->notes;
     }
 }

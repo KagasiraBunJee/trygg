@@ -1,5 +1,3 @@
-var openedCompany = 0;
-var host = window.location.host;
 jQuery("document").ready(function(){
 
     jQuery("#searchAjax").keydown(function(){
@@ -16,7 +14,7 @@ jQuery("document").ready(function(){
             //console.log(params.join("&"));
             var dropdownmenu = jQuery(".smartSearchResult");
             jQuery.ajax({
-                url:"http://"+host+"/company/search?"+params.join("&")
+                url:"http://104.236.61.177/web/app.php/company/search?"+params.join("&")
             }).done(function(result) {
                 if (result.result != "nothing")
                 {
@@ -76,41 +74,28 @@ jQuery("document").ready(function(){
     {
         date.val(yyyy+"-"+mm+"-"+dd);
     }
-
-    $(window).scroll(function() {
-        if($(window).scrollTop() + $(window).height() == $(document).height()) {
-            //alert("bottom!");
-            loadCompanies(1);
-        }
-    });
 });
 
 function showCompany(id,main,obj)
 {
     if(id)
     {
-        if(openedCompany != id) {
-            var params = "";
-            if (main) {
-                params = "?main_page=1";
-            }
-            jQuery.ajax({
-                url: "http://"+host+"/ajax/company/" + id + params
-            }).done(function (result) {
-                jQuery(".company-card").addClass("empty");
-                jQuery(".company-card td").html("");
-                if (result != "nothing") {
-                    openedCompany = id;
-                    jQuery(obj).next().removeClass("empty");
-                    jQuery(obj).next().children("td").html(result);
-                }
-            });
+        var params = "";
+        if(main)
+        {
+            params = "?main_page=1";
         }
-        else{
+        jQuery.ajax({
+            url:"http://104.236.61.177/web/app.php/ajax/company/"+id+params
+        }).done(function(result) {
             jQuery(".company-card").addClass("empty");
             jQuery(".company-card td").html("");
-            openedCompany = 0;
-        }
+            if (result != "nothing")
+            {
+                jQuery(obj).next().removeClass("empty");
+                jQuery(obj).next().children("td").html(result);
+            }
+        });
     }
 }
 
@@ -119,7 +104,7 @@ function setStep(id,company_id,button)
     if(id)
     {
         jQuery.ajax({
-            url: "http://"+host+"/ajax/step/"+id+"/"+company_id
+            url: "http://104.236.61.177/web/app.php/ajax/step/"+id+"/"+company_id
         }).done(function(result){
             switch (result.result){
                 case "added":
@@ -131,21 +116,4 @@ function setStep(id,company_id,button)
             }
         });
     }
-}
-
-function loadCompanies(page)
-{
-    var table = document.getElementById("companies");
-    var tableItems = jQuery(table).find(".companyItem").length;
-    var url = "http://"+host+"/ajax/companies/"+tableItems;
-    jQuery.ajax({
-        url: url
-    }).done(function(result){
-        jQuery(table).children("tbody").append(result.render);
-        jQuery(".table > tbody > tr").click(function(){
-            var main_page = jQuery(this).attr('main_page');
-            var company_id = jQuery(this).attr('data-id');
-            showCompany(company_id,main_page,this);
-        });
-    });
 }

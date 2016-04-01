@@ -4,51 +4,18 @@
 {% block body %}
     <div class="row">
         <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <form style="margin-top:5px;margin-bottom: 5px;" action="{{ path(app.request.attributes.get('_route'),
-                    app.request.attributes.get('_route_params')) }}" id="filter" method="GET">
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <select name="month" id="month" class="form-control selectpicker-1">
-                                    <option value="0">Month</option>
-                                    {% for j in range(1, 12) %}
-                                        <option {% if j == app.request.query.get("month") %} selected="selected" {% endif %} value="{{ j }}">{{ date('2015-' ~ j ~ '-01')|date("F") }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-sm-3">
-                                <select name="week" class="form-control selectpicker-2">
-                                    <option value="0">Week</option>
-                                    {% for j in range(1, 4) %}
-                                        <option {% if j == app.request.query.get("week") %} selected="selected" {% endif %} value="{{ j }}">{{ j }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-sm-3">
-                                <select name="manager" id="manager" class="form-control selectpicker-3">
-                                    <option value="0">Manager</option>
-                                    {% for manager in managers() %}
-                                        <option {% if manager.id == app.request.query.get("manager") %} selected="selected" {% endif %} value="{{ manager.id }}">{{ manager.name~' '~manager.lastName }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-sm-3">
-                                <button type="submit" class="go-button">GO</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-12 table-scrollable">
                 <table class="table custom">
                     <tr>
-                        <td>{% if companies.isSorted('p.creator.id') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'NR', 'p.creator.id') }}</td>
+                        <td>{% if companies.isSorted('p.creator.id') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'ID', 'p.creator.id') }}</td>
                         <td>{% if companies.isSorted('p.saleDate') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'Sales date', 'p.saleDate') }}</td>
                         <td>{% if companies.isSorted('p.name') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'Company', 'p.name') }}</td>
+                        <td>Org.Nr</td>
                         <td>{% if companies.isSorted('p.contact') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'Contact', 'p.contact') }}</td>
+                        <td>Email</td>
                         <td>Phone</td>
+                        <td>Postal Code</td>
+                        <td>{% if companies.isSorted('p.product') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'Product', 'p.product') }}</td>
+                        <td>Price</td>
                         <td></td>
                     </tr>
                     {% if companies|length > 0 %}
@@ -57,8 +24,13 @@
                                 <td>{{ item.creator.id }}</td>
                                 <td>{{ item.saleDate|date("d-m-Y") }}</td>
                                 <td>{{ item.name }}</td>
+                                <td>{{ item.orgCode }}</td>
                                 <td>{{ item.contact }}</td>
+                                <td>{{ item.email }}</td>
                                 <td>{{ item.phone }}</td>
+                                <td>{{ item.postalCode }}</td>
+                                <td>{{ item.product }}</td>
+                                <td>{{ item.price }}</td>
 
                                 {#<td>{{ item.created|date("Y-m-d H:i:s") }}</td>#}
                                 {#<td>{{ item.updated|date("Y-m-d H:i:s") }}</td>#}
@@ -81,15 +53,14 @@
                         {% endfor %}
                     {% endif %}
                 </table>
-
-                {% if companies|length < 1 %}
-                    <h2 style="margin: 0;"><small>No companies found</small></h2>
-                {% endif %}
-        </div>
-        <div class="row">
+                <div class="row">
                     <div class="col-md-12 text-center">
                         {{ knp_pagination_render(companies) }}
                     </div>
+                </div>
+                {% if companies|length < 1 %}
+                    <h2 style="margin: 0;"><small>No companies found</small></h2>
+                {% endif %}
         </div>
         {#<div style="background: #e6e6e6;" class="col-md-12 company_item">
             {% if company.id is not null %}

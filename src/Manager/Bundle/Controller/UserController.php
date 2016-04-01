@@ -154,35 +154,29 @@ class UserController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $oldpass = $user->getPassword();
-        $result = 0;
+
         $form = $this->createForm(new UserType(true), $user);
         $form->handleRequest($request);
 
-        $factory = $this->get('security.encoder_factory');
-        $encoder = $factory->getEncoder($user);
-
         if($form->isValid())
         {
-            if(empty($user->getPassword()) || $encoder->isPasswordValid($oldpass,$user->getPassword(), $user->getSalt()))
+            if(empty($user->getPassword()) || $user->getPassword() == $oldpass)
             {
 
                 $user->setPassword($oldpass);
             }
             else
             {
+                $factory = $this->get('security.encoder_factory');
+                $encoder = $factory->getEncoder($user);
                 $user->setPassword($encoder->encodePassword($user->getPassword(), $user->getSalt()));
             }
-            $result = 2;
             $em->flush();
-        }
-        else
-        {
-            $result = 1;
         }
 
         return [
             'form' => $form->createView(),
-            'result'=> $result,
+            'result'=>$form->getErrors(),
             'show_manager_button' => true,
             "hide_add_btn" => true
         ];

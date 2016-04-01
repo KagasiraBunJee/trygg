@@ -3,7 +3,6 @@
 namespace Manager\Bundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Manager\Bundle\Entity\User;
 
 /**
  * CompanyRepository
@@ -13,160 +12,52 @@ use Manager\Bundle\Entity\User;
  */
 class CompanyRepository extends EntityRepository
 {
-    public function getCompanies($step, $searchText = "",  $month = 0, $week = 0, User $manager = null)
+    public function getCompanies($step, $searchText = "")
     {
         $em = $this->getEntityManager();
         $repository = $em->getRepository("ManagerBundle:Company");
-
-        $queryBuilder = $repository->createQueryBuilder('p');
-        $queryBuilder
+        $query = $repository->createQueryBuilder('p')
             ->innerJoin('p.step','u')
-            ->where("u = :step")
-            ->andWhere("(p.name LIKE :text OR p.email LIKE :text OR p.orgCode LIKE :text OR p.address LIKE :text OR p.contact LIKE :text OR p.phone LIKE :text OR p.postalCode LIKE :text OR p.product LIKE :text)")
-            ->andWhere("p.rejected = 0 and p.trashed = 0")
+            ->where("u = :step and p.name LIKE '%$searchText%' and p.rejected = 0 and p.trashed = 0")
             ->setParameter('step', $step->getId())
-<<<<<<< HEAD
-            ->setParameter("text","%$searchText%");
-
-        if ($month)
-        {
-            $queryBuilder->andWhere("MONTH(p.saleDate) = :month")
-                ->setParameter("month",$month);
-        }
-        if ($week)
-        {
-            $queryBuilder->andWhere("FLOOR((DayOfMonth(p.saleDate)-1)/7)+1 = :week")
-                ->setParameter("week",$week);
-        }
-        if ($manager)
-        {
-            $queryBuilder->andWhere("p.creator = :manager")
-                ->setParameter("manager",$manager);
-        }
-
-        return $queryBuilder->getQuery();
-=======
             ->getQuery();
         return $query;
->>>>>>> parent of 3e17a5b... Merge branch 'master' of https://github.com/KagasiraBunJee/trygg
     }
 
-    public function getAllCompaniesQuery($searchText = "",  $month = 0, $week = 0, User $manager = null)
+    public function getAllCompaniesQuery($searchText = "")
     {
         $em = $this->getEntityManager();
-        $repository = $em->getRepository("ManagerBundle:Company");
-        $queryBuilder = $repository->createQueryBuilder('p');
-
-        $queryBuilder
-            ->where("(p.name LIKE :text OR p.email LIKE :text OR p.orgCode LIKE :text OR p.address LIKE :text OR p.contact LIKE :text OR p.phone LIKE :text OR p.postalCode LIKE :text OR p.product LIKE :text)")
-            ->setParameter("text","%$searchText%");
-
-        if ($month)
-        {
-            $queryBuilder->andWhere("MONTH(p.saleDate) = :month")
-                ->setParameter("month",$month);
-        }
-        if ($week)
-        {
-            $queryBuilder->andWhere("FLOOR((DayOfMonth(p.saleDate)-1)/7)+1 = :week")
-                ->setParameter("week",$week);
-        }
-        if ($manager)
-        {
-            $queryBuilder->andWhere("p.creator = :manager")
-                ->setParameter("manager",$manager);
-        }
-
-        return $queryBuilder->getQuery();
+        $query = $em->createQuery(" SELECT p FROM ManagerBundle:Company p WHERE p.name LIKE '%$searchText%'");
+        return $query;
     }
 
-    public function getRejectedListQuery($searchText = "",  $month = 0, $week = 0, User $manager = null)
+    public function getRejectedListQuery($searchText = "")
     {
         $em = $this->getEntityManager();
-        $repository = $em->getRepository("ManagerBundle:Company");
-        $queryBuilder = $repository->createQueryBuilder('p');
-
-        $queryBuilder->where("p.rejected = 1 and (p.name LIKE :text OR p.email LIKE :text OR p.orgCode LIKE :text OR p.address LIKE :text OR p.contact LIKE :text OR p.phone LIKE :text OR p.postalCode LIKE :text OR p.product LIKE :text) and p.trashed = 0")
-            ->setParameter("text","%$searchText%");
-
-        if ($month)
-        {
-            $queryBuilder->andWhere("MONTH(p.saleDate) = :month")
-                ->setParameter("month",$month);
-        }
-        if ($week)
-        {
-            $queryBuilder->andWhere("FLOOR((DayOfMonth(p.saleDate)-1)/7)+1 = :week")
-                ->setParameter("week",$week);
-        }
-        if ($manager)
-        {
-            $queryBuilder->andWhere("p.creator = :manager")
-                ->setParameter("manager",$manager);
-        }
-
-        return $queryBuilder->getQuery();
+        $query = $em->createQuery(" SELECT p FROM ManagerBundle:Company p WHERE p.rejected = 1 and p.name LIKE '%$searchText%' and p.trashed = 0");
+        return $query;
     }
 
-    public function getReportedCompanies($searchText = "",  $month = 0, $week = 0, User $manager = null)
+    public function getReportedCompanies($searchText = "")
     {
         $em = $this->getEntityManager();
-        $repository = $em->getRepository("ManagerBundle:Company");
-        $queryBuilder = $repository->createQueryBuilder('p');
-
         $date = strtotime("now");
         $date = strtotime("-5 day", $date);
         $searchDate = date('Y-m-d', $date)." 23:59:59";
+        $query = $em->createQuery(" SELECT p FROM ManagerBundle:Company p WHERE p.name LIKE '%$searchText%' and p.updated <= :dataTime");
+        $query->setParameter("dataTime",$searchDate);
 
-        $queryBuilder->where("(p.name LIKE :text OR p.email LIKE :text OR p.orgCode LIKE :text OR p.address LIKE :text OR p.contact LIKE :text OR p.phone LIKE :text OR p.postalCode LIKE :text OR p.product LIKE :text) and p.updated <= :dataTime")
-            ->setParameter("text","%$searchText%")
-            ->setParameter('dataTime', $searchDate);
-
-        if ($month)
-        {
-            $queryBuilder->andWhere("MONTH(p.saleDate) = :month")
-                ->setParameter("month",$month);
-        }
-        if ($week)
-        {
-            $queryBuilder->andWhere("FLOOR((DayOfMonth(p.saleDate)-1)/7)+1 = :week")
-                ->setParameter("week",$week);
-        }
-        if ($manager)
-        {
-            $queryBuilder->andWhere("p.creator = :manager")
-                ->setParameter("manager",$manager);
-        }
-
-        return $queryBuilder->getQuery();
+        return $query;
     }
 
-    public function getCompaniesAjaxAction($page, $limit,  $month = 0, $week = 0, User $manager = null)
+    public function getCompaniesAjaxAction($page, $limit)
     {
-        $em = $this->getEntityManager();
-        $repository = $em->getRepository("ManagerBundle:Company");
-        $queryBuilder = $repository->createQueryBuilder('p');
-
-        if ($month)
-        {
-            $queryBuilder->andWhere("MONTH(p.saleDate) = :month")
-                ->setParameter("month",$month);
-        }
-        if ($week)
-        {
-            $queryBuilder->andWhere("FLOOR((DayOfMonth(p.saleDate)-1)/7)+1 = :week")
-                ->setParameter("week",$week);
-        }
-        if ($manager)
-        {
-            $queryBuilder->andWhere("p.creator = :manager")
-                ->setParameter("manager",$manager);
-        }
-
         $offset = $limit*($page-1);
-        $queryBuilder->setMaxResults($limit);
-        $queryBuilder->setFirstResult($offset);
+        $em = $this->getEntityManager();
+        $query = $em->createQuery("SELECT p FROM ManagerBundle:Company p");
+        $query->setMaxResults($limit);
+        $query->setFirstResult($offset);
 
-        return $queryBuilder->getResult();
+        return $query->getResult();
     }
 }

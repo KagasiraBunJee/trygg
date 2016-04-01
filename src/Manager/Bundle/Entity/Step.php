@@ -30,25 +30,11 @@ class Step implements \JsonSerializable
     private $name;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="otherName", type="string", length=255)
-     */
-    private $otherName;
-
-    /**
      * @var integer
      *
      * @ORM\Column(name="stepLvl", type="integer")
      */
     private $stepLvl;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="active", type="integer", options={"default" = 1})
-     */
-    private $active;
 
     /**
      * @ORM\ManyToMany(targetEntity="Company", mappedBy="step")
@@ -157,53 +143,5 @@ class Step implements \JsonSerializable
             "id" => $this->getId(),
             "name" => $this->getName()
         ];
-    }
-
-    /**
-     * Set otherName
-     *
-     * @param string $otherName
-     *
-     * @return Step
-     */
-    public function setOtherName($otherName)
-    {
-        $this->otherName = $otherName;
-
-        return $this;
-    }
-
-    /**
-     * Get otherName
-     *
-     * @return string
-     */
-    public function getOtherName()
-    {
-        return $this->otherName;
-    }
-
-    /**
-     * Set active
-     *
-     * @param integer $active
-     *
-     * @return Step
-     */
-    public function setActive($active)
-    {
-        $this->active = $active;
-
-        return $this;
-    }
-
-    /**
-     * Get active
-     *
-     * @return integer
-     */
-    public function getActive()
-    {
-        return $this->active;
     }
 }

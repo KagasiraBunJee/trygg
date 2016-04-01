@@ -4,51 +4,18 @@
 {% block body %}
     <div class="row">
         <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <form style="margin-top:5px;margin-bottom: 5px;" action="{{ path(app.request.attributes.get('_route'),
-                    app.request.attributes.get('_route_params')) }}" id="filter" method="GET">
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <select name="month" id="month" class="form-control selectpicker-1">
-                                    <option value="0">Month</option>
-                                    {% for j in range(1, 12) %}
-                                        <option {% if j == app.request.query.get("month") %} selected="selected" {% endif %} value="{{ j }}">{{ date('2015-' ~ j ~ '-01')|date("F") }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-sm-3">
-                                <select name="week" class="form-control selectpicker-2">
-                                    <option value="0">Week</option>
-                                    {% for j in range(1, 4) %}
-                                        <option {% if j == app.request.query.get("week") %} selected="selected" {% endif %} value="{{ j }}">{{ j }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-sm-3">
-                                <select name="manager" id="manager" class="form-control selectpicker-3">
-                                    <option value="0">Manager</option>
-                                    {% for manager in managers() %}
-                                        <option {% if manager.id == app.request.query.get("manager") %} selected="selected" {% endif %} value="{{ manager.id }}">{{ manager.name~' '~manager.lastName }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-sm-3">
-                                <button type="submit" class="go-button">GO</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-12 table-scrollable">
                <table class="table custom">
                     <tr>
-                        <td>{% if companies.isSorted('p.creator.id') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'NR', 'p.creator.id') }}</td>
+                        <td>{% if companies.isSorted('p.creator.id') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'ID', 'p.creator.id') }}</td>
                         <td>{% if companies.isSorted('p.saleDate') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'Sales date', 'p.saleDate') }}</td>
                         <td>{% if companies.isSorted('p.name') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'Company', 'p.name') }}</td>
+                        <td>Org.Nr</td>
                         <td>{% if companies.isSorted('p.contact') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'Contact', 'p.contact') }}</td>
+                        <td>Email</td>
                         <td>Phone</td>
+                        <td>Postal Code</td>
+                        <td>{% if companies.isSorted('p.product') %}<i style="padding: 0" class="glyphicon {% if app.request.get('direction') == "asc" %}glyphicon-triangle-bottom{% else %}glyphicon-triangle-top{% endif %} btn-sm"></i>{% endif %}{{ knp_pagination_sortable(companies, 'Product', 'p.product') }}</td>
+                        <td>Price</td>
                         <td></td>
                     </tr>
                     {% if companies|length > 0 %}
@@ -57,8 +24,13 @@
                                 <td>{{ item.creator.id }}</td>
                                 <td>{{ item.saleDate|date("d-m-Y") }}</td>
                                 <td>{{ item.name }}</td>
+                                <td>{{ item.orgCode }}</td>
                                 <td>{{ item.contact }}</td>
+                                <td>{{ item.email }}</td>
                                 <td>{{ item.phone }}</td>
+                                <td>{{ item.postalCode }}</td>
+                                <td>{{ item.product }}</td>
+                                <td>{{ item.price }}</td>
 
                                 <td style="position: relative;">
                                     <div class="btn-group" aria-label="..." role="group">
@@ -85,14 +57,86 @@
                         {% endfor %}
                     {% endif %}
                 </table>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        {{ knp_pagination_render(companies) }}
+                    </div>
+                </div>
             {% if companies|length < 1 %}
                 <h2 style="margin: 0;"><small>No companies found</small></h2>
             {% endif %}
+
         </div>
-        <div class="row">
-            <div class="col-md-12 text-center">
-                {{ knp_pagination_render(companies) }}
+        {#<div style="background: #e6e6e6;" class="col-md-12 company_item">
+            {% if company.id is not null %}
+            <div class="row">
+                <div class="col-sm-3">
+                    <div>
+                        <h1>
+                            {% if company.image is not empty %}
+                                <img src="{{ asset('upload/' ~ company.id ~'/' ~ company.image)}}" alt="" height="100" />
+                            {% else %}
+                                <img src="{{ asset('upload/default.png')}}" alt="" height="100" />
+                            {% endif %}
+                        </h1>
+                    </div>
+                    <div>
+                        {% if company.rejected %}
+                            Status: <span style="color:red;">Rejected</span>
+                        {% elseif company.trashed %}
+                            Status: <span style="color:red;">Deleted</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    {% if company %}
+                        <h2>{{ company.name }}</h2>
+                        <p>Company name: {{ company.name }}</p>
+                        <p>Company email: {{ company.email }}</p>
+                        <p>Org. Number: {{ company.orgCode }}</p>
+                        <p>Company id: {{ company.id }}</p>
+                        <p>Sales date: {{ company.saleDate|date("d-F-Y") }}</p>
+                        <p>Postal Code: {{ company.postalCode }}</p>
+                        <p>Product: {{ company.product }}</p>
+                        <p>Price: {{ company.price }}</p>
+                    {% endif %}
+                </div>
+                <div class="col-sm-4">
+                    {% if company %}
+                        <h2>Notes</h2>
+                        <p>
+                            {{ company.comment }}
+                        </p>
+                    {% endif %}
+                </div>
+                <div class="col-sm-12">
+                    <ul class="list-inline">
+                        {% if is_granted('ROLE_SUPER_ADMIN') %}
+                            {% for step in steps() %}
+                                {% if step.id > 1 %}
+                                    <li><a class="{% if step in company.step %} btn-success {% endif %}btn btn-default btn-xs text-uppercase" href="{{ path('set_step', { 'stepId':step.id, "id":company.id, "current_step":app.request.attributes.get('step') }) }}"> {{ step.name }} </a></li>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="col-sm-12">
+                    <p>Added by: {{ company.creator.name }}</p>
+                    {% if company.logs|length > 0 %}
+                        {% for log in company.logs|reverse|slice(0, 2) %}
+                            {% if loop.first %}
+                                <p>Last updated by: {{ log.user.name }} [{{ log.created|date('Y-m-d H:i:s') }}] - [Last Action: {{ log.message|raw }}]</p>
+                            {% else %}
+                                <p>Updated by: {{ log.user.name }} [{{ log.created|date('Y-m-d H:i:s') }}] - [Action: {{ log.message|raw }}]</p>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
             </div>
-        </div>
+            {% endif %}
+        </div>#}
+
     </div>
+
+
 {% endblock %}
