@@ -30,6 +30,25 @@ class CompanyController extends Controller
         $step = $em->getRepository("ManagerBundle:Step")->find($step);
         $searchText = $request->get("search") ? $request->get("search") : "";
         $companies = $em->getRepository("ManagerBundle:Company")->getCompanies($step,$searchText);
+
+        /**
+         * @var Company $company
+         */
+        foreach($companies as $index=>$company)
+        {
+            $steps = $company->getStep();
+            /**
+             * @var Step $cStep
+             */
+            foreach($steps as $cStep)
+            {
+                if($cStep->getId() > $step->getId())
+                {
+                    unset($companies[$index]);
+                }
+            }
+        }
+
         $company = new Company();
 
         $paginator  = $this->get('knp_paginator');
@@ -360,7 +379,6 @@ class CompanyController extends Controller
             $em = $this->getDoctrine()->getManager();
             if(!$rejected and !$trashed and $searchWithStep)
             {
-
                 $step = $em->getRepository("ManagerBundle:Step")->find($searchWithStep);
                 $companies = $em->getRepository("ManagerBundle:Company")->getCompanies($step,$searchTxt);
             }
@@ -375,11 +393,25 @@ class CompanyController extends Controller
             {
                 $companies = $this->getDoctrine()->getRepository("ManagerBundle:Company")->getAllCompaniesQuery($searchTxt);
             }
-
             $result = [];
-
-            $companies = $companies->getResult();
-
+//            $companies = $companies->getResult();
+            /**
+             * @var Company $company
+             */
+            foreach($companies as $index=>$company)
+            {
+                $steps = $company->getStep();
+                /**
+                 * @var Step $cStep
+                 */
+                foreach($steps as $cStep)
+                {
+                    if($cStep->getId() > $step->getId())
+                    {
+                        unset($companies[$index]);
+                    }
+                }
+            }
             foreach($companies as $company)
             {
                 $url = $rejected ? $this->generateUrl("rejectedCom", ["id"=>$company->getId()]) : $this->generateUrl("main_with_item", ["id"=>$company->getId(), "step"=> $company->getStep()->first()->getId()]);
@@ -389,7 +421,6 @@ class CompanyController extends Controller
                     "url" => $url
                 ];
             }
-
             return new JsonResponse([
                 "result" => $result
             ]);

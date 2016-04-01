@@ -21,23 +21,20 @@ class CompanyRepository extends EntityRepository
             ->where("u = :step and p.name LIKE '%$searchText%' and p.rejected = 0 and p.trashed = 0")
             ->setParameter('step', $step->getId())
             ->getQuery();
-        return $query;
+        return $query->getResult();
     }
-
     public function getAllCompaniesQuery($searchText = "")
     {
         $em = $this->getEntityManager();
         $query = $em->createQuery(" SELECT p FROM ManagerBundle:Company p WHERE p.name LIKE '%$searchText%'");
         return $query;
     }
-
     public function getRejectedListQuery($searchText = "")
     {
         $em = $this->getEntityManager();
         $query = $em->createQuery(" SELECT p FROM ManagerBundle:Company p WHERE p.rejected = 1 and p.name LIKE '%$searchText%' and p.trashed = 0");
         return $query;
     }
-
     public function getReportedCompanies($searchText = "")
     {
         $em = $this->getEntityManager();
@@ -46,10 +43,8 @@ class CompanyRepository extends EntityRepository
         $searchDate = date('Y-m-d', $date)." 23:59:59";
         $query = $em->createQuery(" SELECT p FROM ManagerBundle:Company p WHERE p.name LIKE '%$searchText%' and p.updated <= :dataTime");
         $query->setParameter("dataTime",$searchDate);
-
         return $query;
     }
-
     public function getCompaniesAjaxAction($page, $limit)
     {
         $offset = $limit*($page-1);
@@ -57,7 +52,6 @@ class CompanyRepository extends EntityRepository
         $query = $em->createQuery("SELECT p FROM ManagerBundle:Company p");
         $query->setMaxResults($limit);
         $query->setFirstResult($offset);
-
         return $query->getResult();
     }
 }
