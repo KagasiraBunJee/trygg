@@ -25,7 +25,8 @@ class Extension extends \Twig_Extension{
     public function getFunctions()
     {
         return array(
-            new \Twig_SimpleFunction("steps", array($this, 'getSteps'))
+            new \Twig_SimpleFunction("steps", array($this, 'getSteps')),
+            new \Twig_SimpleFunction("managers", array($this, 'getManagers'))
         );
     }
 
@@ -33,6 +34,16 @@ class Extension extends \Twig_Extension{
     public function getSteps($reverse = false)
     {
         $steps = $this->em->getRepository("ManagerBundle:Step")->findAll();
+        if($reverse)
+        {
+            $steps = array_reverse($steps);
+        }
+        return $steps;
+    }
+
+    public function getManagers($reverse = false)
+    {
+        $steps = $this->em->getRepository("ManagerBundle:User")->findAll();
         if($reverse)
         {
             $steps = array_reverse($steps);

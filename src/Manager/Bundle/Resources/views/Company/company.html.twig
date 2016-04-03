@@ -40,6 +40,21 @@
     </div>
     <div class="col-sm-12">
         <ul class="list-inline">
+            <a class="btn btn-warning btn-xs text-uppercase" data-toggle="modal" data-target="#documentModal">
+                ADD DOCUMENT
+            </a>
+            <a class="btn btn-warning btn-xs text-uppercase" href="{{ path('document_list', {"id" : company.id}) }}">
+                View documents
+            </a>
+        </ul>
+        <div class="modal fade" id="documentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog modal-sm" role="document">
+                {{ render(controller('ManagerBundle:Document:create',{ 'id' : company.id})) }}
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <ul class="list-inline">
             {% if is_granted('ROLE_SUPER_ADMIN') %}
                 {% for step in steps() %}
                     {% if step.id > 1 %}

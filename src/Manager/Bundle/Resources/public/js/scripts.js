@@ -1,8 +1,11 @@
 var openedCompany = 0;
-var host = window.location.host;
+//prod
+// var host = window.location.host;
+//test
+var host = window.location.host+"/app_dev.php"
 jQuery("document").ready(function(){
 
-    jQuery("#searchAjax").keydown(function(){
+    jQuery("#searchAjax").keyup(function(){
         var params = [];
         var searchInput = jQuery(this);
         var rejected = searchInput.attr("rejected") ? "rejected=1" : "";
@@ -22,12 +25,11 @@ jQuery("document").ready(function(){
                 {
                     if(result.result.length > 0)
                     {
-                        var resultData = result.result.reduce(function (a, b) {
-                            return "<li><a href='"+a.url+"'>"+a.name+"</a></li>" + "<li><a href='"+b.url+"'>"+b.name+"</a></li>";
-                        });
-                        if(typeof resultData === 'object')
+                        var resultData = "";
+                        for(var i = 0; i < result.result.length; i++)
                         {
-                            resultData = "<li><a href='"+resultData.url+"'>"+resultData.name+"</a></li>";
+                            var object = result.result[i];
+                            resultData += "<li><a href='"+object.url+"'>"+object.name+"</a></li>";
                         }
                         dropdownmenu.html(resultData);
                         dropdownmenu.addClass("showSmartSearch");
@@ -76,6 +78,17 @@ jQuery("document").ready(function(){
     {
         date.val(yyyy+"-"+mm+"-"+dd);
     }
+
+    //custom selects
+    $('.selectpicker-1').selectric({
+        expandToItemText: true
+    });
+    $('.selectpicker-2').selectric({
+        expandToItemText: true
+    });
+    $('.selectpicker-3').selectric({
+        expandToItemText: true
+    });
 
     $(window).scroll(function() {
         if($(window).scrollTop() + $(window).height() == $(document).height()) {
@@ -147,5 +160,31 @@ function loadCompanies(page)
             var company_id = jQuery(this).attr('data-id');
             showCompany(company_id,main_page,this);
         });
+    });
+}
+
+function postForm( $form, callback ){
+
+    /*
+     * Get all form values
+     */
+    var values = {};
+    $.each( $form.serializeArray(), function(i, field) {
+        values[field.name] = field.value;
+    });
+
+    var formData = new FormData($form[0]);
+    /*
+     * Throw the form values to the server!
+     */
+    $.ajax({
+        type        : $form.attr( 'method' ),
+        url         : 'http://'+window.location.host+$form.attr( 'action' ),
+        data        : formData,
+        processData: false,
+        contentType: false,
+        success     : function(data) {
+            callback( data );
+        }
     });
 }

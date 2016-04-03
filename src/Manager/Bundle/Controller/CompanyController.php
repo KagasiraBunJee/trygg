@@ -14,6 +14,7 @@ use Manager\Bundle\Entity\Company;
 use Manager\Bundle\Form\CompanyType;
 use Manager\Bundle\Entity\Step;
 use Manager\Bundle\Entity\Log;
+use Manager\Bundle\Entity\User;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CompanyController extends Controller
@@ -28,8 +29,42 @@ class CompanyController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $step = $em->getRepository("ManagerBundle:Step")->find($step);
-        $searchText = $request->get("search") ? $request->get("search") : "";
-        $companies = $em->getRepository("ManagerBundle:Company")->getCompanies($step,$searchText);
+        $steps = $em->getRepository("ManagerBundle:Step")->findAll();
+        /** @var User $user **/
+        $user = $this->getUser();
+
+        //filter
+        $searchText = $request->get("search", "");
+        $month = $request->get("month", 0);
+        $week = $request->get("week", 0);
+        $managerId = $request->get("manager", null);
+        //sort hacks
+        $sortDirection = $request->get("direction", 'desc');
+        $sortField = $request->get("sort", 'p.saleDate');
+
+        /** @var User $manager **/
+        $manager = null;
+        if ($managerId != null || $user->isManager())
+        {
+            if ($user->isManager())
+            {
+                $manager = $em->getRepository("ManagerBundle:User")->find($user->getId());
+            }
+            else
+            {
+                $manager = $em->getRepository("ManagerBundle:User")->find($managerId);
+            }
+        }
+        //creating query with filter
+        $companies = $em->getRepository("ManagerBundle:Company")->getCompanies(
+            $step, //by step
+            $searchText, //by text
+            $month, //by month
+            $week, //by week of month
+            $manager, // by manager
+            $sortField, //trick with sorting, since 5.7 mysql is confliting with knppaginator sorting methods, going to use this trick
+            $sortDirection //if somebody knows better solution let me know, or if i find out it i'll change
+        )->getResult();
 
         /**
          * @var Company $company
@@ -77,8 +112,42 @@ class CompanyController extends Controller
      */
     public function allCompaniesAction(Request $request)
     {
-        $searchText = $request->get("search") ? $request->get("search") : "";
-        $companies = $this->getDoctrine()->getRepository("ManagerBundle:Company")->getAllCompaniesQuery($searchText);
+        $em = $this->getDoctrine()->getManager();
+        /** @var User $user **/
+        $user = $this->getUser();
+
+        //filter
+        $searchText = $request->get("search", "");
+        $month = $request->get("month", 0);
+        $week = $request->get("week", 0);
+        $managerId = $request->get("manager", null);
+        //sort hacks
+        $sortDirection = $request->get("direction", 'desc');
+        $sortField = $request->get("sort", 'p.saleDate');
+
+        /** @var User $manager **/
+        $manager = null;
+        if ($managerId != null || $user->isManager())
+        {
+            if ($user->isManager())
+            {
+                $manager = $em->getRepository("ManagerBundle:User")->find($user->getId());
+            }
+            else
+            {
+                $manager = $em->getRepository("ManagerBundle:User")->find($managerId);
+            }
+        }
+        //creating query with filter
+        $companies = $em->getRepository("ManagerBundle:Company")->getAllCompaniesQuery(
+            $searchText, //by text
+            $month, //by month
+            $week, //by week of month
+            $manager, // by manager
+            $sortField, //trick with sorting, since 5.7 mysql is confliting with knppaginator sorting methods, going to use this trick
+            $sortDirection //if somebody knows better solution let me know, or if i find out it i'll change
+        )->getResult();
+
         $step = new Step();
         $step->setName('All Customers');
 
@@ -219,8 +288,34 @@ class CompanyController extends Controller
         $step->setName('Rejected');
         $step->setStepLvl("rejected");
         $company = new Company();
-        $searchText = $request->get("search") ? $request->get("search") : "";
-        $companies = $em->getRepository("ManagerBundle:Company")->getRejectedListQuery($searchText);
+
+        /** @var User $user **/
+        $user = $this->getUser();
+
+        //filter
+        $searchText = $request->get("search", "");
+        $month = $request->get("month", 0);
+        $week = $request->get("week", 0);
+        $managerId = $request->get("manager", null);
+        //sort hacks
+        $sortDirection = $request->get("direction", 'desc');
+        $sortField = $request->get("sort", 'p.saleDate');
+
+        /** @var User $manager **/
+        $manager = null;
+        if ($managerId != null || $user->isManager())
+        {
+            if ($user->isManager())
+            {
+                $manager = $em->getRepository("ManagerBundle:User")->find($user->getId());
+            }
+            else
+            {
+                $manager = $em->getRepository("ManagerBundle:User")->find($managerId);
+            }
+        }
+
+        $companies = $em->getRepository("ManagerBundle:Company")->getRejectedListQuery($searchText, $month, $week, $manager, $sortField, $sortDirection);
 
         $paginator  = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
@@ -379,17 +474,13 @@ class CompanyController extends Controller
             $em = $this->getDoctrine()->getManager();
             if(!$rejected and !$trashed and $searchWithStep)
             {
-
                 $step = $em->getRepository("ManagerBundle:Step")->find($searchWithStep);
-                $companies = $em->getRepository("ManagerBundle:Company")->getCompanies($step,$searchTxt);
+                $companies = $em->getRepository("ManagerBundle:Company")->getCompanies($step,$searchTxt)->getResult();
             }
             elseif($rejected)
             {
                 $companies = $em->getRepository("ManagerBundle:Company")->getRejectedListQuery($searchTxt);
             }
-            /*elseif($trashed)
-            {
-            }*/
             else
             {
                 $companies = $this->getDoctrine()->getRepository("ManagerBundle:Company")->getAllCompaniesQuery($searchTxt);
@@ -402,20 +493,20 @@ class CompanyController extends Controller
             /**
              * @var Company $company
              */
-            foreach($companies as $index=>$company)
-            {
-                $steps = $company->getStep();
-                /**
-                 * @var Step $cStep
-                 */
-                foreach($steps as $cStep)
-                {
-                    if($cStep->getId() > $step->getId())
-                    {
-                        unset($companies[$index]);
-                    }
-                }
-            }
+//            foreach($companies as $index=>$company)
+//            {
+//                $steps = $company->getStep();
+//                /**
+//                 * @var Step $cStep
+//                 */
+//                foreach($steps as $cStep)
+//                {
+//                    if($cStep->getId() > $step->getId())
+//                    {
+//                        unset($companies[$index]);
+//                    }
+//                }
+//            }
 
             foreach($companies as $company)
             {
@@ -448,8 +539,34 @@ class CompanyController extends Controller
         $step = new Step();
         $step->setName('Reported companies');
         $step->setStepLvl("reported");
-        $searchText = $request->get("search") ? $request->get("search") : "";
-        $companies = $em->getRepository("ManagerBundle:Company")->getReportedCompanies($searchText);
+
+        /** @var User $user **/
+        $user = $this->getUser();
+
+        //filter
+        $searchText = $request->get("search", "");
+        $month = $request->get("month", 0);
+        $week = $request->get("week", 0);
+        $managerId = $request->get("manager", null);
+        //sort hacks
+        $sortDirection = $request->get("direction", 'desc');
+        $sortField = $request->get("sort", 'p.saleDate');
+
+        /** @var User $manager **/
+        $manager = null;
+        if ($managerId != null || $user->isManager())
+        {
+            if ($user->isManager())
+            {
+                $manager = $em->getRepository("ManagerBundle:User")->find($user->getId());
+            }
+            else
+            {
+                $manager = $em->getRepository("ManagerBundle:User")->find($managerId);
+            }
+        }
+
+        $companies = $em->getRepository("ManagerBundle:Company")->getReportedCompanies($searchText, $month, $week, $manager, $sortField, $sortDirection);
         $company = new Company();
 
         $paginator  = $this->get('knp_paginator');
@@ -528,8 +645,17 @@ class CompanyController extends Controller
      */
     public function getAjaxCompaniesByPage(Request $request, $items)
     {
-        $searchText = $request->get("search") ? $request->get("search") : "";
-        $limit = $this->container->getParameter("items_per_page");
+        $em = $this->getDoctrine()->getManager();
+        $searchText = $request->get("search", "");
+        $month = $request->get("month", 0);
+        $week = $request->get("week", 0);
+        $managerId = $request->get("manager", null);
+        $manager = null;
+        if ($managerId != null)
+        {
+            /** @var User $manager **/
+            $manager = $em->getRepository("ManagerBundle:User")->find($managerId);
+        }
 
         $currentItems = $items;
         $itemsPerPage = $this->container->getParameter("items_per_page");
@@ -540,7 +666,7 @@ class CompanyController extends Controller
             throw new NotFoundHttpException("Found no companies");
         }
 
-        $companies = $this->getDoctrine()->getRepository("ManagerBundle:Company")->getAllCompaniesQuery($searchText);
+        $companies = $em->getRepository("ManagerBundle:Company")->getAllCompaniesQuery($searchText, $month, $week, $manager);
 
         $paginator  = $this->get('knp_paginator');
         $pagination = $paginator->paginate(

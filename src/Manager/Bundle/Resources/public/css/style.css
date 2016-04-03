@@ -82,3 +82,24 @@ table.custom tr:nth-child(1n+3){
 table.custom tr:nth-child(4n-6){
     background: #f9f9f9;
 }
+
+.go-button {
+    background: #f8f8f8 none repeat scroll 0 0;
+    border: 1px solid #ddd;
+    display:inline-block;
+    cursor:pointer;
+    color:#444;
+    font-family:Helvetica Neue;
+    font-size:12px;
+    font-weight:700;
+    padding:9px 0;
+    text-decoration:none;
+    width: 100%;
+    height:40px;
+}
+.go-button:hover {
+    border-color: #C4C4C4;
+}
+.go-button:active {
+    position:relative;
+}

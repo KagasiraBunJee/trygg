@@ -6,6 +6,7 @@ use Doctrine\DBAL\Types\DateType;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
@@ -69,6 +70,13 @@ class Company implements \JsonSerializable
      * @ORM\Column(name="contact", type="string", length=255)
      */
     private $contact;
+
+    /**
+     * @var string
+     * @Assert\NotBlank()
+     * @ORM\Column(name="seller_name", type="string", length=255)
+     */
+    private $sellerName;
 
     /**
      * @var string
@@ -141,15 +149,23 @@ class Company implements \JsonSerializable
 
     /**
      * @var \DateTime
+     * @Gedmo\Timestampable(on="create")
      * @ORM\Column(name="created", type="datetime")
      */
     private $created;
 
     /**
      * @var \DateTime $updated
+     * @Gedmo\Timestampable(on="update")
      * @ORM\Column(name="updated", type="datetime")
      */
     private $updated;
+
+
+    /**
+     * @ORM\OneToMany(targetEntity="Manager\Bundle\Entity\Document", mappedBy="company")
+     */
+    private $documents;
 
     private $updateWIthoutImage = false;
 
@@ -747,5 +763,61 @@ class Company implements \JsonSerializable
     {
         $this->step = new \Doctrine\Common\Collections\ArrayCollection();
         $this->step[] = $step;
+    }
+
+    /**
+     * Set sellerName
+     *
+     * @param string $sellerName
+     * @return Company
+     */
+    public function setSellerName($sellerName)
+    {
+        $this->sellerName = $sellerName;
+
+        return $this;
+    }
+
+    /**
+     * Get sellerName
+     *
+     * @return string 
+     */
+    public function getSellerName()
+    {
+        return $this->sellerName;
+    }
+
+    /**
+     * Add documents
+     *
+     * @param \Manager\Bundle\Entity\Document $documents
+     * @return Company
+     */
+    public function addDocument(\Manager\Bundle\Entity\Document $documents)
+    {
+        $this->documents[] = $documents;
+
+        return $this;
+    }
+
+    /**
+     * Remove documents
+     *
+     * @param \Manager\Bundle\Entity\Document $documents
+     */
+    public function removeDocument(\Manager\Bundle\Entity\Document $documents)
+    {
+        $this->documents->removeElement($documents);
+    }
+
+    /**
+     * Get documents
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getDocuments()
+    {
+        return $this->documents;
     }
 }

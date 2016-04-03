@@ -66,6 +66,12 @@ class User implements UserInterface
      * @ORM\OneToMany(targetEntity="Log", mappedBy="user")
      */
     private $logs;
+
+
+    /**
+     * @ORM\OneToMany(targetEntity="Manager\Bundle\Entity\Document", mappedBy="user")
+     */
+    private $documents;
     
     /**
      * Get id
@@ -275,5 +281,47 @@ class User implements UserInterface
     public function getLastName()
     {
         return $this->last_name;
+    }
+
+    public function isManager()
+    {
+        if ($this->getRole() == "ROLE_ADMIN")
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Add documents
+     *
+     * @param \Manager\Bundle\Entity\Document $documents
+     * @return User
+     */
+    public function addDocument(\Manager\Bundle\Entity\Document $documents)
+    {
+        $this->documents[] = $documents;
+
+        return $this;
+    }
+
+    /**
+     * Remove documents
+     *
+     * @param \Manager\Bundle\Entity\Document $documents
+     */
+    public function removeDocument(\Manager\Bundle\Entity\Document $documents)
+    {
+        $this->documents->removeElement($documents);
+    }
+
+    /**
+     * Get documents
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getDocuments()
+    {
+        return $this->documents;
     }
 }
