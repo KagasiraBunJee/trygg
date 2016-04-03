@@ -4,7 +4,7 @@ var openedCompany = 0;
 //test
 // var host = window.location.host+"/app_dev.php"
 //test server
-var host = "http://moya.pri4astudio.com.ua/trygg/web/app.php";
+var host = "moya.pri4astudio.com.ua/trygg/web/app.php";
 jQuery("document").ready(function(){
 
     jQuery("#searchAjax").keyup(function(){
