@@ -1,8 +1,8 @@
 var openedCompany = 0;
 //prod
-// var host = window.location.host;
+var host = window.location.host;
 //test
-var host = window.location.host+"/app_dev.php"
+// var host = window.location.host+"/app_dev.php"
 jQuery("document").ready(function(){
 
     jQuery("#searchAjax").keyup(function(){
