@@ -8,3 +8,9 @@ services:
             - { name: twig.extension }
         arguments:
             em: "@doctrine.orm.entity_manager"
+
+    mybundle.tblprefix_subscriber:
+            class: Manager\Bundle\Subscriber\TablePrefixSubscriber
+            arguments: [%database_prefix%]
+            tags:
+                - { name: doctrine.event_subscriber }

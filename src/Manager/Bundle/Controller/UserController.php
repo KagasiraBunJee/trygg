@@ -91,11 +91,7 @@ class UserController extends Controller
             $encoder = $factory->getEncoder($user);
             $user->setPassword($encoder->encodePassword($user->getPassword(), $user->getSalt()));
             $user->setRole('ROLE_ADMIN');
-
-            if ($userDeleted)
-            {
-                $user->setIsDeleted(false);
-            }
+            $user->setIsDeleted(false);
 
             if (!$userExists)
             {
