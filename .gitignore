@@ -17,3 +17,5 @@
 /nbproject/
 /web/js/*
 /web/css/*
+.DS_Store
+.idea/
