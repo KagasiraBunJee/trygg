@@ -45,6 +45,7 @@ class UserController extends Controller
      */
     public function loginCheckAction()
     {
+        echo 'check';
         // this controller will not be executed,
         // as the route is handled by the Security system
     }
@@ -72,13 +73,34 @@ class UserController extends Controller
         $em = $this->getDoctrine()->getManager();
         $success = false;
 
-        if($form->isValid())
+        $userExists = false;
+        $userDeleted = false;
+
+        /** @var User $checkUser */
+        $checkUser = $this->getDoctrine()->getManager()->getRepository("ManagerBundle:User")->findBy(['email' => $user->getEmail()]);
+        if (count($checkUser) > 0)
+        {
+            $userExists = true;
+            $user = $checkUser[0];
+            $userDeleted = $user->getIsDeleted();
+        }
+
+        if($form->isValid() && (!$userExists || ($userExists && $userDeleted)))
         {
             $factory = $this->get('security.encoder_factory');
             $encoder = $factory->getEncoder($user);
             $user->setPassword($encoder->encodePassword($user->getPassword(), $user->getSalt()));
             $user->setRole('ROLE_ADMIN');
-            $em->persist($user);
+
+            if ($userDeleted)
+            {
+                $user->setIsDeleted(false);
+            }
+
+            if (!$userExists)
+            {
+                $em->persist($user);
+            }
             $em->flush();
             $success = true;
         }
@@ -188,7 +210,7 @@ class UserController extends Controller
     public function deleteAction(User $user, Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-        $em->remove($user);
+        $user->setIsDeleted(true);
         $em->flush();
         return $this->redirectToRoute("personal");
     }
