@@ -16,7 +16,7 @@ class UserRepository extends EntityRepository
     {
         $em = $this->getEntityManager();
         $query = $em->createQuery('
-            SELECT p FROM ManagerBundle:User p WHERE p.name LIKE :name
+            SELECT p FROM ManagerBundle:User p WHERE p.name LIKE :name AND p.is_deleted = 0
         ');
         $query->setParameter('name','%'.$searchText.'%');
 
