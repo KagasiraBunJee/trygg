@@ -4,7 +4,7 @@ namespace Manager\Bundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 use Manager\Bundle\Entity\Company;
 /**
  * User
@@ -12,7 +12,7 @@ use Manager\Bundle\Entity\Company;
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="Manager\Bundle\Entity\Repository\UserRepository")
  */
-class User implements UserInterface
+class User implements AdvancedUserInterface
 {
     /**
      * @var integer
@@ -50,6 +50,12 @@ class User implements UserInterface
      * @ORM\Column(name="password", type="string", length=255)
      */
     private $password;
+
+    /**
+     * @var boolean
+     * @ORM\Column(name="is_deleted", type="boolean")
+     */
+    private $is_deleted;
     
     /**
      * @var string
@@ -275,5 +281,49 @@ class User implements UserInterface
     public function getLastName()
     {
         return $this->last_name;
+    }
+
+    /**
+     * Set is_deleted
+     *
+     * @param boolean $isDeleted
+     * @return User
+     */
+    public function setIsDeleted($isDeleted)
+    {
+        $this->is_deleted = $isDeleted;
+
+        return $this;
+    }
+
+    /**
+     * Get is_deleted
+     *
+     * @return boolean
+     */
+    public function getIsDeleted()
+    {
+        return $this->is_deleted;
+    }
+
+    //AdvancedUserInterface
+    public function isAccountNonExpired()
+    {
+        return true;
+    }
+
+    public function isAccountNonLocked()
+    {
+        return true;
+    }
+
+    public function isCredentialsNonExpired()
+    {
+        return true;
+    }
+
+    public function isEnabled()
+    {
+        return !$this->is_deleted;
     }
 }

@@ -57,7 +57,7 @@ class UserController extends Controller
         // this controller will not be executed,
         // as the route is handled by the Security system
     }
-    
+
     /**
      * @param Request $request
      * @Route("/register/manager", name="reg_manager")
@@ -72,13 +72,34 @@ class UserController extends Controller
         $em = $this->getDoctrine()->getManager();
         $success = false;
 
-        if($form->isValid())
+        $userExists = false;
+        $userDeleted = false;
+
+        /** @var User $checkUser */
+        $checkUser = $this->getDoctrine()->getManager()->getRepository("ManagerBundle:User")->findBy(['email' => $user->getEmail()]);
+        if (count($checkUser) > 0)
+        {
+            $userExists = true;
+            $user = $checkUser[0];
+            $userDeleted = $user->getIsDeleted();
+        }
+
+        if($form->isValid() && (!$userExists || ($userExists && $userDeleted)))
         {
             $factory = $this->get('security.encoder_factory');
             $encoder = $factory->getEncoder($user);
             $user->setPassword($encoder->encodePassword($user->getPassword(), $user->getSalt()));
             $user->setRole('ROLE_ADMIN');
-            $em->persist($user);
+
+            if ($userDeleted)
+            {
+                $user->setIsDeleted(false);
+            }
+
+            if (!$userExists)
+            {
+                $em->persist($user);
+            }
             $em->flush();
             $success = true;
         }
@@ -90,7 +111,7 @@ class UserController extends Controller
             "hide_add_btn" => true
         ];
     }
-    
+
     /**
      * @param Request $request
      * @Route("/register/admin", name="reg_admin")
@@ -102,7 +123,7 @@ class UserController extends Controller
         $form = $this->createForm(new UserType(), $user);
         $form->handleRequest($request);
         $em = $this->getDoctrine()->getManager();
-        
+
         if($form->isValid())
         {
             $factory = $this->get('security.encoder_factory');
@@ -112,7 +133,7 @@ class UserController extends Controller
             $em->persist($user);
             $em->flush();
         }
-        
+
         return [
             'form' => $form->createView()
         ];
@@ -157,6 +178,7 @@ class UserController extends Controller
 
         $form = $this->createForm(new UserType(true), $user);
         $form->handleRequest($request);
+        $result = false;
 
         if($form->isValid())
         {
@@ -171,12 +193,13 @@ class UserController extends Controller
                 $encoder = $factory->getEncoder($user);
                 $user->setPassword($encoder->encodePassword($user->getPassword(), $user->getSalt()));
             }
+            $result = true;
             $em->flush();
         }
 
         return [
             'form' => $form->createView(),
-            'result'=>$form->getErrors(),
+            'result'=>$result,
             'show_manager_button' => true,
             "hide_add_btn" => true
         ];
@@ -188,7 +211,7 @@ class UserController extends Controller
     public function deleteAction(User $user, Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-        $em->remove($user);
+        $user->setIsDeleted(true);
         $em->flush();
         return $this->redirectToRoute("personal");
     }
