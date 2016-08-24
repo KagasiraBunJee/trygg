@@ -26,9 +26,13 @@ class UserType extends AbstractType
             ->add('email')
             ->add('name')
             ->add('last_name');
-            if(!$this->editing){
-                $builder->add('password');
-            }
+        if(!$this->editing){
+            $builder->add('password');
+        } else {
+            $builder->add('password', 'password',[
+                'required' => false
+            ]);
+        }
             $builder->add('role', 'choice', array(
                 'choices' => array(
                     'ROLE_SUPER_ADMIN'   => 'Admin',
